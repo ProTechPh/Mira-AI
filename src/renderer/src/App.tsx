@@ -79,10 +79,7 @@ function App(): React.JSX.Element {
         ? (navigator.language.startsWith('zh') ? 'zh' : 'en')
         : language
       window.api.updateTrayLanguage(actualLang)
-      
-      // Set authenticated flag if there are any accounts
-      const { accounts } = useAccountsStore.getState()
-      window.api.setAuthenticated(accounts.size > 0)
+
     })
     
     return () => {
