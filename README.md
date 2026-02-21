@@ -272,6 +272,10 @@ The project is configured with GitHub Actions workflow for auto building all pla
 
 ## 📋 Changelog
 
+### v1.5.3 (2026-02-21)
+- 🛠️ **Hotfix & i18n**: Minor translation fixes and UI copy improvements.
+- 🔁 **Release automation**: GitHub Actions release workflow refined; release creation and artifact upload automated.
+
 ### v1.5.2 (2026-02-21)
 - 🛠️ **Hotfix & i18n**: Minor translation fixes and UI copy improvements.
 - 🔁 **Release automation**: GitHub Actions release workflow refined; release creation and artifact upload automated.
