@@ -81,13 +81,15 @@ jobs:
           name: linux-build
           path: release-files
       
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
+      - name: Create Release on Mira-Release
+        # This action creates a release in the external repository ProTechPh/Mira-Release
+        # Requires a personal access token with `repo` scope stored in repository secrets as `RELEASE_REPO_TOKEN`.
+        uses: peter-evans/create-release@v1
         with:
-          files: release-files/*
-          draft: false
-          prerelease: false
-          generate_release_notes: true
+          token: ${{ secrets.RELEASE_REPO_TOKEN }}
+          repository: ProTechPh/Mira-Release
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
           body: |
             ## 🎉 Mira AI ${{ github.ref_name }}
             
@@ -102,5 +104,6 @@ jobs:
             
             ---
             See full changelog below.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          draft: false
+          prerelease: false
+          files: release-files/*
