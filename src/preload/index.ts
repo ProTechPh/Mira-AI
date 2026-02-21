@@ -983,6 +983,11 @@ const api = {
     ipcRenderer.send('update-tray-language', language)
   },
 
+  // 设置认证状态（渲染进程调用以通知主进程用户是否已登录）
+  setAuthenticated: (authenticated: boolean): void => {
+    ipcRenderer.send('set-authenticated', authenticated)
+  },
+
   // 监听托盘刷新账户事件
   onTrayRefreshAccount: (callback: () => void): (() => void) => {
     const handler = (): void => {
