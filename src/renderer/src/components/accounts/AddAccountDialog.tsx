@@ -660,7 +660,7 @@ export function AddAccountDialog({ isOpen, onClose }: AddAccountDialogProps): Re
       const parsed = JSON.parse(oidcBatchData.trim())
       credentials = Array.isArray(parsed) ? parsed : [parsed]
     } catch {
-      setError('JSON 格式错误，请检查输入')
+      setError(t('errors.jsonFormatError'))
       return
     }
 
@@ -1693,7 +1693,7 @@ export function AddAccountDialog({ isOpen, onClose }: AddAccountDialogProps): Re
                         const count = Array.isArray(parsed) ? parsed.length : 1
                         return <p className="text-xs text-muted-foreground">{isEn ? `Entered ${count} credentials` : `已输入 ${count} 个凭证`}</p>
                       } catch {
-                        return <p className="text-xs text-destructive">{isEn ? 'Invalid JSON format' : 'JSON 格式错误'}</p>
+                        return <p className="text-xs text-destructive">{t('errors.invalidJsonFormat')}</p>
                       }
                     })()}
                   </div>

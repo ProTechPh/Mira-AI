@@ -90,7 +90,6 @@ function CustomDropdown({ value, options, onChange, placeholder, className }: Cu
 
 export function ProxyDetailedLogsDialog({ open, onOpenChange }: ProxyDetailedLogsDialogProps) {
   const { t } = useTranslation()
-  const isEn = t('common.unknown') === 'Unknown'
   const [logs, setLogs] = useState<LogEntry[]>([])
   const [loading, setLoading] = useState(false)
   const [searchText, setSearchText] = useState('')
@@ -329,7 +328,7 @@ export function ProxyDetailedLogsDialog({ open, onOpenChange }: ProxyDetailedLog
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h2 className="text-lg font-semibold">{isEn ? 'Proxy Detailed Logs' : '反代详细日志'}</h2>
+            <h2 className="text-lg font-semibold">{t('proxyDetailedLogs.title')}</h2>
           </div>
           <div className="flex items-center gap-2">
             <CustomDropdown
@@ -337,16 +336,16 @@ export function ProxyDetailedLogsDialog({ open, onOpenChange }: ProxyDetailedLog
               onChange={setTimeRange}
               className="min-w-[70px]"
               options={[
-                { value: 'all', label: isEn ? 'All Time' : '全部时间' },
-                { value: '1h', label: isEn ? '1 Hour' : '1小时' },
-                { value: '6h', label: isEn ? '6 Hours' : '6小时' },
-                { value: '12h', label: isEn ? '12 Hours' : '12小时' },
-                { value: '1d', label: isEn ? '1 Day' : '1天' },
-                { value: '3d', label: isEn ? '3 Days' : '3天' },
-                { value: '7d', label: isEn ? '7 Days' : '7天' },
-                { value: '30d', label: isEn ? '30 Days' : '30天' },
-                { value: '180d', label: isEn ? '180 Days' : '180天' },
-                { value: '1y', label: isEn ? '1 Year' : '1年' },
+                { value: 'all', label: t('proxyDetailedLogs.allTime') },
+                { value: '1h', label: t('proxyDetailedLogs.oneHour') },
+                { value: '6h', label: t('proxyDetailedLogs.sixHours') },
+                { value: '12h', label: t('proxyDetailedLogs.twelveHours') },
+                { value: '1d', label: t('proxyDetailedLogs.oneDay') },
+                { value: '3d', label: t('proxyDetailedLogs.threeDays') },
+                { value: '7d', label: t('proxyDetailedLogs.sevenDays') },
+                { value: '30d', label: t('proxyDetailedLogs.thirtyDays') },
+                { value: '180d', label: t('proxyDetailedLogs.oneEightyDays') },
+                { value: '1y', label: t('proxyDetailedLogs.oneYear') },
               ]}
             />
             <CustomDropdown
@@ -354,18 +353,18 @@ export function ProxyDetailedLogsDialog({ open, onOpenChange }: ProxyDetailedLog
               onChange={setDisplayLimit}
               className="min-w-[70px]"
               options={[
-                { value: 'all', label: isEn ? 'All' : '全部' },
+                { value: 'all', label: t('proxyDetailedLogs.all') },
                 { value: '5000', label: '5000' },
-                { value: '10000', label: isEn ? '10K' : '1万' },
-                { value: '50000', label: isEn ? '50K' : '5万' },
-                { value: '100000', label: isEn ? '100K' : '10万' },
-                { value: '200000', label: isEn ? '200K' : '20万' },
-                { value: '500000', label: isEn ? '500K' : '50万' },
-                { value: '1000000', label: isEn ? '1M' : '100万' },
+                { value: '10000', label: t('proxyDetailedLogs.tenK') },
+                { value: '50000', label: t('proxyDetailedLogs.fiftyK') },
+                { value: '100000', label: t('proxyDetailedLogs.hundredK') },
+                { value: '200000', label: t('proxyDetailedLogs.twoHundredK') },
+                { value: '500000', label: t('proxyDetailedLogs.fiveHundredK') },
+                { value: '1000000', label: t('proxyDetailedLogs.oneMillion') },
               ]}
             />
             <Badge variant="secondary" className="font-mono">
-              {filteredLogs.length} / {logs.length} {isEn ? 'entries' : '条'}
+              {filteredLogs.length} / {logs.length} {t('proxyDetailedLogs.entries')}
             </Badge>
             <Button variant="ghost" size="icon" className="rounded-full hover:bg-destructive/10 hover:text-destructive" onClick={() => onOpenChange(false)}>
               <X className="w-4 h-4" />
@@ -379,7 +378,7 @@ export function ProxyDetailedLogsDialog({ open, onOpenChange }: ProxyDetailedLog
           <div className="relative flex-1 min-w-[100px]">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
             <Input
-              placeholder={isEn ? 'Search logs...' : '搜索日志内容...'}
+              placeholder={t('proxyDetailedLogs.searchPlaceholder')}
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               className="pl-8 pr-8 h-8 text-xs bg-background/50 border-border focus:border-primary"
@@ -401,7 +400,7 @@ export function ProxyDetailedLogsDialog({ open, onOpenChange }: ProxyDetailedLog
             value={levelFilter}
             onChange={setLevelFilter}
             options={[
-              { value: 'all', label: isEn ? 'All' : '全部', icon: <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-red-500 via-yellow-500 to-blue-500" /> },
+              { value: 'all', label: t('proxyDetailedLogs.all'), icon: <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-red-500 via-yellow-500 to-blue-500" /> },
               { value: 'ERROR', label: 'ERR', icon: <span className="w-2.5 h-2.5 rounded-full bg-red-500" /> },
               { value: 'WARN', label: 'WARN', icon: <span className="w-2.5 h-2.5 rounded-full bg-yellow-500" /> },
               { value: 'INFO', label: 'INFO', icon: <span className="w-2.5 h-2.5 rounded-full bg-blue-500" /> },
@@ -415,7 +414,7 @@ export function ProxyDetailedLogsDialog({ open, onOpenChange }: ProxyDetailedLog
             onChange={setCategoryFilter}
             className="min-w-[100px]"
             options={[
-              { value: 'all', label: isEn ? 'All' : '全部', icon: <svg className="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg> },
+              { value: 'all', label: t('proxyDetailedLogs.all'), icon: <svg className="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg> },
               ...categories.map(cat => ({ 
                 value: cat, 
                 label: cat,
@@ -436,7 +435,7 @@ export function ProxyDetailedLogsDialog({ open, onOpenChange }: ProxyDetailedLog
               className="h-7 px-2 text-xs hover:border-primary/50"
             >
               <RefreshCw className={`w-3.5 h-3.5 mr-1 ${loading ? 'animate-spin' : ''}`} />
-              {isEn ? 'Refresh' : '刷新'}
+              {t('proxyDetailedLogs.refresh')}
             </Button>
             <Button
               variant="outline"
@@ -446,7 +445,7 @@ export function ProxyDetailedLogsDialog({ open, onOpenChange }: ProxyDetailedLog
               className="h-7 px-2 text-xs hover:border-primary/50"
             >
               <Download className="w-3.5 h-3.5 mr-1" />
-              {isEn ? 'Export' : '导出'}
+              {t('proxyDetailedLogs.export')}
             </Button>
             <Button
               variant="outline"
@@ -456,7 +455,7 @@ export function ProxyDetailedLogsDialog({ open, onOpenChange }: ProxyDetailedLog
               className="h-7 px-2 text-xs text-destructive hover:bg-destructive/10 hover:border-destructive/50"
             >
               <Trash2 className="w-3.5 h-3.5 mr-1" />
-              {isEn ? 'Clear' : '清空'}
+              {t('proxyDetailedLogs.clear')}
             </Button>
           </div>
 
@@ -472,12 +471,12 @@ export function ProxyDetailedLogsDialog({ open, onOpenChange }: ProxyDetailedLog
             {autoScroll ? (
               <>
                 <ArrowDownToLine className="w-3.5 h-3.5 mr-1" />
-                {isEn ? 'Auto' : '自动'}
+                {t('proxyDetailedLogs.auto')}
               </>
             ) : (
               <>
                 <Pause className="w-3.5 h-3.5 mr-1" />
-                {isEn ? 'Paused' : '暂停'}
+                {t('proxyDetailedLogs.paused')}
               </>
             )}
           </Button>
@@ -557,9 +556,9 @@ export function ProxyDetailedLogsDialog({ open, onOpenChange }: ProxyDetailedLog
                 <svg className="w-12 h-12 mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <span className="text-sm">{logs.length === 0 ? (isEn ? 'No logs yet' : '暂无日志记录') : (isEn ? 'No matching logs' : '没有匹配的日志')}</span>
+                <span className="text-sm">{logs.length === 0 ? t('proxyDetailedLogs.noLogs') : t('proxyDetailedLogs.noMatchingLogs')}</span>
                 {logs.length === 0 && (
-                  <span className="text-xs mt-1 opacity-70">{isEn ? 'Logs will appear here after proxy requests' : '发起反代请求后日志将显示在这里'}</span>
+                  <span className="text-xs mt-1 opacity-70">{t('proxyDetailedLogs.noLogsMessage')}</span>
                 )}
               </div>
             ) : (

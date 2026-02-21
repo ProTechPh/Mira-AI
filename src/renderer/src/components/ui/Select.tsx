@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { ChevronDown, Check } from 'lucide-react'
 import { cn } from '../../lib/utils'
+import { useTranslation } from '@/hooks/useTranslation'
 
 interface SelectOption {
   value: string
@@ -16,7 +17,9 @@ interface SelectProps {
   className?: string
 }
 
-export function Select({ value, options, onChange, placeholder = '请选择', className }: SelectProps) {
+export function Select({ value, options, onChange, placeholder, className }: SelectProps) {
+  const { t } = useTranslation()
+  const defaultPlaceholder = placeholder || t('placeholders.select')
   const [isOpen, setIsOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -46,7 +49,7 @@ export function Select({ value, options, onChange, placeholder = '请选择', cl
         )}
       >
         <span className={cn(!selectedOption && 'text-muted-foreground')}>
-          {selectedOption?.label || placeholder}
+          {selectedOption?.label || defaultPlaceholder}
         </span>
         <ChevronDown className={cn(
           'h-4 w-4 text-muted-foreground transition-transform duration-200',

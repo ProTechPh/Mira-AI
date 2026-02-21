@@ -87,24 +87,7 @@ const getSubscriptionColor = (type: string, title?: string): string => {
   if (text.includes('POWER')) return 'bg-amber-500'
   // KIRO PRO - 蓝色
   if (text.includes('PRO')) return 'bg-blue-500'
-  // KIRO FREE - 灰色
   return 'bg-gray-500'
-}
-
-const StatusLabelsZh: Record<string, string> = {
-  active: '正常',
-  expired: '已过期',
-  error: '错误',
-  refreshing: '刷新中',
-  unknown: '未知'
-}
-
-const StatusLabelsEn: Record<string, string> = {
-  active: 'Active',
-  expired: 'Expired',
-  error: 'Error',
-  refreshing: 'Refreshing',
-  unknown: 'Unknown'
 }
 
 // 获取账户显示名称：昵称优先，无则邮箱，无邮箱则 userId
@@ -116,28 +99,28 @@ function getDisplayName(account: Account): string {
 }
 
 // 格式化 Token 到期时间
-function formatTokenExpiry(expiresAt: number, isEn: boolean): string {
+function formatTokenExpiry(expiresAt: number, t: (key: string, params?: Record<string, any>) => string): string {
   const now = Date.now()
   const diff = expiresAt - now
   
-  if (diff <= 0) return isEn ? 'Expired' : '已过期'
+  if (diff <= 0) return t('time.expired')
   
   const minutes = Math.floor(diff / (60 * 1000))
   const hours = Math.floor(diff / (60 * 60 * 1000))
   
   if (minutes < 60) {
-    return isEn ? `${minutes}m` : `${minutes} 分钟`
+    return t('time.minutesShort', { n: minutes })
   } else if (hours < 24) {
     const remainingMinutes = minutes % 60
-    return isEn 
-      ? (remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`)
-      : (remainingMinutes > 0 ? `${hours} 小时 ${remainingMinutes} 分` : `${hours} 小时`)
+    return remainingMinutes > 0 
+      ? t('time.hoursMinutesShort', { h: hours, m: remainingMinutes })
+      : t('time.hoursShort', { n: hours })
   } else {
     const days = Math.floor(hours / 24)
     const remainingHours = hours % 24
-    return isEn
-      ? (remainingHours > 0 ? `${days}d ${remainingHours}h` : `${days}d`)
-      : (remainingHours > 0 ? `${days} 天 ${remainingHours} 小时` : `${days} 天`)
+    return remainingHours > 0
+      ? t('time.daysHoursShort', { d: days, h: remainingHours })
+      : t('time.daysShort', { n: days })
   }
 }
 
@@ -177,11 +160,11 @@ export const AccountCard = memo(function AccountCard({
     
     // 社交登录只需要 refreshToken，IdC 登录需要 clientId 和 clientSecret
     if (!credentials.refreshToken) {
-      alert(isEn ? 'Incomplete credentials, cannot switch' : '账号凭证不完整，无法切换')
+      alert(t('accountCard.incompleteCredentials'))
       return
     }
     if (credentials.authMethod !== 'social' && (!credentials.clientId || !credentials.clientSecret)) {
-      alert(isEn ? 'Incomplete credentials, cannot switch' : '账号凭证不完整，无法切换')
+      alert(t('accountCard.incompleteCredentials'))
       return
     }
     
@@ -200,7 +183,7 @@ export const AccountCard = memo(function AccountCard({
     if (result.success) {
       setActiveAccount(account.id)
     } else {
-      alert(isEn ? `Switch failed: ${result.error}` : `切换失败: ${result.error}`)
+      alert(t('messages.switchFailed', { error: result.error || 'Unknown error' }))
     }
   }
 
@@ -210,7 +193,7 @@ export const AccountCard = memo(function AccountCard({
   }
 
   const handleLogout = async (): Promise<void> => {
-    if (!confirm(isEn ? 'This will clear local SSO cache and logout from Mira AI. Continue?' : '这将清除本地 SSO 缓存并退出 Mira AI 登录，是否继续？')) {
+    if (!confirm(t('confirm.logoutClearCache'))) {
       return
     }
     
@@ -218,9 +201,9 @@ export const AccountCard = memo(function AccountCard({
     if (result.success) {
       // 取消当前账号的激活状态
       setActiveAccount(null)
-      alert(isEn ? `Logged out successfully, cleared ${result.deletedCount} cache files` : `退出成功，已清除 ${result.deletedCount} 个缓存文件`)
+      alert(t('messages.logoutSuccess', { count: result.deletedCount || 0 }))
     } else {
-      alert(isEn ? `Logout failed: ${result.error}` : `退出失败: ${result.error}`)
+      alert(t('messages.logoutFailed', { error: result.error || 'Unknown error' }))
     }
   }
 
@@ -235,7 +218,7 @@ export const AccountCard = memo(function AccountCard({
   }
 
   const handleDelete = (): void => {
-    if (confirm(isEn ? `Delete account ${getDisplayName(account)}?` : `确定要删除账号 ${getDisplayName(account)} 吗？`)) {
+    if (confirm(t('messages.deleteAccountConfirm', { name: getDisplayName(account) }))) {
       removeAccount(account.id)
     }
   }
@@ -341,7 +324,7 @@ export const AccountCard = memo(function AccountCard({
         // 自动复制链接到剪贴板
         await navigator.clipboard.writeText(result.url)
         // 显示复制成功提示
-        setSubscriptionSuccess(isEn ? 'Link copied to clipboard!' : '链接已复制到剪贴板！')
+        setSubscriptionSuccess(t('accountCard.linkCopied'))
         // 短暂显示后关闭弹窗并打开链接
         const urlToOpen = result.url
         setTimeout(async () => {
@@ -350,12 +333,12 @@ export const AccountCard = memo(function AccountCard({
           await window.api.openSubscriptionWindow(urlToOpen)
         }, 800)
       } else {
-        const errorMsg = result.error || (isEn ? 'Failed to get payment URL' : '获取支付链接失败')
+        const errorMsg = result.error || t('errors.failedToGetPaymentUrl')
         setSubscriptionError(errorMsg)
         console.error('[AccountCard] Failed to get payment URL:', result.error)
       }
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : (isEn ? 'Unknown error' : '未知错误')
+      const errorMsg = error instanceof Error ? error.message : t('errors.unknown')
       setSubscriptionError(errorMsg)
       console.error('[AccountCard] Payment URL error:', error)
     } finally {
@@ -377,12 +360,12 @@ export const AccountCard = memo(function AccountCard({
         await window.api.openSubscriptionWindow(result.url)
       } else {
         // 显示错误信息
-        const errorMsg = result.error || (isEn ? 'Failed to get management URL' : '获取管理链接失败')
+        const errorMsg = result.error || t('errors.failedToGetManagementUrl')
         setSubscriptionError(errorMsg)
         console.error('[AccountCard] Failed to get management URL:', result.error)
       }
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : (isEn ? 'Unknown error' : '未知错误')
+      const errorMsg = error instanceof Error ? error.message : t('errors.unknown')
       setSubscriptionError(errorMsg)
       console.error('[AccountCard] Management URL error:', error)
     } finally {
@@ -467,7 +450,7 @@ export const AccountCard = memo(function AccountCard({
                      "font-semibold text-sm truncate cursor-pointer transition-colors",
                      emailCopied ? "text-green-500" : "text-foreground/90 hover:text-primary"
                    )}
-                   title={`${getDisplayName(account)} (${isEn ? 'Click to copy' : '点击复制'})`}
+                   title={`${getDisplayName(account)} (${t('accountCard.clickToCopy')})`}
                    onClick={(e) => {
                      e.stopPropagation()
                      const text = account.email || account.userId || ''
@@ -477,7 +460,7 @@ export const AccountCard = memo(function AccountCard({
                        setTimeout(() => setEmailCopied(false), 1500)
                      }
                    }}
-                 >{emailCopied ? (isEn ? 'Copied!' : '已复制!') : (account.email ? maskEmail(account.email) : getDisplayName(account))}</h3>
+                 >{emailCopied ? t('accountCard.copied') : (account.email ? maskEmail(account.email) : getDisplayName(account))}</h3>
                  {/* Status Badge */}
                  <div className={cn(
                     "text-[10px] font-medium px-2 py-0.5 rounded-full flex items-center gap-1 flex-shrink-0",
@@ -495,9 +478,9 @@ export const AccountCard = memo(function AccountCard({
                         className="cursor-pointer hover:underline" 
                         onClick={(e) => { e.stopPropagation(); setShowBanDialog(true); }}
                       >
-                        {isEn ? 'Banned' : '已封禁'}
+                        {t('accountCard.banned')}
                       </span>
-                    ) : (isEn ? StatusLabelsEn : StatusLabelsZh)[account.status]}
+                    ) : t(`status.${account.status}`)}
                  </div>
               </div>
               <div className="flex items-center gap-2 mt-1">
@@ -523,16 +506,16 @@ export const AccountCard = memo(function AccountCard({
                 subscriptionLoading && 'opacity-60 cursor-wait'
               )}
               onClick={handleSubscriptionClick}
-              title={isEn ? 'Click to manage subscription' : '点击管理订阅'}
+              title={t('accountCard.clickToManageSubscription')}
             >
-                {subscriptionLoading ? (isEn ? 'Loading...' : '加载中...') : (account.subscription.title || account.subscription.type)}
+                {subscriptionLoading ? t('accountCard.loading') : (account.subscription.title || account.subscription.type)}
             </Badge>
             <Badge variant="outline" className="text-[10px] h-5 px-2 text-muted-foreground font-normal border-muted-foreground/30 bg-muted/30">
                 {account.idp}
             </Badge>
             {account.isActive && (
               <Badge variant="default" className="ml-auto h-5 bg-green-500 text-white border-0 hover:bg-green-600">
-                {isEn ? 'Active' : '当前使用'}
+                {t('accountCard.active')}
               </Badge>
             )}
         </div>
@@ -540,7 +523,7 @@ export const AccountCard = memo(function AccountCard({
         {/* Usage Section */}
         <div className="bg-muted/30 p-3 rounded-lg space-y-2 border border-border/50">
             <div className="flex justify-between items-end text-xs">
-                <span className="text-muted-foreground font-medium">{isEn ? 'Usage' : '使用量'}</span>
+                <span className="text-muted-foreground font-medium">{t('accountCard.usage')}</span>
                 <span className={cn("font-mono font-medium", isHighUsage ? "text-amber-600" : "text-foreground")}>
                    {(account.usage.percentUsed * 100).toFixed(usagePrecision ? 2 : 0)}%
                 </span>
@@ -560,7 +543,7 @@ export const AccountCard = memo(function AccountCard({
                       try {
                          return (typeof d === 'string' ? d : new Date(d as Date).toISOString()).split('T')[0]
                       } catch { return 'Unknown' }
-                    })()} {isEn ? 'reset' : '重置'}
+                    })()} {t('accountCard.reset')}
                   </span>
                 )}
             </div>
@@ -572,11 +555,11 @@ export const AccountCard = memo(function AccountCard({
            {account.usage.baseLimit !== undefined && account.usage.baseLimit > 0 && (
              <div className="flex items-center gap-2">
                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
-               <span className="text-muted-foreground">{isEn ? 'Base:' : '基础:'}</span>
+               <span className="text-muted-foreground">{t('accountCard.base')}</span>
                <span className="font-medium">{formatUsage(account.usage.baseCurrent ?? 0)}/{formatUsage(account.usage.baseLimit)}</span>
                {account.usage.nextResetDate && (
                  <span className="text-muted-foreground/70 ml-auto">
-                   {isEn ? 'to' : '至'} {(() => {
+                   {t('accountCard.to')} {(() => {
                       const d = account.usage.nextResetDate as unknown
                       try { return (typeof d === 'string' ? d : new Date(d as Date).toISOString()).split('T')[0] } catch { return '' }
                    })()}
@@ -588,11 +571,11 @@ export const AccountCard = memo(function AccountCard({
            {account.usage.freeTrialLimit !== undefined && account.usage.freeTrialLimit > 0 && (
              <div className="flex items-center gap-2">
                <div className="w-1.5 h-1.5 rounded-full bg-purple-500 flex-shrink-0" />
-               <span className="text-muted-foreground">{isEn ? 'Trial:' : '试用:'}</span>
+               <span className="text-muted-foreground">{t('accountCard.trial')}</span>
                <span className="font-medium">{formatUsage(account.usage.freeTrialCurrent ?? 0)}/{formatUsage(account.usage.freeTrialLimit)}</span>
                {account.usage.freeTrialExpiry && (
                  <span className="text-muted-foreground/70 ml-auto">
-                   {isEn ? 'to' : '至'} {(() => {
+                   {t('accountCard.to')} {(() => {
                       const d = account.usage.freeTrialExpiry as unknown
                       try { return (typeof d === 'string' ? d : new Date(d as Date).toISOString()).split('T')[0] } catch { return '' }
                    })()}
@@ -608,7 +591,7 @@ export const AccountCard = memo(function AccountCard({
                <span className="font-medium">{formatUsage(bonus.current)}/{formatUsage(bonus.limit)}</span>
                {bonus.expiresAt && (
                  <span className="text-muted-foreground/70 ml-auto">
-                   {isEn ? 'to' : '至'} {(() => {
+                   {t('accountCard.to')} {(() => {
                       const d = bonus.expiresAt as unknown
                       try { return (typeof d === 'string' ? d : new Date(d as Date).toISOString()).split('T')[0] } catch { return '' }
                    })()}
@@ -645,13 +628,13 @@ export const AccountCard = memo(function AccountCard({
                 <div className="flex items-center gap-1">
                    <Clock className="h-3 w-3" />
                    <span className={isExpiringSoon ? "text-amber-600 font-medium" : ""}>
-                      {account.subscription.daysRemaining !== undefined ? (isEn ? `${account.subscription.daysRemaining}d left` : `剩 ${account.subscription.daysRemaining} 天`) : '-'}
+                      {account.subscription.daysRemaining !== undefined ? t('time.daysShort', { n: account.subscription.daysRemaining }) + (t('common.unknown') === 'Unknown' ? ' left' : ' 剩') : '-'}
                    </span>
                 </div>
-                <div className="flex items-center gap-1" title={account.credentials.expiresAt ? new Date(account.credentials.expiresAt).toLocaleString(isEn ? 'en-US' : 'zh-CN') : (isEn ? 'Unknown' : '未知')}>
+                <div className="flex items-center gap-1" title={account.credentials.expiresAt ? new Date(account.credentials.expiresAt).toLocaleString(isEn ? 'en-US' : 'zh-CN') : t('common.unknown')}>
                    <KeyRound className="h-3 w-3" />
                    <span className={account.credentials.expiresAt && account.credentials.expiresAt - Date.now() < 5 * 60 * 1000 ? "text-red-500 font-medium" : ""}>
-                      Token: {account.credentials.expiresAt ? formatTokenExpiry(account.credentials.expiresAt, isEn) : '-'}
+                      Token: {account.credentials.expiresAt ? formatTokenExpiry(account.credentials.expiresAt, t) : '-'}
                    </span>
                 </div>
             </div>
@@ -664,7 +647,7 @@ export const AccountCard = memo(function AccountCard({
                    variant="ghost"
                    className="h-7 w-7 hover:bg-destructive/10 hover:text-destructive transition-colors"
                    onClick={(e) => { e.stopPropagation(); handleLogout() }}
-                   title={isEn ? 'Logout (clear SSO cache)' : '退出登录（清除 SSO 缓存）'}
+                   title={t('accountCard.logout')}
                  >
                    <LogOut className="h-3.5 w-3.5" />
                  </Button>
@@ -674,32 +657,32 @@ export const AccountCard = memo(function AccountCard({
                    variant="ghost"
                    className="h-7 w-7 hover:bg-primary/10 hover:text-primary transition-colors"
                    onClick={(e) => { e.stopPropagation(); handleSwitch() }}
-                   title={isEn ? 'Switch to this account' : '切换到此账号'}
+                   title={t('accountCard.switchToAccount')}
                  >
                    <Power className="h-3.5 w-3.5" />
                  </Button>
                )}
                
-               <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={(e) => { e.stopPropagation(); handleRefresh() }} disabled={account.status === 'refreshing'} title={isEn ? 'Check account info' : '检查账户信息（用量、订阅、封禁状态）'}>
+               <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={(e) => { e.stopPropagation(); handleRefresh() }} disabled={account.status === 'refreshing'} title={t('accountCard.checkAccountInfo')}>
                   <RefreshCw className={cn("h-3.5 w-3.5", account.status === 'refreshing' && "animate-spin")} />
                </Button>
-               <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={(e) => { e.stopPropagation(); handleRefreshToken() }} disabled={isRefreshingToken} title={isEn ? 'Refresh Token' : '刷新 Token（仅刷新访问令牌）'}>
+               <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={(e) => { e.stopPropagation(); handleRefreshToken() }} disabled={isRefreshingToken} title={t('accountCard.refreshToken')}>
                   <KeyRound className={cn("h-3.5 w-3.5", isRefreshingToken && "animate-pulse")} />
                </Button>
                
-               <Button size="icon" variant="ghost" className={cn("h-7 w-7 text-muted-foreground hover:text-foreground", copied && "text-green-500")} onClick={(e) => { e.stopPropagation(); handleCopyCredentials() }} title={isEn ? 'Copy credentials' : '复制凭证'}>
+               <Button size="icon" variant="ghost" className={cn("h-7 w-7 text-muted-foreground hover:text-foreground", copied && "text-green-500")} onClick={(e) => { e.stopPropagation(); handleCopyCredentials() }} title={t('accountCard.copyCredentials')}>
                   {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                </Button>
 
-               <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={(e) => { e.stopPropagation(); onShowDetail() }} title={isEn ? 'Details' : '详情'}>
+               <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={(e) => { e.stopPropagation(); onShowDetail() }} title={t('accountCard.details')}>
                   <Info className="h-3.5 w-3.5" />
                </Button>
                
-               <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={(e) => { e.stopPropagation(); onEdit() }} title={isEn ? 'Edit' : '编辑'}>
+               <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={(e) => { e.stopPropagation(); onEdit() }} title={t('accountCard.edit')}>
                   <Edit className="h-3.5 w-3.5" />
                </Button>
                
-               <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-destructive transition-colors" onClick={(e) => { e.stopPropagation(); handleDelete() }} title={isEn ? 'Delete' : '删除'}>
+               <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground hover:text-destructive transition-colors" onClick={(e) => { e.stopPropagation(); handleDelete() }} title={t('accountCard.delete')}>
                   <Trash2 className="h-3.5 w-3.5" />
                </Button>
             </div>
@@ -722,7 +705,7 @@ export const AccountCard = memo(function AccountCard({
             <div className="p-4 border-b flex items-center justify-between bg-red-50 dark:bg-red-900/20">
               <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
                 <AlertCircle className="h-5 w-5" />
-                <span className="font-bold">{isEn ? 'Account Suspended' : '账户已封禁'}</span>
+                <span className="font-bold">{t('accountCard.accountSuspended')}</span>
               </div>
               <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-red-100 dark:hover:bg-red-900/30" onClick={() => setShowBanDialog(false)}>
                 <X className="h-4 w-4" />
@@ -730,11 +713,11 @@ export const AccountCard = memo(function AccountCard({
             </div>
             <div className="p-4 space-y-4">
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">{isEn ? 'Account' : '账户'}</label>
+                <label className="text-xs font-medium text-muted-foreground">{t('accountCard.account')}</label>
                 <div className="text-sm font-medium">{getDisplayName(account)}</div>
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">{isEn ? 'Error Details' : '错误详情'}</label>
+                <label className="text-xs font-medium text-muted-foreground">{t('errors.errorDetails')}</label>
                 <div className="text-xs font-mono bg-muted/50 p-3 rounded-lg border break-all whitespace-pre-wrap max-h-[200px] overflow-y-auto">
                   {account.lastError}
                 </div>
@@ -748,10 +731,10 @@ export const AccountCard = memo(function AccountCard({
                   onClick={(e) => e.stopPropagation()}
                 >
                   <ExternalLink className="h-3 w-3" />
-                  {isEn ? 'Contact Support' : '联系支持'}
+                  {t('accountCard.contactSupport')}
                 </a>
                 <Button size="sm" variant="outline" onClick={() => setShowBanDialog(false)}>
-                  {isEn ? 'Close' : '关闭'}
+                  {t('accountCard.close')}
                 </Button>
               </div>
             </div>
@@ -768,7 +751,7 @@ export const AccountCard = memo(function AccountCard({
             <div className="p-4 border-b flex items-center justify-between bg-gradient-to-r from-primary/10 to-purple-500/10">
               <div className="flex items-center gap-2 text-primary">
                 <CreditCard className="h-5 w-5" />
-                <span className="font-bold">{isEn ? (isFirstTimeUser ? 'Choose Your Plan' : 'Subscription Plans') : (isFirstTimeUser ? '选择订阅计划' : '订阅计划')}</span>
+                <span className="font-bold">{t(isFirstTimeUser ? 'accountCard.chooseYourPlan' : 'accountCard.subscriptionPlans')}</span>
               </div>
               <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { setShowSubscriptionDialog(false); setIsFirstTimeUser(false); setSubscriptionError(null); setSubscriptionSuccess(null) }}>
                 <X className="h-4 w-4" />
@@ -777,11 +760,11 @@ export const AccountCard = memo(function AccountCard({
             <div className="p-4 space-y-4">
               {isFirstTimeUser ? (
                 <div className="text-xs text-muted-foreground mb-2 bg-amber-500/10 text-amber-600 dark:text-amber-400 p-2 rounded-lg">
-                  {isEn ? 'Please select a subscription plan to continue.' : '请选择一个订阅计划以继续使用。'}
+                  {t('accountCard.pleaseSelectPlan')}
                 </div>
               ) : (
                 <div className="text-xs text-muted-foreground mb-2">
-                  {isEn ? 'Current subscription: ' : '当前订阅: '}
+                  {t('accountCard.currentSubscription')}
                   <span className="font-medium text-foreground">{account.subscription.title || account.subscription.type}</span>
                 </div>
               )}
@@ -816,7 +799,7 @@ export const AccountCard = memo(function AccountCard({
                     >
                       {isCurrent && (
                         <div className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-[10px] px-2 py-0.5 rounded-full font-medium">
-                          {isEn ? 'Current' : '当前'}
+                          {t('accountCard.current')}
                         </div>
                       )}
                       <div className="flex items-center gap-2 mb-2">
@@ -824,7 +807,7 @@ export const AccountCard = memo(function AccountCard({
                         <span className="font-bold text-sm">{plan.description.title}</span>
                       </div>
                       <div className="text-2xl font-bold mb-2">
-                        {plan.pricing.amount === 0 ? (isEn ? 'Free' : '免费') : `$${plan.pricing.amount}`}
+                        {plan.pricing.amount === 0 ? t('accountCard.free') : `$${plan.pricing.amount}`}
                         {plan.pricing.amount > 0 && <span className="text-xs font-normal text-muted-foreground">/{plan.description.billingInterval}</span>}
                       </div>
                       <ul className="space-y-1.5">
@@ -843,9 +826,9 @@ export const AccountCard = memo(function AccountCard({
                           disabled={isLoading}
                         >
                           {isLoading ? (
-                            <><Loader2 className="h-3 w-3 mr-1 animate-spin" />{isEn ? 'Loading...' : '加载中...'}</>
+                            <><Loader2 className="h-3 w-3 mr-1 animate-spin" />{t('accountCard.loading')}</>
                           ) : (
-                            isEn ? 'Select' : '选择'
+                            t('accountCard.select')
                           )}
                         </Button>
                       )}
@@ -863,13 +846,13 @@ export const AccountCard = memo(function AccountCard({
                   className="text-xs"
                 >
                   {paymentLoading && !selectedPlan ? (
-                    <><Loader2 className="h-3 w-3 mr-1 animate-spin" />{isEn ? 'Loading...' : '加载中...'}</>
+                    <><Loader2 className="h-3 w-3 mr-1 animate-spin" />{t('accountCard.loading')}</>
                   ) : (
-                    <><ExternalLink className="h-3 w-3 mr-1" />{isEn ? 'Manage Billing' : '管理账单'}</>
+                    <><ExternalLink className="h-3 w-3 mr-1" />{t('accountCard.manageBilling')}</>
                   )}
                 </Button>
                 <Button size="sm" variant="ghost" onClick={() => { setShowSubscriptionDialog(false); setIsFirstTimeUser(false); setSubscriptionError(null); setSubscriptionSuccess(null) }}>
-                  {isEn ? 'Close' : '关闭'}
+                  {t('accountCard.close')}
                 </Button>
               </div>
             </div>

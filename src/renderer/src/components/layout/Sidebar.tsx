@@ -2,7 +2,6 @@ import { Home, Users, Settings, Info, ChevronLeft, ChevronRight, Fingerprint, Sp
 import { cn } from '@/lib/utils'
 import miraAILogo from '@/assets/mira-ai-logo.png'
 import miraAILogoSmall from '@/assets/mira-ai-logo.png'
-import { useAccountsStore } from '@/store/accounts'
 import { useTranslation } from '@/hooks/useTranslation'
 
 export type PageType = 'home' | 'accounts' | 'machineId' | 'kiroSettings' | 'proxy' | 'kproxy' | 'settings' | 'about'
@@ -26,7 +25,6 @@ const menuItemsConfig: { id: PageType; labelKey: string; icon: React.ElementType
 ]
 
 export function Sidebar({ currentPage, onPageChange, collapsed, onToggleCollapse }: SidebarProps) {
-  const { darkMode } = useAccountsStore()
   const { t } = useTranslation()
 
   return (
@@ -42,14 +40,14 @@ export function Sidebar({ currentPage, onPageChange, collapsed, onToggleCollapse
           <img 
             src={miraAILogoSmall} 
             alt="Mira AI" 
-            className={cn("h-14 w-14 object-contain transition-all", darkMode && "invert brightness-0")} 
+            className="h-14 w-14 object-contain transition-all" 
           />
         ) : (
           <>
             <img 
               src={miraAILogo} 
               alt="Mira AI" 
-              className={cn("h-7 w-auto shrink-0 transition-all", darkMode && "invert brightness-0")} 
+              className="h-7 w-auto shrink-0 transition-all" 
             />
             <span className="font-semibold text-foreground whitespace-nowrap">Mira AI</span>
           </>
@@ -91,14 +89,14 @@ export function Sidebar({ currentPage, onPageChange, collapsed, onToggleCollapse
         <button
           onClick={onToggleCollapse}
           className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          title={collapsed ? (t('common.unknown') === 'Unknown' ? 'Expand' : '展开侧边栏') : (t('common.unknown') === 'Unknown' ? 'Collapse' : '收起侧边栏')}
+          title={collapsed ? t('sidebar.expand') : t('sidebar.collapse')}
         >
           {collapsed ? (
             <ChevronRight className="h-4 w-4" />
           ) : (
             <>
               <ChevronLeft className="h-4 w-4 shrink-0" />
-              <span className="whitespace-nowrap">{t('common.unknown') === 'Unknown' ? 'Collapse' : '收起'}</span>
+              <span className="whitespace-nowrap">{t('sidebar.collapseShort')}</span>
             </>
           )}
         </button>

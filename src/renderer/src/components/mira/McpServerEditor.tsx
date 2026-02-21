@@ -30,15 +30,14 @@ export function McpServerEditor({ serverName, server, onClose, onSaved }: McpSer
 
   const isEdit = !!serverName
   const { t } = useTranslation()
-  const isEn = t('common.unknown') === 'Unknown'
 
   const handleSave = async () => {
     if (!name.trim()) {
-      setError(isEn ? 'Please enter server name' : '请输入服务器名称')
+      setError(t('mcpServerEditor.pleaseEnterServerName'))
       return
     }
     if (!command.trim()) {
-      setError(isEn ? 'Please enter command' : '请输入命令')
+      setError(t('mcpServerEditor.pleaseEnterCommand'))
       return
     }
 
@@ -67,10 +66,10 @@ export function McpServerEditor({ serverName, server, onClose, onSaved }: McpSer
         onSaved()
         onClose()
       } else {
-        setError(result.error || (isEn ? 'Save failed' : '保存失败'))
+        setError(result.error || t('mcpServerEditor.saveFailed'))
       }
     } catch (err) {
-      setError(isEn ? 'Save failed' : '保存失败')
+      setError(t('mcpServerEditor.saveFailed'))
       console.error(err)
     } finally {
       setSaving(false)
@@ -111,7 +110,7 @@ export function McpServerEditor({ serverName, server, onClose, onSaved }: McpSer
       
       <div className="relative bg-background rounded-lg shadow-xl w-[90vw] max-w-lg max-h-[80vh] flex flex-col">
         <div className="flex items-center justify-between px-4 py-3 border-b">
-          <h2 className="font-semibold">{isEdit ? (isEn ? 'Edit MCP Server' : '编辑 MCP 服务器') : (isEn ? 'Add MCP Server' : '添加 MCP 服务器')}</h2>
+          <h2 className="font-semibold">{isEdit ? t('mcpServerEditor.editMcpServer') : t('mcpServerEditor.addMcpServer')}</h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
@@ -126,12 +125,12 @@ export function McpServerEditor({ serverName, server, onClose, onSaved }: McpSer
         <div className="flex-1 p-4 space-y-4 overflow-auto">
           {/* 服务器名称 */}
           <div>
-            <label className="block text-sm font-medium mb-1">{isEn ? 'Server Name' : '服务器名称'}</label>
+            <label className="block text-sm font-medium mb-1">{t('mcpServerEditor.serverName')}</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder={isEn ? 'e.g.: fetch, exa, context7' : '例如: fetch, exa, context7'}
+              placeholder={t('mcpServerEditor.serverNamePlaceholder')}
               className="w-full px-3 py-2 rounded-md border bg-background text-sm"
               disabled={isEdit}
             />
@@ -139,19 +138,19 @@ export function McpServerEditor({ serverName, server, onClose, onSaved }: McpSer
 
           {/* 命令 */}
           <div>
-            <label className="block text-sm font-medium mb-1">{isEn ? 'Command' : '命令'}</label>
+            <label className="block text-sm font-medium mb-1">{t('mcpServerEditor.command')}</label>
             <input
               type="text"
               value={command}
               onChange={(e) => setCommand(e.target.value)}
-              placeholder={isEn ? 'e.g.: uvx, npx, node' : '例如: uvx, npx, node'}
+              placeholder={t('mcpServerEditor.commandPlaceholder')}
               className="w-full px-3 py-2 rounded-md border bg-background text-sm"
             />
           </div>
 
           {/* 参数 */}
           <div>
-            <label className="block text-sm font-medium mb-1">{isEn ? 'Arguments' : '参数'}</label>
+            <label className="block text-sm font-medium mb-1">{t('mcpServerEditor.arguments')}</label>
             <div className="space-y-2">
               {args.map((arg, index) => (
                 <div key={index} className="flex gap-2">
@@ -166,7 +165,7 @@ export function McpServerEditor({ serverName, server, onClose, onSaved }: McpSer
                   type="text"
                   value={newArg}
                   onChange={(e) => setNewArg(e.target.value)}
-                  placeholder={isEn ? 'Add argument' : '添加参数'}
+                  placeholder={t('mcpServerEditor.addArgument')}
                   className="flex-1 px-3 py-1.5 rounded-md border bg-background text-sm"
                   onKeyDown={(e) => e.key === 'Enter' && addArg()}
                 />
@@ -179,7 +178,7 @@ export function McpServerEditor({ serverName, server, onClose, onSaved }: McpSer
 
           {/* 环境变量 */}
           <div>
-            <label className="block text-sm font-medium mb-1">{isEn ? 'Environment Variables' : '环境变量'}</label>
+            <label className="block text-sm font-medium mb-1">{t('mcpServerEditor.environmentVariables')}</label>
             <div className="space-y-2">
               {envVars.map((env, index) => (
                 <div key={index} className="flex gap-2">
@@ -187,14 +186,14 @@ export function McpServerEditor({ serverName, server, onClose, onSaved }: McpSer
                     type="text"
                     value={env.key}
                     onChange={(e) => updateEnvVar(index, 'key', e.target.value)}
-                    placeholder={isEn ? 'Key' : '变量名'}
+                    placeholder={t('mcpServerEditor.key')}
                     className="w-1/3 px-2 py-1.5 rounded-md border bg-background text-sm"
                   />
                   <input
                     type="text"
                     value={env.value}
                     onChange={(e) => updateEnvVar(index, 'value', e.target.value)}
-                    placeholder={isEn ? 'Value' : '值'}
+                    placeholder={t('mcpServerEditor.value')}
                     className="flex-1 px-2 py-1.5 rounded-md border bg-background text-sm"
                   />
                   <Button variant="ghost" size="sm" onClick={() => removeEnvVar(index)}>
@@ -204,17 +203,17 @@ export function McpServerEditor({ serverName, server, onClose, onSaved }: McpSer
               ))}
               <Button variant="outline" size="sm" onClick={addEnvVar}>
                 <Plus className="h-4 w-4 mr-1" />
-                {isEn ? 'Add Env Var' : '添加环境变量'}
+                {t('mcpServerEditor.addEnvVar')}
               </Button>
             </div>
           </div>
         </div>
 
         <div className="flex justify-end gap-2 px-4 py-3 border-t">
-          <Button variant="outline" onClick={onClose}>{isEn ? 'Cancel' : '取消'}</Button>
+          <Button variant="outline" onClick={onClose}>{t('mcpServerEditor.cancel')}</Button>
           <Button onClick={handleSave} disabled={saving}>
             <Save className="h-4 w-4 mr-1" />
-            {saving ? (isEn ? 'Saving...' : '保存中...') : (isEn ? 'Save' : '保存')}
+            {saving ? t('mcpServerEditor.saving') : t('mcpServerEditor.save')}
           </Button>
         </div>
       </div>

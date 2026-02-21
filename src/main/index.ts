@@ -1488,11 +1488,11 @@ function createWindow(): void {
         console.error('[ProxyServer] Auto-start failed:', error)
       }
 
-      // K-Proxy MITM 自启动
+      // M-Proxy MITM 自启动
       try {
         const savedKProxyConfig = store?.get('kproxyConfig') as KProxyConfig | undefined
         if (savedKProxyConfig?.autoStart) {
-          console.log('[KProxy] Auto-starting K-Proxy MITM...')
+          console.log('[KProxy] Auto-starting M-Proxy MITM...')
           const service = initKProxyService(savedKProxyConfig, {
             onRequest: (info) => {
               mainWindow?.webContents.send('kproxy-request', info)
@@ -1828,7 +1828,7 @@ app.whenReady().then(async () => {
   })
 
   // IPC: 手动检查更新（使用 GitHub API，用于 AboutPage）
-  const GITHUB_REPO = 'chaogei/Kiro-account-manager'
+  const GITHUB_REPO = 'ProTechPh/Mira-AI'
   const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`
   
   ipcMain.handle('check-for-updates-manual', async () => {
@@ -1839,7 +1839,7 @@ app.whenReady().then(async () => {
       const response = await fetch(GITHUB_API_URL, {
         headers: {
           'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'Kiro-Account-Manager'
+          'User-Agent': 'Mira-AI'
         }
       })
       
@@ -3965,7 +3965,7 @@ app.whenReady().then(async () => {
       let mcpConfig = { mcpServers: {} }
       let steeringFiles: string[] = []
       
-      // 读取 Kiro settings.json (VS Code 风格 JSON，可能有尾随逗号)
+      // 读取 Mira settings.json (VS Code 风格 JSON，可能有尾随逗号)
       if (fs.existsSync(kiroSettingsPath)) {
         const content = fs.readFileSync(kiroSettingsPath, 'utf-8')
         // 移除尾随逗号和注释以兼容标准 JSON
@@ -4170,7 +4170,7 @@ app.whenReady().then(async () => {
     }
   })
 
-  // IPC: 打开 Kiro settings.json 文件
+  // IPC: 打开 Mira settings.json 文件
   ipcMain.handle('open-kiro-settings-file', async () => {
     try {
       const os = await import('os')
@@ -4842,7 +4842,7 @@ app.whenReady().then(async () => {
     }
   })
 
-  // ============ K-Proxy MITM 代理 IPC ============
+  // ============ M-Proxy MITM 代理 IPC ============
 
   // IPC: 初始化 K-Proxy 服务
   ipcMain.handle('kproxy-init', async () => {

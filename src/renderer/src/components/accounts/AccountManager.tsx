@@ -89,16 +89,18 @@ export function AccountManager({ onBack }: AccountManagerProps): React.ReactNode
         if (data.version && data.accounts) {
           const result = importFromExportData(data)
           const skippedInfo = result.errors.find(e => e.id === 'skipped')
-          const skippedMsg = skippedInfo ? `，${skippedInfo.error}` : ''
-          alert(`导入完成：成功 ${result.success} 个${skippedMsg}`)
+          const skippedMsg = skippedInfo ? `${isEn ? ', ' : '，'}${skippedInfo.error}` : ''
+          alert(isEn 
+            ? `Import complete: ${result.success} successful${skippedMsg}` 
+            : t('messages.importCompleteWithSkipped', { success: result.success, skipped: skippedMsg }))
         } else {
-          alert('无效的 JSON 文件格式')
+          alert(t('messages.invalidJsonFormat'))
         }
       } else if (format === 'csv') {
         // CSV 格式：邮箱,昵称,登录方式,RefreshToken,ClientId,ClientSecret,Region
         const lines = content.split('\n').filter(line => line.trim())
         if (lines.length < 2) {
-          alert('CSV 文件为空或只有标题行')
+          alert(t('messages.csvFileEmpty'))
           return
         }
 
@@ -117,12 +119,12 @@ export function AccountManager({ onBack }: AccountManagerProps): React.ReactNode
         }).filter(item => item.email && item.refreshToken)
 
         if (items.length === 0) {
-          alert('未找到有效的账号数据（需要邮箱和 RefreshToken）')
+          alert(t('messages.noValidAccountData'))
           return
         }
 
         const result = importAccounts(items)
-        alert(`导入完成：成功 ${result.success} 个，失败 ${result.failed} 个`)
+        alert(t('messages.importCompleteWithFailed', { success: result.success, failed: result.failed }))
       } else if (format === 'txt') {
         // TXT 格式：每行一个账号，格式为 邮箱,RefreshToken 或 邮箱|RefreshToken
         const lines = content.split('\n').filter(line => line.trim() && !line.startsWith('#'))
@@ -139,18 +141,18 @@ export function AccountManager({ onBack }: AccountManagerProps): React.ReactNode
         }).filter(item => item.email && item.refreshToken)
 
         if (items.length === 0) {
-          alert('未找到有效的账号数据（格式：邮箱,RefreshToken）')
+          alert(t('messages.noValidAccountDataFormat'))
           return
         }
 
         const result = importAccounts(items)
-        alert(`导入完成：成功 ${result.success} 个，失败 ${result.failed} 个`)
+        alert(t('messages.importCompleteWithFailed', { success: result.success, failed: result.failed }))
       } else {
-        alert(`不支持的文件格式：${format}`)
+        alert(t('messages.unsupportedFileFormat', { format }))
       }
     } catch (e) {
       console.error('Import error:', e)
-      alert('解析导入文件失败')
+      alert(t('messages.parseFileFailed'))
     }
   }
 
@@ -194,7 +196,7 @@ export function AccountManager({ onBack }: AccountManagerProps): React.ReactNode
             <div className="p-2 rounded-lg bg-primary/10">
               <Users className="h-5 w-5 text-primary" />
             </div>
-            <h1 className="text-lg font-semibold text-primary">{isEn ? 'Accounts' : '账户管理'}</h1>
+            <h1 className="text-lg font-semibold text-primary">{t('accountManagement.title')}</h1>
           </div>
         </div>
         

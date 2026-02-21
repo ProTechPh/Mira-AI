@@ -320,20 +320,20 @@ export function SettingsPage() {
       if (fileData && fileData.format === 'json') {
         const data = JSON.parse(fileData.content)
         const importResult = importFromExportData(data)
-        alert(`导入完成：成功 ${importResult.success} 个，失败 ${importResult.failed} 个`)
+        alert(t('messages.importCompleteWithFailed', { success: importResult.success, failed: importResult.failed }))
       } else if (fileData) {
-        alert('设置页面仅支持 JSON 格式导入，请使用账号管理页面导入 CSV/TXT')
+        alert(isEn ? 'Settings page only supports JSON format import, please use Accounts page to import CSV/TXT' : '设置页面仅支持 JSON 格式导入，请使用账号管理页面导入 CSV/TXT')
       }
     } catch (e) {
-      alert(`导入失败: ${e instanceof Error ? e.message : '未知错误'}`)
+      alert(isEn ? `Import failed: ${e instanceof Error ? e.message : 'Unknown error'}` : `导入失败: ${e instanceof Error ? e.message : t('errors.unknown')}`)
     } finally {
       setIsImporting(false)
     }
   }
 
   const handleClearData = () => {
-    if (confirm('确定要清除所有账号数据吗？此操作不可恢复！')) {
-      if (confirm('再次确认：这将删除所有账号、分组和标签数据！')) {
+    if (confirm(t('confirm.clearAllData'))) {
+      if (confirm(t('confirm.clearAllDataSecond'))) {
         // 清除所有数据
         Array.from(accounts.keys()).forEach(id => {
           useAccountsStore.getState().removeAccount(id)
@@ -401,15 +401,15 @@ export function SettingsPage() {
             <div className="p-2 rounded-lg bg-primary/10">
               <Palette className="h-4 w-4 text-primary" />
             </div>
-            {isEn ? 'Theme' : '主题设置'}
+            {t('settings.theme.themeSettings')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* 深色模式 */}
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium">{isEn ? 'Dark Mode' : '深色模式'}</p>
-              <p className="text-sm text-muted-foreground">{isEn ? 'Toggle dark/light theme' : '切换深色/浅色主题'}</p>
+              <p className="font-medium">{t('settings.theme.darkMode')}</p>
+              <p className="text-sm text-muted-foreground">{t('settings.theme.toggleDesc')}</p>
             </div>
             <Button
               variant={darkMode ? "default" : "outline"}
@@ -417,7 +417,7 @@ export function SettingsPage() {
               onClick={() => setDarkMode(!darkMode)}
             >
               {darkMode ? <Moon className="h-4 w-4 mr-2" /> : <Sun className="h-4 w-4 mr-2" />}
-              {darkMode ? (isEn ? 'Dark' : '深色') : (isEn ? 'Light' : '浅色')}
+              {darkMode ? t('settings.theme.dark') : t('settings.theme.light')}
             </Button>
           </div>
 
@@ -428,7 +428,7 @@ export function SettingsPage() {
               onClick={() => setThemeExpanded(!themeExpanded)}
             >
               <div className="flex items-center gap-2">
-                <p className="font-medium">{isEn ? 'Theme Color' : '主题颜色'}</p>
+                <p className="font-medium">{t('settings.theme.color')}</p>
                 {!themeExpanded && (
                   <div 
                     className="w-5 h-5 rounded-full ring-2 ring-primary ring-offset-1"
@@ -481,14 +481,14 @@ export function SettingsPage() {
             <div className="p-2 rounded-lg bg-primary/10">
               {privacyMode ? <EyeOff className="h-4 w-4 text-primary" /> : <Eye className="h-4 w-4 text-primary" />}
             </div>
-            {isEn ? 'Privacy' : '隐私设置'}
+            {t('settings.privacy.privacySettings')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium">{isEn ? 'Privacy Mode' : '隐私模式'}</p>
-              <p className="text-sm text-muted-foreground">{isEn ? 'Hide emails and sensitive info' : '隐藏邮箱和账号敏感信息'}</p>
+              <p className="font-medium">{t('settings.privacy.privacyMode')}</p>
+              <p className="text-sm text-muted-foreground">{t('settings.privacy.hideEmailsAndInfo')}</p>
             </div>
             <Button
               variant={privacyMode ? "default" : "outline"}
@@ -496,26 +496,26 @@ export function SettingsPage() {
               onClick={() => setPrivacyMode(!privacyMode)}
             >
               {privacyMode ? <EyeOff className="h-4 w-4 mr-2" /> : <Eye className="h-4 w-4 mr-2" />}
-              {privacyMode ? (isEn ? 'On' : '已开启') : (isEn ? 'Off' : '已关闭')}
+              {privacyMode ? t('settings.privacy.on') : t('settings.privacy.off')}
             </Button>
           </div>
           <div className="flex items-center justify-between pt-2 border-t">
             <div>
-              <p className="font-medium">{isEn ? 'Usage Precision' : '使用量精度'}</p>
-              <p className="text-sm text-muted-foreground">{isEn ? 'Show decimal places for usage values' : '显示使用量的小数精度（如 1.22 而非 1）'}</p>
+              <p className="font-medium">{t('settings.privacy.usagePrecision')}</p>
+              <p className="text-sm text-muted-foreground">{t('settings.privacy.usagePrecisionDesc')}</p>
             </div>
             <Button
               variant={usagePrecision ? "default" : "outline"}
               size="sm"
               onClick={() => setUsagePrecision(!usagePrecision)}
             >
-              {usagePrecision ? (isEn ? 'Decimal' : '小数') : (isEn ? 'Integer' : '整数')}
+              {usagePrecision ? t('settings.privacy.decimal') : t('settings.privacy.integer')}
             </Button>
           </div>
           <div className="flex items-center justify-between pt-2 border-t">
             <div>
-              <p className="font-medium">{isEn ? 'Login Private Mode' : '登录隐私模式'}</p>
-              <p className="text-sm text-muted-foreground">{isEn ? 'Open browser in incognito/private mode when logging in' : '在线登录时使用浏览器无痕/隐私模式打开'}</p>
+              <p className="font-medium">{t('settings.loginPrivacy.title')}</p>
+              <p className="text-sm text-muted-foreground">{t('settings.loginPrivacy.desc')}</p>
             </div>
             <Button
               variant={loginPrivateMode ? "default" : "outline"}
@@ -523,7 +523,7 @@ export function SettingsPage() {
               onClick={() => setLoginPrivateMode(!loginPrivateMode)}
             >
               <UserX className="h-4 w-4 mr-2" />
-              {loginPrivateMode ? (isEn ? 'On' : '已开启') : (isEn ? 'Off' : '已关闭')}
+              {loginPrivateMode ? t('settings.privacy.on') : t('settings.privacy.off')}
             </Button>
           </div>
         </CardContent>
@@ -536,13 +536,13 @@ export function SettingsPage() {
             <div className="p-2 rounded-lg bg-primary/10">
               <RefreshCw className="h-4 w-4 text-primary" />
             </div>
-            {isEn ? 'Auto Refresh' : '自动刷新'}
+            {t('settings.autoRefresh.title')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium">{isEn ? 'Auto Refresh' : '自动刷新'}</p>
+              <p className="font-medium">{t('settings.autoRefresh.enabled')}</p>
               <p className="text-sm text-muted-foreground">{isEn ? 'Auto refresh tokens before expiration' : 'Token 过期前自动刷新，并同步更新账户信息'}</p>
             </div>
             <Button
@@ -550,7 +550,7 @@ export function SettingsPage() {
               size="sm"
               onClick={() => setAutoRefresh(!autoRefreshEnabled)}
             >
-              {autoRefreshEnabled ? (isEn ? 'On' : '已开启') : (isEn ? 'Off' : '已关闭')}
+              {autoRefreshEnabled ? t('settings.privacy.on') : t('settings.privacy.off')}
             </Button>
           </div>
 
@@ -559,12 +559,12 @@ export function SettingsPage() {
               <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg p-3 space-y-1">
                 <p>• {isEn ? 'Auto refresh tokens to keep login' : 'Token 即将过期时自动刷新，保持登录状态'}</p>
                 <p>• {isEn ? 'Update usage and subscription info after refresh' : 'Token 刷新后自动更新账户用量、订阅等信息'}</p>
-                <p>• {isEn ? 'Check all balances when auto-switch is on' : '开启自动换号时，会定期检查所有账户余额'}</p>
+                <p>• {t('settings.autoRefresh.checkBalanceNote')}</p>
               </div>
               <div className="flex items-center justify-between pt-2 border-t">
                 <div>
-                  <p className="font-medium">{isEn ? 'Check Interval' : '检查间隔'}</p>
-                  <p className="text-sm text-muted-foreground">{isEn ? 'How often to check account status' : '每隔多久检查一次账户状态'}</p>
+                  <p className="font-medium">{t('settings.autoRefresh.interval')}</p>
+                  <p className="text-sm text-muted-foreground">{t('settings.autoRefresh.intervalDesc')}</p>
                 </div>
                 <select
                   className="w-[120px] h-9 px-3 rounded-lg border bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
@@ -584,8 +584,8 @@ export function SettingsPage() {
               </div>
               <div className="flex items-center justify-between pt-2 border-t">
                 <div>
-                  <p className="font-medium">{isEn ? 'Concurrency' : '刷新并发数'}</p>
-                  <p className="text-sm text-muted-foreground">{isEn ? 'Number of accounts to refresh simultaneously' : '同时刷新的账号数量，过大可能卡顿'}</p>
+                  <p className="font-medium">{t('settings.autoRefresh.concurrency')}</p>
+                  <p className="text-sm text-muted-foreground">{t('settings.autoRefresh.concurrencyDescFull')}</p>
                 </div>
                 <input
                   type="number"
@@ -598,8 +598,8 @@ export function SettingsPage() {
               </div>
               <div className="flex items-center justify-between pt-2 border-t">
                 <div>
-                  <p className="font-medium">{isEn ? 'Sync Account Info' : '同步检测账户信息'}</p>
-                  <p className="text-sm text-muted-foreground">{isEn ? 'Detect usage, subscription, and ban status' : '刷新 Token 时同步检测用量、订阅、封禁状态'}</p>
+                  <p className="font-medium">{t('settings.autoRefresh.syncInfo')}</p>
+                  <p className="text-sm text-muted-foreground">{t('settings.autoRefresh.syncInfoDesc')}</p>
                 </div>
                 <Button
                   variant={autoRefreshSyncInfo ? "default" : "outline"}
@@ -661,7 +661,7 @@ export function SettingsPage() {
           <div className="flex items-center justify-between pt-2 border-t">
             <div>
               <p className="font-medium">{isEn ? 'Use K-Proxy for API' : 'API 请求走 K-Proxy'}</p>
-              <p className="text-sm text-muted-foreground">{isEn ? 'Route API requests through K-Proxy MITM proxy' : 'API 请求通过 K-Proxy MITM 代理发送'}</p>
+              <p className="text-sm text-muted-foreground">{isEn ? 'Route API requests through M-Proxy MITM proxy' : 'API 请求通过 M-Proxy MITM 代理发送'}</p>
             </div>
             <Button
               variant={useKProxyForApi ? "default" : "outline"}
@@ -674,7 +674,7 @@ export function SettingsPage() {
           </div>
           {useKProxyForApi && (
             <div className="text-xs text-amber-500 bg-amber-500/10 rounded-lg p-3">
-              {isEn ? '⚠️ K-Proxy must be running for this to work' : '⚠️ 需要先启动 K-Proxy MITM 代理才能生效'}
+              {isEn ? '⚠️ K-Proxy must be running for this to work' : '⚠️ 需要先启动 M-Proxy MITM 代理才能生效'}
             </div>
           )}
         </CardContent>

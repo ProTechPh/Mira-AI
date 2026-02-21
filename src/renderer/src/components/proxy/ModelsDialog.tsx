@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { X, RefreshCw, Loader2, Cpu, FileText, Image, Hash, Sparkles, Zap, Shuffle } from 'lucide-react'
 import { Button, Card, CardContent, CardHeader, CardTitle, Badge } from '../ui'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/hooks/useTranslation'
 
 interface ModelInfo {
   id: string
@@ -17,7 +18,6 @@ interface ModelInfo {
 interface ModelsDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  isEn: boolean
   onOpenModelMapping?: () => void
   mappingCount?: number
 }
@@ -25,10 +25,10 @@ interface ModelsDialogProps {
 export function ModelsDialog({
   open,
   onOpenChange,
-  isEn,
   onOpenModelMapping,
   mappingCount = 0
 }: ModelsDialogProps) {
+  const { t } = useTranslation()
   const [models, setModels] = useState<ModelInfo[]>([])
   const [loading, setLoading] = useState(false)
   const [fromCache, setFromCache] = useState(false)
@@ -78,15 +78,15 @@ export function ModelsDialog({
                 <Cpu className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <span className="font-bold">{isEn ? 'Available Models' : '可用模型'}</span>
+                <span className="font-bold">{t('proxyPanel.viewModels')}</span>
                 <div className="flex items-center gap-2 mt-1">
                   <Badge className="bg-primary/10 text-primary border-primary/20 font-semibold">
-                    {models.length} {isEn ? 'models' : '个模型'}
+                    {models.length} {t('common.total')}
                   </Badge>
                   {fromCache && (
                     <Badge variant="secondary" className="text-xs bg-amber-500/10 text-amber-600 dark:text-amber-400 border-0">
                       <Sparkles className="h-3 w-3 mr-1" />
-                      {isEn ? 'Cached' : '缓存'}
+                      {t('common.cached')}
                     </Badge>
                   )}
                 </div>
@@ -101,7 +101,7 @@ export function ModelsDialog({
                   className="rounded-lg"
                 >
                   <Shuffle className="h-4 w-4" />
-                  <span className="ml-1.5">{isEn ? 'Mapping' : '映射'}</span>
+                  <span className="ml-1.5">{t('modelMapping.title')}</span>
                   {mappingCount > 0 && (
                     <Badge className="ml-1.5 h-5 px-1.5 bg-primary/20 text-primary text-xs">
                       {mappingCount}
@@ -121,7 +121,7 @@ export function ModelsDialog({
                 ) : (
                   <RefreshCw className="h-4 w-4" />
                 )}
-                <span className="ml-1.5">{isEn ? 'Refresh' : '刷新'}</span>
+                <span className="ml-1.5">{t('common.refresh')}</span>
               </Button>
               <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg hover:bg-destructive/10 hover:text-destructive" onClick={() => onOpenChange(false)}>
                 <X className="h-5 w-5" />
@@ -136,7 +136,7 @@ export function ModelsDialog({
                 <div className="p-4 rounded-full bg-primary/10 mb-4">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
-                <p className="font-medium">{isEn ? 'Loading models...' : '加载模型中...'}</p>
+                <p className="font-medium">{t('common.loading')}</p>
               </div>
             ) : error ? (
               <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
@@ -144,14 +144,14 @@ export function ModelsDialog({
                   <X className="h-8 w-8 text-red-500" />
                 </div>
                 <p className="text-red-500 font-medium">{error}</p>
-                <p className="text-sm mt-2">{isEn ? 'Make sure proxy is running and has synced accounts' : '请确保代理服务已启动且已同步账号'}</p>
+                <p className="text-sm mt-2">{t('errors.proxyNotRunning')}</p>
               </div>
             ) : models.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
                 <div className="p-4 rounded-full bg-muted mb-4">
                   <Cpu className="h-8 w-8" />
                 </div>
-                <p className="font-medium">{isEn ? 'No models available' : '暂无可用模型'}</p>
+                <p className="font-medium">{t('errors.noModels')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-3">
@@ -176,7 +176,7 @@ export function ModelsDialog({
                       </div>
                     </div>
                     <p className="text-[11px] text-muted-foreground line-clamp-2 mb-2 pl-4">
-                      {model.description || (isEn ? 'No description' : '无描述')}
+                      {model.description || t('errors.noDescription')}
                     </p>
                     <div className="flex items-center justify-between pt-2 border-t border-border/50">
                       <div className="flex items-center gap-2">

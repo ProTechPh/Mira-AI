@@ -234,7 +234,7 @@ export function MProxyPanel() {
         <div className="flex flex-col items-center justify-center h-64 gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="text-muted-foreground">
-            {isEn ? 'Initializing K-Proxy...' : '正在初始化 K-Proxy...'}
+            {t('mproxy.initializing')}
           </p>
         </div>
       )
@@ -246,7 +246,7 @@ export function MProxyPanel() {
         <p className="text-destructive">{error}</p>
         <Button onClick={initKProxy}>
           <RefreshCw className="h-4 w-4 mr-2" />
-          {isEn ? 'Retry' : '重试'}
+          {t('mproxy.retry')}
         </Button>
       </div>
     )
@@ -271,7 +271,7 @@ export function MProxyPanel() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
-              <CardTitle className="text-lg">K-Proxy MITM</CardTitle>
+              <CardTitle className="text-lg">M-Proxy MITM</CardTitle>
               <Badge variant={isRunning ? 'default' : 'secondary'} className={cn(
                 "ml-2",
                 isRunning && "bg-green-500 hover:bg-green-600"
@@ -282,9 +282,9 @@ export function MProxyPanel() {
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
                     </span>
-                    {isEn ? 'Running' : '运行中'}
+                    {t('mproxy.running')}
                   </span>
-                ) : (isEn ? 'Stopped' : '已停止')}
+                ) : t('mproxy.stopped')}
               </Badge>
             </div>
             <Button
@@ -295,12 +295,12 @@ export function MProxyPanel() {
               {isRunning ? (
                 <>
                   <Square className="h-4 w-4 mr-1" />
-                  {isEn ? 'Stop' : '停止'}
+                  {t('mproxy.stop')}
                 </>
               ) : (
                 <>
                   <Play className="h-4 w-4 mr-1" />
-                  {isEn ? 'Start' : '启动'}
+                  {t('mproxy.start')}
                 </>
               )}
             </Button>
@@ -315,7 +315,7 @@ export function MProxyPanel() {
           {/* 代理地址 */}
           <div className="flex items-center gap-2">
             <Server className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">{isEn ? 'Proxy:' : '代理地址:'}</span>
+            <span className="text-sm text-muted-foreground">{t('mproxy.proxy')}</span>
             <code className="bg-muted px-2 py-1 rounded text-sm font-mono">
               {config.host}:{config.port}
             </code>
@@ -327,7 +327,7 @@ export function MProxyPanel() {
           {/* 配置项 */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>{isEn ? 'Port' : '端口'}</Label>
+              <Label>{t('mproxy.port')}</Label>
               <Input
                 type="number"
                 value={config.port}
@@ -337,7 +337,7 @@ export function MProxyPanel() {
               />
             </div>
             <div className="space-y-2">
-              <Label>{isEn ? 'Host' : '监听地址'}</Label>
+              <Label>{t('mproxy.host')}</Label>
               <Input
                 value={config.host}
                 onChange={(e) => updateConfig({ host: e.target.value })}
@@ -351,7 +351,7 @@ export function MProxyPanel() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4 text-muted-foreground" />
-              <Label>{isEn ? 'Log Requests' : '记录请求日志'}</Label>
+              <Label>{t('mproxy.logRequests')}</Label>
             </div>
             <Switch
               checked={config.logRequests}
@@ -362,7 +362,7 @@ export function MProxyPanel() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Play className="h-4 w-4 text-muted-foreground" />
-              <Label>{isEn ? 'Auto Start' : '自动启动'}</Label>
+              <Label>{t('mproxy.autoStart')}</Label>
             </div>
             <Switch
               checked={config.autoStart}
@@ -377,7 +377,7 @@ export function MProxyPanel() {
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <Fingerprint className="h-5 w-5 text-primary" />
-            <CardTitle className="text-lg">{isEn ? 'Device ID' : '设备 ID'}</CardTitle>
+            <CardTitle className="text-lg">{t('mproxy.deviceId')}</CardTitle>
           </div>
           <CardDescription>
             {isEn 
@@ -395,12 +395,12 @@ export function MProxyPanel() {
                   window.api.kproxySetDeviceId(e.target.value)
                 }
               }}
-              placeholder={isEn ? 'Enter or generate device ID' : '输入或生成设备 ID'}
+              placeholder={t('mproxy.enterOrGenerate')}
               className="font-mono text-xs h-8"
             />
             <Button variant="outline" size="sm" className="h-8" onClick={generateDeviceId}>
               <Key className="h-3 w-3 mr-1" />
-              {isEn ? 'Generate' : '生成'}
+              {t('mproxy.generate')}
             </Button>
             {config.deviceId && (
               <Button variant="ghost" size="sm" className="h-8 px-2" onClick={copyDeviceId}>
@@ -411,8 +411,8 @@ export function MProxyPanel() {
           {config.deviceId && (
             <p className="text-xs text-muted-foreground">
               {config.deviceId.length === 64 
-                ? (isEn ? '✓ Valid device ID format' : '✓ 设备 ID 格式正确')
-                : (isEn ? `⚠ Invalid length: ${config.deviceId.length}/64` : `⚠ 长度不正确: ${config.deviceId.length}/64`)}
+                ? t('mproxy.validDeviceIdFormat')
+                : t('mproxy.invalidLength', { length: config.deviceId.length })}
             </p>
           )}
         </CardContent>
@@ -424,7 +424,7 @@ export function MProxyPanel() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
-              <CardTitle className="text-lg">{isEn ? 'CA Certificate' : 'CA 证书'}</CardTitle>
+              <CardTitle className="text-lg">{t('mproxy.caCertificate')}</CardTitle>
             </div>
             <div className="flex gap-2">
               {caInstalled === false ? (
@@ -433,15 +433,15 @@ export function MProxyPanel() {
                     const result = await window.api.kproxyInstallCaCert()
                     if (result.success) {
                       setCaInstalled(true)
-                      alert(result.message || (isEn ? 'Certificate installed' : '证书已安装'))
+                      alert(result.message || t('mproxy.certificateInstalled'))
                     } else {
-                      alert(result.error || (isEn ? 'Failed to install' : '安装失败'))
+                      alert(result.error || t('mproxy.failedToInstall'))
                     }
                   } catch (e) {
                     alert(e instanceof Error ? e.message : String(e))
                   }
                 }}>
-                  {isEn ? 'Install' : '安装'}
+                  {t('mproxy.install')}
                 </Button>
               ) : caInstalled === true ? (
                 <Button variant="destructive" size="sm" onClick={async () => {
@@ -449,43 +449,43 @@ export function MProxyPanel() {
                     const result = await window.api.kproxyUninstallCaCert()
                     if (result.success) {
                       setCaInstalled(false)
-                      alert(result.message || (isEn ? 'Certificate uninstalled' : '证书已卸载'))
+                      alert(result.message || t('mproxy.certificateUninstalled'))
                     } else {
-                      alert(result.error || (isEn ? 'Failed to uninstall' : '卸载失败'))
+                      alert(result.error || t('mproxy.failedToUninstall'))
                     }
                   } catch (e) {
                     alert(e instanceof Error ? e.message : String(e))
                   }
                 }}>
-                  {isEn ? 'Uninstall' : '卸载'}
+                  {t('mproxy.uninstall')}
                 </Button>
               ) : (
                 <Button variant="outline" size="sm" disabled>
-                  {isEn ? 'Checking...' : '检测中...'}
+                  {t('mproxy.checking')}
                 </Button>
               )}
               <Button variant="outline" size="sm" onClick={exportCaCert}>
                 <Download className="h-3 w-3 mr-1" />
-                {isEn ? 'Export' : '导出'}
+                {t('mproxy.export')}
               </Button>
             </div>
           </div>
           <CardDescription>
             {isEn 
-              ? 'Install this certificate to trust K-Proxy MITM' 
-              : '安装此证书以信任 K-Proxy MITM 代理'}
+              ? 'Install this certificate to trust M-Proxy MITM' 
+              : '安装此证书以信任 M-Proxy MITM 代理'}
           </CardDescription>
         </CardHeader>
         {caInfo && (
           <CardContent className="space-y-2 text-sm">
             <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">{isEn ? 'Fingerprint:' : '指纹:'}</span>
+              <span className="text-muted-foreground">{t('mproxy.fingerprint')}</span>
               <code className="bg-muted px-2 py-0.5 rounded text-xs font-mono truncate max-w-[300px]">
                 {caInfo.fingerprint}
               </code>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">{isEn ? 'Valid:' : '有效期:'}</span>
+              <span className="text-muted-foreground">{t('mproxy.valid')}</span>
               <span className="text-xs">
                 {new Date(caInfo.validFrom).toLocaleDateString()} - {new Date(caInfo.validTo).toLocaleDateString()}
               </span>
@@ -500,14 +500,14 @@ export function MProxyPanel() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Activity className="h-5 w-5 text-primary" />
-              <CardTitle className="text-lg">{isEn ? 'Statistics' : '统计'}</CardTitle>
+              <CardTitle className="text-lg">{t('mproxy.statistics')}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-4 gap-4 text-center">
               <div>
                 <div className="text-2xl font-bold">{stats.totalRequests}</div>
-                <div className="text-xs text-muted-foreground">{isEn ? 'Total' : '总请求'}</div>
+                <div className="text-xs text-muted-foreground">{t('mproxy.total')}</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-blue-500">{stats.mitmRequests}</div>
@@ -515,11 +515,11 @@ export function MProxyPanel() {
               </div>
               <div>
                 <div className="text-2xl font-bold text-green-500">{stats.modifiedRequests}</div>
-                <div className="text-xs text-muted-foreground">{isEn ? 'Modified' : '已修改'}</div>
+                <div className="text-xs text-muted-foreground">{t('mproxy.modified')}</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-gray-500">{stats.bypassRequests}</div>
-                <div className="text-xs text-muted-foreground">{isEn ? 'Bypass' : '透传'}</div>
+                <div className="text-xs text-muted-foreground">{t('mproxy.bypass')}</div>
               </div>
             </div>
           </CardContent>
@@ -532,7 +532,7 @@ export function MProxyPanel() {
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Globe className="h-5 w-5 text-primary" />
-              <CardTitle className="text-lg">{isEn ? 'Recent Requests' : '最近请求'}</CardTitle>
+              <CardTitle className="text-lg">{t('mproxy.recentRequests')}</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -559,13 +559,13 @@ export function MProxyPanel() {
       {/* 使用说明 */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg">{isEn ? 'Usage Guide' : '使用说明'}</CardTitle>
+          <CardTitle className="text-lg">{t('mproxy.usageGuide')}</CardTitle>
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground space-y-2">
-          <p>1. {isEn ? 'Export and install the CA certificate to your system trust store' : '导出并安装 CA 证书到系统信任存储'}</p>
-          <p>2. {isEn ? 'Set your system/application proxy to' : '设置系统/应用代理为'} <code className="bg-muted px-1 rounded">{config.host}:{config.port}</code></p>
-          <p>3. {isEn ? 'Generate or enter a device ID to use for requests' : '生成或输入用于请求的设备 ID'}</p>
-          <p>4. {isEn ? 'Start the proxy and use Kiro IDE normally' : '启动代理后正常使用 Kiro IDE'}</p>
+          <p>1. {t('mproxy.guide1')}</p>
+          <p>2. {t('mproxy.guide2')} <code className="bg-muted px-1 rounded">{config.host}:{config.port}</code></p>
+          <p>3. {t('mproxy.guide3')}</p>
+          <p>4. {t('mproxy.guide4')}</p>
         </CardContent>
       </Card>
     </div>

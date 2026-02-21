@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { X, Download, RefreshCw, Sparkles, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
+import { useTranslation } from '@/hooks/useTranslation'
 
 interface UpdateInfo {
   version: string
@@ -25,6 +26,7 @@ export function UpdateDialog() {
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null)
   const [progress, setProgress] = useState<DownloadProgress | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const { t } = useTranslation()
 
   useEffect(() => {
     // 监听更新事件
@@ -108,7 +110,7 @@ export function UpdateDialog() {
                 <Sparkles className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h2 className="text-lg font-bold">发现新版本</h2>
+                <h2 className="text-lg font-bold">{t('update.newVersionTitle')}</h2>
                 {updateInfo && (
                   <p className="text-sm text-muted-foreground">v{updateInfo.version}</p>
                 )}
@@ -130,7 +132,7 @@ export function UpdateDialog() {
           {status === 'available' && (
             <>
               <p className="text-sm text-muted-foreground">
-                新版本已发布，建议立即更新以获得最新功能和修复。
+                {t('update.newVersionDesc')}
               </p>
               {updateInfo?.releaseNotes && (
                 <div 
@@ -140,11 +142,11 @@ export function UpdateDialog() {
               )}
               <div className="flex gap-3">
                 <Button variant="outline" className="flex-1" onClick={handleClose}>
-                  稍后提醒
+                  {t('update.remindLater')}
                 </Button>
                 <Button className="flex-1" onClick={handleDownload}>
                   <Download className="h-4 w-4 mr-2" />
-                  立即下载
+                  {t('update.downloadNow')}
                 </Button>
               </div>
             </>
@@ -154,7 +156,7 @@ export function UpdateDialog() {
             <>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">正在下载更新...</span>
+                  <span className="text-muted-foreground">{t('update.downloading')}</span>
                   <span className="font-mono">{progress ? `${progress.percent.toFixed(1)}%` : '0%'}</span>
                 </div>
                 <Progress value={progress?.percent ?? 0} className="h-2" />
@@ -167,7 +169,7 @@ export function UpdateDialog() {
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <RefreshCw className="h-4 w-4 animate-spin" />
-                <span>请勿关闭应用...</span>
+                <span>{t('update.doNotClose')}</span>
               </div>
             </>
           )}
@@ -176,18 +178,18 @@ export function UpdateDialog() {
             <>
               <div className="flex items-center gap-3 text-green-600">
                 <CheckCircle className="h-6 w-6" />
-                <span className="font-medium">下载完成！</span>
+                <span className="font-medium">{t('update.downloadComplete')}</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                更新已下载完成，点击下方按钮重启应用以完成安装。
+                {t('update.downloadCompleteDesc')}
               </p>
               <div className="flex gap-3">
                 <Button variant="outline" className="flex-1" onClick={handleClose}>
-                  稍后安装
+                  {t('update.installLater')}
                 </Button>
                 <Button className="flex-1" onClick={handleInstall}>
                   <RefreshCw className="h-4 w-4 mr-2" />
-                  立即重启
+                  {t('update.restartNow')}
                 </Button>
               </div>
             </>
@@ -196,10 +198,10 @@ export function UpdateDialog() {
           {status === 'error' && (
             <>
               <p className="text-sm text-destructive">
-                更新检查失败: {error}
+                {t('update.updateCheckFailed', { error: error || 'Unknown error' })}
               </p>
               <Button variant="outline" className="w-full" onClick={handleClose}>
-                关闭
+                {t('update.close')}
               </Button>
             </>
           )}

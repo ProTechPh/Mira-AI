@@ -148,7 +148,7 @@ export function AccountDetailDialog({
               <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
                  <span className="px-1.5 py-0.5 bg-muted rounded-md font-medium">{account.idp}</span>
                  <span>·</span>
-                 <span>{isEn ? 'Added ' : '添加于 '}{formatDate(account.createdAt)}</span>
+                 <span>{t('accountDetail.addedOn', { date: formatDate(account.createdAt) })}</span>
               </div>
             </div>
           </div>
@@ -164,12 +164,12 @@ export function AccountDetailDialog({
             <div className="flex items-center justify-between">
               <h3 className="flex items-center gap-2 font-bold text-base text-foreground">
                 <CreditCard className="h-5 w-5 text-primary" />
-                {isEn ? 'Quota Overview' : '配额总览'}
+                {t('accountDetail.quotaOverview')}
               </h3>
               {onRefresh && (
                 <Button variant="outline" size="sm" onClick={onRefresh} disabled={isRefreshing} className="h-8 rounded-lg">
                   <RefreshCw className={cn("h-3.5 w-3.5 mr-1.5", isRefreshing && "animate-spin")} />
-                  {isEn ? 'Refresh' : '刷新数据'}
+                  {t('accountDetail.refresh')}
                 </Button>
               )}
             </div>
@@ -179,7 +179,7 @@ export function AccountDetailDialog({
                <div>
                  <div className="flex items-end justify-between mb-2">
                    <div className="space-y-1">
-                     <div className="text-sm text-muted-foreground font-medium">{isEn ? 'Total Usage' : '总使用量'}</div>
+                     <div className="text-sm text-muted-foreground font-medium">{t('accountDetail.totalUsage')}</div>
                      <div className="flex items-baseline gap-1.5">
                        <span className="text-3xl font-bold tracking-tight text-foreground">{formatUsage(usage.current)}</span>
                        <span className="text-lg text-muted-foreground font-medium">/ {formatUsage(usage.limit)}</span>
@@ -190,7 +190,7 @@ export function AccountDetailDialog({
                      usage.percentUsed > 0.9 ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" : 
                      "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                    )}>
-                     {(usage.percentUsed * 100).toFixed(usagePrecision ? 2 : 1)}% {isEn ? 'used' : '已使用'}
+                     {(usage.percentUsed * 100).toFixed(usagePrecision ? 2 : 1)}% {t('accountDetail.used')}
                    </div>
                  </div>
                  <Progress value={usage.percentUsed * 100} className="h-3 rounded-full" indicatorClassName={usage.percentUsed > 0.9 ? "bg-red-500" : "bg-primary"} />
@@ -201,13 +201,13 @@ export function AccountDetailDialog({
                  <div className="p-4 bg-background rounded-xl border shadow-sm">
                    <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 dark:text-blue-400 mb-2">
                      <div className="w-2 h-2 rounded-full bg-blue-500" />
-                     {isEn ? 'Base' : '主配额'}
+                     {t('accountDetail.base')}
                    </div>
                    <div className="text-xl font-bold tracking-tight">
                      {formatUsage(usage.baseCurrent ?? 0)} <span className="text-sm text-muted-foreground font-normal">/ {formatUsage(usage.baseLimit ?? 0)}</span>
                    </div>
                    <div className="text-xs text-muted-foreground mt-1 font-medium">
-                     {formatDate(usage.nextResetDate)} {isEn ? 'reset' : '重置'}
+                     {formatDate(usage.nextResetDate)} {t('accountDetail.reset')}
                    </div>
                  </div>
                  
@@ -215,14 +215,14 @@ export function AccountDetailDialog({
                  <div className={cn("p-4 bg-background rounded-xl border shadow-sm", (usage.freeTrialLimit ?? 0) === 0 && "opacity-60 grayscale")}>
                    <div className="flex items-center gap-2 text-xs font-semibold text-purple-600 dark:text-purple-400 mb-2">
                      <div className="w-2 h-2 rounded-full bg-purple-500" />
-                     {isEn ? 'Trial' : '免费试用'}
+                     {t('accountDetail.trial')}
                      {(usage.freeTrialLimit ?? 0) > 0 && <Badge variant="secondary" className="text-[10px] px-1 h-4 ml-auto">ACTIVE</Badge>}
                    </div>
                    <div className="text-xl font-bold tracking-tight">
                      {formatUsage(usage.freeTrialCurrent ?? 0)} <span className="text-sm text-muted-foreground font-normal">/ {formatUsage(usage.freeTrialLimit ?? 0)}</span>
                    </div>
                    <div className="text-xs text-muted-foreground mt-1 font-medium">
-                     {usage.freeTrialExpiry ? `${formatDate(usage.freeTrialExpiry)} ${isEn ? 'expires' : '过期'}` : (isEn ? 'No trial' : '无试用额度')}
+                     {usage.freeTrialExpiry ? `${formatDate(usage.freeTrialExpiry)} ${t('accountDetail.expires')}` : t('accountDetail.noTrial')}
                    </div>
                  </div>
 
@@ -230,7 +230,7 @@ export function AccountDetailDialog({
                  <div className={cn("p-4 bg-background rounded-xl border shadow-sm", bonusTotal === 0 && "opacity-60 grayscale")}>
                    <div className="flex items-center gap-2 text-xs font-semibold text-cyan-600 dark:text-cyan-400 mb-2">
                      <div className="w-2 h-2 rounded-full bg-cyan-500" />
-                     {isEn ? 'Bonus' : '奖励总计'}
+                     {t('accountDetail.bonus')}
                    </div>
                    <div className="text-xl font-bold tracking-tight">
                      {formatUsage(bonusUsed)} <span className="text-sm text-muted-foreground font-normal">/ {formatUsage(bonusTotal)}</span>
@@ -246,7 +246,7 @@ export function AccountDetailDialog({
           {/* 奖励详情 */}
           {usage.bonuses && usage.bonuses.length > 0 && (
             <section className="space-y-3">
-              <h3 className="font-bold text-sm text-muted-foreground uppercase tracking-wider pl-1">{isEn ? 'Active Bonuses' : '生效奖励明细'}</h3>
+              <h3 className="font-bold text-sm text-muted-foreground uppercase tracking-wider pl-1">{t('accountDetail.activeBonuses')}</h3>
               <div className="grid grid-cols-1 gap-2">
                 {usage.bonuses.map((bonus) => (
                   <div key={bonus.code} className="flex items-center justify-between p-4 bg-background border rounded-xl shadow-sm hover:shadow-md transition-shadow">
@@ -264,7 +264,7 @@ export function AccountDetailDialog({
                     <div className="text-right">
                       <div className="text-sm font-bold">{formatUsage(bonus.current)} <span className="text-muted-foreground font-normal">/ {formatUsage(bonus.limit)}</span></div>
                       <div className="text-[10px] text-blue-600 font-medium">
-                         {isEn ? 'Used' : '已用'} {((bonus.current / bonus.limit) * 100).toFixed(usagePrecision ? 2 : 0)}%
+                         {t('accountDetail.used')} {((bonus.current / bonus.limit) * 100).toFixed(usagePrecision ? 2 : 0)}%
                       </div>
                     </div>
                   </div>
@@ -279,25 +279,25 @@ export function AccountDetailDialog({
              <section className="space-y-3">
                <h3 className="flex items-center gap-2 font-bold text-base text-foreground">
                  <User className="h-5 w-5 text-primary" />
-                 {isEn ? 'Basic Info' : '基本信息'}
+                 {t('accountDetail.basicInfo')}
                </h3>
                <div className="bg-muted/30 border rounded-xl p-4 space-y-4">
                  <div className="space-y-1">
-                   <label className="text-xs font-medium text-muted-foreground">{isEn ? 'Email/ID' : '邮箱/ID'}</label>
+                   <label className="text-xs font-medium text-muted-foreground">{t('accountDetail.emailOrId')}</label>
                    <div className="text-sm font-mono break-all select-all">{account.email ? maskEmail(account.email) : getDisplayName(account)}</div>
                  </div>
                  <div className="grid grid-cols-2 gap-4">
                    <div className="space-y-1 min-w-0">
-                      <label className="text-xs font-medium text-muted-foreground">{isEn ? 'Nickname' : '账号别名'}</label>
+                      <label className="text-xs font-medium text-muted-foreground">{t('accountDetail.nickname')}</label>
                       <div className="text-sm font-medium truncate" title={account.nickname || '-'}>{maskNickname(account.nickname) || '-'}</div>
                    </div>
                    <div className="space-y-1">
-                      <label className="text-xs font-medium text-muted-foreground">{isEn ? 'Provider' : '身份提供商'}</label>
+                      <label className="text-xs font-medium text-muted-foreground">{t('accountDetail.provider')}</label>
                       <div className="text-sm font-medium">{account.idp}</div>
                    </div>
                  </div>
                  <div className="space-y-1">
-                    <label className="text-xs font-medium text-muted-foreground">{isEn ? 'User ID' : '用户 ID'}</label>
+                    <label className="text-xs font-medium text-muted-foreground">{t('accountDetail.userId')}</label>
                     <div className="text-xs font-mono break-all bg-background p-2 rounded border select-all">{privacyMode ? '********' : (account.userId || '-')}</div>
                  </div>
                </div>
@@ -307,7 +307,7 @@ export function AccountDetailDialog({
              <section className="space-y-3">
                <h3 className="flex items-center gap-2 font-bold text-base text-foreground">
                  <Key className="h-5 w-5 text-primary" />
-                 {isEn ? 'Subscription' : '订阅详情'}
+                 {t('accountDetail.subscription')}
                </h3>
                <div className="bg-muted/30 border rounded-xl p-4 text-sm space-y-3">
                  <div className="flex justify-between items-center py-1 border-b border-border/50">
@@ -319,11 +319,11 @@ export function AccountDetailDialog({
                    <span className="font-medium text-xs">{credentials.expiresAt ? formatDateTime(credentials.expiresAt) : '-'}</span>
                  </div>
                  <div className="flex justify-between items-center py-1 border-b border-border/50">
-                   <span className="text-muted-foreground text-xs">{isEn ? 'Plan Type' : '订阅类型'}</span>
+                   <span className="text-muted-foreground text-xs">{t('accountDetail.planType')}</span>
                    <span className="font-mono text-xs" title={subscription.rawType}>{subscription.rawType || '-'}</span>
                  </div>
                  <div className="flex justify-between items-center py-1 border-b border-border/50">
-                   <span className="text-muted-foreground text-xs">{isEn ? 'Overage Rate' : '超额费率'}</span>
+                   <span className="text-muted-foreground text-xs">{t('accountDetail.overageRate')}</span>
                    <span className="font-mono text-xs">
                      {usage.resourceDetail?.overageRate 
                        ? `$${usage.resourceDetail.overageRate}/${usage.resourceDetail.unit || 'INV'}`
@@ -331,11 +331,11 @@ export function AccountDetailDialog({
                    </span>
                  </div>
                  <div className="flex justify-between items-center py-1 border-b border-border/50">
-                   <span className="text-muted-foreground text-xs">{isEn ? 'Resource Type' : '资源类型'}</span>
+                   <span className="text-muted-foreground text-xs">{t('accountDetail.resourceType')}</span>
                    <span className="font-mono text-xs">{usage.resourceDetail?.resourceType || '-'}</span>
                  </div>
                  <div className="flex justify-between items-center py-1">
-                   <span className="text-muted-foreground text-xs">{isEn ? 'Upgradable' : '可升级'}</span>
+                   <span className="text-muted-foreground text-xs">{t('accountDetail.upgradable')}</span>
                    <span className={cn("text-xs font-bold", subscription.upgradeCapability === 'UPGRADE_CAPABLE' ? "text-green-600" : "text-muted-foreground")}>
                       {subscription.upgradeCapability === 'UPGRADE_CAPABLE' ? 'YES' : 'NO'}
                    </span>
@@ -348,14 +348,14 @@ export function AccountDetailDialog({
           <section className="space-y-3">
             <h3 className="flex items-center gap-2 font-bold text-base text-foreground">
               <Cpu className="h-5 w-5 text-primary" />
-              {isEn ? 'Available Models' : '账户可用模型'}
+              {t('accountDetail.availableModels')}
               <Badge className="ml-auto bg-primary/10 text-primary border-primary/20">{models.length}</Badge>
             </h3>
             <div className="bg-gradient-to-br from-muted/20 to-muted/40 border rounded-xl p-4">
               {modelsLoading ? (
                 <div className="flex items-center justify-center py-8 text-muted-foreground">
                   <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                  {isEn ? 'Loading models...' : '加载模型中...'}
+                  {t('accountDetail.loadingModels')}
                 </div>
               ) : modelsError ? (
                 <div className="text-center py-8 text-muted-foreground">
@@ -363,7 +363,7 @@ export function AccountDetailDialog({
                 </div>
               ) : models.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground text-sm">
-                  {isEn ? 'No models available' : '暂无可用模型'}
+                  {t('accountDetail.noModels')}
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[320px] overflow-y-auto pr-1">
@@ -390,7 +390,7 @@ export function AccountDetailDialog({
                             <p className="text-[11px] text-primary/80 font-medium mb-1 truncate">{model.name}</p>
                           )}
                           <p className="text-[11px] text-muted-foreground line-clamp-2 leading-relaxed">
-                            {model.description || (isEn ? 'No description' : '无描述')}
+                            {model.description || t('accountDetail.noDescription')}
                           </p>
                         </div>
                       </div>
