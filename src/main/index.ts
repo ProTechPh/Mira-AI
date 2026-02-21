@@ -1828,7 +1828,7 @@ app.whenReady().then(async () => {
   })
 
   // IPC: 手动检查更新（使用 GitHub API，用于 AboutPage）
-  const GITHUB_REPO = 'ProTechPh/Mira-AI'
+  const GITHUB_REPO = 'ProTechPh/Mira-Release'
   const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`
   
   ipcMain.handle('check-for-updates-manual', async () => {
