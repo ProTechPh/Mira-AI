@@ -79,6 +79,7 @@ function App(): React.JSX.Element {
         ? (navigator.language.startsWith('zh') ? 'zh' : 'en')
         : language
       window.api.updateTrayLanguage(actualLang)
+
     })
     
     return () => {
@@ -86,10 +87,12 @@ function App(): React.JSX.Element {
     }
   }, [loadFromStorage, startAutoTokenRefresh, stopAutoTokenRefresh])
 
-  // 账户变化时更新托盘信息
+  // 账户变化时更新托盘信息和认证状态
   useEffect(() => {
     updateTrayInfo()
-  }, [updateTrayInfo])
+    // Update authenticated status based on account count
+    window.api.setAuthenticated(accounts.size > 0)
+  }, [updateTrayInfo, accounts])
 
   // 监听托盘刷新账户事件
   useEffect(() => {
