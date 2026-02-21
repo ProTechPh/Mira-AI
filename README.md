@@ -272,6 +272,14 @@ The project is configured with GitHub Actions workflow for auto building all pla
 
 ## 📋 Changelog
 
+### v1.5.2 (2026-02-21)
+- 🛠️ **Hotfix & i18n**: Minor translation fixes and UI copy improvements.
+- 🔁 **Release automation**: GitHub Actions release workflow refined; release creation and artifact upload automated.
+
+### v1.5.1 (2026-02-21)
+- 🔧 **Auto-update**: Fixed update check links to use `ProTechPh/Mira-AI` and corrected `electron-builder` config.
+- 🧩 **Readme & packaging**: Build/publish workflow updated; installers will be uploaded to GitHub Releases when tagging.
+
 ### v1.5.0 (2025-02-06)
 - 🌐 **API Regional Routing Fix**: Fixed 403 errors for EU accounts when calling ListAvailableModels/fetchSubscriptionToken/fetchAvailableSubscriptions, all API calls now route to correct regional endpoints (eu-* → eu-central-1, others → us-east-1)
 - 🔄 **Regional Fallback Mechanism**: Auto-retry with alternate regional endpoint on 403 errors, ensuring all regions (ap-*, ca-*, sa-*, me-*, af-*) work correctly
