@@ -11,20 +11,6 @@ const SubscriptionOptions: { value: SubscriptionType; label: string; color: stri
   { value: 'Enterprise', label: 'KIRO POWER', color: 'text-amber-500 border-amber-300', activeColor: 'bg-amber-500 text-white border-amber-500' }
 ]
 
-const StatusOptionsZh: { value: AccountStatus; label: string }[] = [
-  { value: 'active', label: '正常' },
-  { value: 'expired', label: '已过期' },
-  { value: 'error', label: '错误' },
-  { value: 'unknown', label: '未知' }
-]
-
-const StatusOptionsEn: { value: AccountStatus; label: string }[] = [
-  { value: 'active', label: 'Active' },
-  { value: 'expired', label: 'Expired' },
-  { value: 'error', label: 'Error' },
-  { value: 'unknown', label: 'Unknown' }
-]
-
 const IdpOptions: { value: IdpType; label: string }[] = [
   { value: 'Google', label: 'Google' },
   { value: 'Github', label: 'GitHub' },
@@ -52,8 +38,13 @@ function toRgba(argbColor: string): string {
 export function AccountFilterPanel(): React.ReactNode {
   const { filter, setFilter, clearFilter, groups, tags, getStats } = useAccountsStore()
   const { t } = useTranslation()
-  const isEn = t('common.unknown') === 'Unknown'
-  const StatusOptions = isEn ? StatusOptionsEn : StatusOptionsZh
+  
+  const StatusOptions = [
+    { value: 'active' as AccountStatus, label: t('status.active') },
+    { value: 'expired' as AccountStatus, label: t('status.expired') },
+    { value: 'error' as AccountStatus, label: t('status.error') },
+    { value: 'unknown' as AccountStatus, label: t('status.unknown') }
+  ]
 
   const stats = getStats()
 
@@ -109,7 +100,7 @@ export function AccountFilterPanel(): React.ReactNode {
             className="h-6 text-xs px-2"
             onClick={() => clearFilter()}
           >
-            {isEn ? 'Clear' : '清除筛选'}
+            {t('filter.clear')}
           </Button>
         </div>
       )}
@@ -117,7 +108,7 @@ export function AccountFilterPanel(): React.ReactNode {
           <div className="flex flex-wrap items-start gap-x-6 gap-y-2">
             {/* 订阅类型 */}
             <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground shrink-0">{isEn ? 'Plan:' : '订阅:'}</span>
+              <span className="text-xs text-muted-foreground shrink-0">{t('filter.plan')}</span>
               <div className="flex flex-wrap gap-1">
                 {SubscriptionOptions.map((option) => {
                   const isActive = filter.subscriptionTypes?.includes(option.value)
@@ -140,7 +131,7 @@ export function AccountFilterPanel(): React.ReactNode {
 
             {/* 状态 */}
             <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground shrink-0">{isEn ? 'Status:' : '状态:'}</span>
+              <span className="text-xs text-muted-foreground shrink-0">{t('filter.status')}</span>
               <div className="flex flex-wrap gap-1">
                 {StatusOptions.map((option) => {
                   const isActive = filter.statuses?.includes(option.value)
@@ -170,7 +161,7 @@ export function AccountFilterPanel(): React.ReactNode {
                   )}
                   onClick={() => setFilter({ ...filter, bannedOnly: !filter.bannedOnly })}
                 >
-                  {isEn ? 'Banned' : '已封禁'}({stats.bannedCount})
+                  {t('filter.banned')}({stats.bannedCount})
                 </button>
               </div>
             </div>
@@ -206,7 +197,7 @@ export function AccountFilterPanel(): React.ReactNode {
             {/* 分组 */}
             {groups.size > 0 && (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground shrink-0">{isEn ? 'Group:' : '分组:'}</span>
+                <span className="text-xs text-muted-foreground shrink-0">{t('filter.group')}</span>
                 <div className="flex flex-wrap gap-1">
                   {Array.from(groups.values()).map((group) => {
                     const isActive = filter.groupIds?.includes(group.id)
@@ -233,7 +224,7 @@ export function AccountFilterPanel(): React.ReactNode {
             {/* 标签 */}
             {tags.size > 0 && (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground shrink-0">{isEn ? 'Tags:' : '标签:'}</span>
+                <span className="text-xs text-muted-foreground shrink-0">{t('filter.tags')}</span>
                 <div className="flex flex-wrap gap-1">
                   {Array.from(tags.values()).map((tag) => {
                     const isActive = filter.tagIds?.includes(tag.id)
@@ -257,7 +248,7 @@ export function AccountFilterPanel(): React.ReactNode {
 
             {/* 使用量范围 */}
             <div className="flex items-center gap-1">
-              <span className="text-xs text-muted-foreground">{isEn ? 'Usage:' : '使用量:'}</span>
+              <span className="text-xs text-muted-foreground">{t('filter.usage')}</span>
               <input
                 type="number"
                 min="0"
@@ -296,7 +287,7 @@ export function AccountFilterPanel(): React.ReactNode {
 
             {/* 剩余天数范围 */}
             <div className="flex items-center gap-1">
-              <span className="text-xs text-muted-foreground">{isEn ? 'Days:' : '剩余:'}</span>
+              <span className="text-xs text-muted-foreground">{t('filter.days')}</span>
               <input
                 type="number"
                 min="0"
@@ -328,7 +319,7 @@ export function AccountFilterPanel(): React.ReactNode {
                   )
                 }
               />
-              <span className="text-xs text-muted-foreground">{isEn ? 'd' : '天'}</span>
+              <span className="text-xs text-muted-foreground">{t('filter.dayUnit')}</span>
             </div>
           </div>
     </div>

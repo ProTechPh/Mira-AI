@@ -527,7 +527,7 @@ const api = {
     return ipcRenderer.invoke('open-kiro-steering-folder')
   },
 
-  // 打开 Kiro settings.json 文件
+  // 打开 Mira settings.json 文件
   openKiroSettingsFile: (): Promise<{ success: boolean; error?: string }> => {
     return ipcRenderer.invoke('open-kiro-settings-file')
   },
@@ -752,7 +752,7 @@ const api = {
     return ipcRenderer.invoke('set-use-kproxy-for-api', enabled)
   },
 
-  // ============ K-Proxy MITM 代理 ============
+  // ============ M-Proxy MITM 代理 ============
 
   // 初始化 K-Proxy
   kproxyInit: (): Promise<{ success: boolean; caInfo?: { certPath: string; fingerprint: string; validFrom: string; validTo: string }; error?: string }> => {
@@ -905,7 +905,7 @@ const api = {
     }
   },
 
-  // 监听 K-Proxy MITM 拦截事件
+  // 监听 M-Proxy MITM 拦截事件
   onKproxyMitm: (callback: (info: { host: string; modified: boolean }) => void): (() => void) => {
     const handler = (_event: Electron.IpcRendererEvent, info: { host: string; modified: boolean }): void => {
       callback(info)

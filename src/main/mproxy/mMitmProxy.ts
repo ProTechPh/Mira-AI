@@ -1,4 +1,4 @@
-// K-Proxy MITM 代理核心
+// M-Proxy MITM 代理核心
 import * as http from 'http'
 import * as net from 'net'
 import * as tls from 'tls'
@@ -17,7 +17,7 @@ const MACHINE_ID_REGEX = /[a-f0-9]{64}/gi
 const KIRO_UA_REGEX = /KiroIDE[-\s][\d.]+[-\s]([a-f0-9]{64})/i
 
 /**
- * K-Proxy MITM 代理服务器
+ * M-Proxy MITM 代理服务器
  */
 export class MitmProxy {
   private server: http.Server | null = null

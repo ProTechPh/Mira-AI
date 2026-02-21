@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <strong>QQ Group: 653516618</strong>
+  <strong>ProTechPh</strong>
 </p>
 
 <p align="center">
@@ -91,7 +91,7 @@ Manage device identifier, prevent account association bans, backup and restore.
 ### Settings
 Configure theme colors, privacy mode, auto refresh, proxy and more.
 
-<!-- Mira AI: old Kiro Settings screenshot reference removed -->
+<!-- Mira AI: old Mira Settings screenshot reference removed -->
 
 ### API Proxy Service
 Provides OpenAI and Claude compatible API endpoints with multi-account rotation, auto token refresh, request retry and more.
@@ -101,7 +101,7 @@ Provides OpenAI and Claude compatible API endpoints with multi-account rotation,
 ### Mira AI IDE Settings
 Sync Kiro IDE settings, edit MCP servers, manage user rules (Steering).
 
-<!-- Mira AI: old Kiro Settings screenshot reference removed -->
+<!-- Mira AI: old Mira Settings screenshot reference removed -->
 
 ### About
 View version info, feature list, tech stack and author info.
@@ -277,7 +277,7 @@ The project is configured with GitHub Actions workflow for auto building all pla
 - 🔄 **Regional Fallback Mechanism**: Auto-retry with alternate regional endpoint on 403 errors, ensuring all regions (ap-*, ca-*, sa-*, me-*, af-*) work correctly
 - 🔄 **Stale Status Fix**: Fixed GetUserInfo "Stale" status being incorrectly treated as an error, Stale is now treated as a normal active state
 - 📋 **Model List Enhancement**: fetchKiroModels now passes profileArn parameter and supports pagination, consistent with official plugin, returns complete model list
-- ⚙️ **Kiro Settings Page Update**: Model Selection changed to dropdown with dynamic model fetching from current account (fallback to text input); added Trusted Tools config; descriptions aligned with official IDE
+- ⚙️ **Mira Settings Page Update**: Model Selection changed to dropdown with dynamic model fetching from current account (fallback to text input); added Trusted Tools config; descriptions aligned with official IDE
 - ⚙️ **Settings Model Fetch Optimization**: Settings page model list now uses the current active account (isActive) instead of the first account in store
 - 🔧 **Proxy Model Fetch Fix**: getAvailableModels now uses getAvailableAccount() instead of getNextAccount(), respecting multi-account toggle and selected account settings
 - 🔄 **CBOR → REST Auto Fallback**: Enterprise/IdC accounts automatically fall back from CBOR API to REST API on failure (consistent with official IDE behavior)
@@ -538,8 +538,8 @@ This project is licensed under the [AGPL-3.0 License](LICENSE).
 
 ## 👨‍💻 Author
 
-- **GitHub**: [chaogei](https://github.com/chaogei)
-- **Project Homepage**: [Mira-AI](https://github.com/chaogei/Mira-AI)
+- **GitHub**: [ProTechPh](https://github.com/ProTechPh)
+- **Project Homepage**: [Mira-AI](https://github.com/ProTechPh/Mira-AI)
 
 ---
 

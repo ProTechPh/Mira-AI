@@ -484,7 +484,7 @@ interface KiroApi {
   // 打开 Kiro Steering 目录
   openKiroSteeringFolder: () => Promise<{ success: boolean; error?: string }>
 
-  // 打开 Kiro settings.json 文件
+  // 打开 Mira settings.json 文件
   openKiroSettingsFile: () => Promise<{ success: boolean; error?: string }>
 
   // 打开指定的 Steering 文件
@@ -607,7 +607,7 @@ interface KiroApi {
   // 设置是否使用 K-Proxy 代理
   setUseKProxyForApi: (enabled: boolean) => Promise<{ success: boolean; enabled: boolean }>
 
-  // ============ K-Proxy MITM 代理 ============
+  // ============ M-Proxy MITM 代理 ============
 
   // 初始化 K-Proxy
   kproxyInit: () => Promise<{ success: boolean; caInfo?: { certPath: string; fingerprint: string; validFrom: string; validTo: string }; error?: string }>
@@ -686,7 +686,7 @@ interface KiroApi {
   // 监听 K-Proxy 状态变化事件
   onKproxyStatusChange: (callback: (status: { running: boolean; port: number }) => void) => () => void
 
-  // 监听 K-Proxy MITM 拦截事件
+  // 监听 M-Proxy MITM 拦截事件
   onKproxyMitm: (callback: (info: { host: string; modified: boolean }) => void) => () => void
 
   // ============ 托盘相关 API ============

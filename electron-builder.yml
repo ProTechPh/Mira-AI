@@ -59,11 +59,9 @@ deb:
 appImage:
   artifactName: ${name}-${version}-${arch}.${ext}
 snap:
-  publish:
-    provider: generic
-    url: https://example.com/auto-updates
+  artifactName: ${name}-${version}-${arch}.${ext}
 npmRebuild: false
 publish:
   provider: github
-  owner: chaogei
-  repo: mira-ai
+  owner: ProTechPh
+  repo: Mira-AI

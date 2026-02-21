@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { X, Trash2, Download, AlertCircle, RotateCcw } from 'lucide-react'
 import { Button, Card, CardContent, CardHeader, CardTitle, Badge } from '../ui'
+import { useTranslation } from '@/hooks/useTranslation'
 
 interface LogEntry {
   time: string
@@ -23,7 +24,6 @@ interface ProxyLogsDialogProps {
   onClearLogs: () => void
   onResetCredits?: () => void
   onResetTokens?: () => void
-  isEn: boolean
 }
 
 export function ProxyLogsDialog({
@@ -34,9 +34,9 @@ export function ProxyLogsDialog({
   totalTokens,
   onClearLogs,
   onResetCredits,
-  onResetTokens,
-  isEn
+  onResetTokens
 }: ProxyLogsDialogProps) {
+  const { t } = useTranslation()
   const [expandedError, setExpandedError] = useState<number | null>(null)
   
   if (!open) return null
@@ -65,15 +65,15 @@ export function ProxyLogsDialog({
       <Card className="relative w-[900px] max-h-[80vh] shadow-2xl border-0 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         <CardHeader className="pb-3 border-b sticky top-0 bg-background z-10">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">{isEn ? 'Request Logs' : '请求日志'}</CardTitle>
+            <CardTitle className="text-lg">{t('proxyLogs.title')}</CardTitle>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" onClick={handleExport} disabled={logs.length === 0}>
                 <Download className="h-4 w-4 mr-1" />
-                {isEn ? 'Export' : '导出'}
+                {t('common.export')}
               </Button>
               <Button variant="outline" size="sm" onClick={onClearLogs} disabled={logs.length === 0}>
                 <Trash2 className="h-4 w-4 mr-1" />
-                {isEn ? 'Clear' : '清空'}
+                {t('proxyLogs.clearLogs')}
               </Button>
               <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onOpenChange(false)}>
                 <X className="h-4 w-4" />
@@ -81,25 +81,25 @@ export function ProxyLogsDialog({
             </div>
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm">
-            <span>{isEn ? 'Total' : '总计'}: <Badge variant="secondary">{logs.length}</Badge></span>
-            <span>{isEn ? 'Success' : '成功'}: <Badge className="bg-green-500/20 text-green-600">{successCount}</Badge></span>
-            <span>{isEn ? 'Error' : '错误'}: <Badge className="bg-red-500/20 text-red-600">{errorCount}</Badge></span>
+            <span>{t('common.total')}: <Badge variant="secondary">{logs.length}</Badge></span>
+            <span>{t('common.success')}: <Badge className="bg-green-500/20 text-green-600">{successCount}</Badge></span>
+            <span>{t('status.error')}: <Badge className="bg-red-500/20 text-red-600">{errorCount}</Badge></span>
             <span className="text-muted-foreground">|</span>
-            <span>Tokens {isEn ? 'Recent' : '最近'}: <Badge variant="outline">{recentTokens.toLocaleString()}</Badge></span>
+            <span>Tokens: <Badge variant="outline">{recentTokens.toLocaleString()}</Badge></span>
             <span className="flex items-center gap-1">
-              Tokens {isEn ? 'Total' : '总计'}: <Badge variant="secondary">{totalTokens.toLocaleString()}</Badge>
+              {t('proxyLogs.totalTokens')}: <Badge variant="secondary">{totalTokens.toLocaleString()}</Badge>
               {onResetTokens && (
-                <Button variant="ghost" size="icon" className="h-5 w-5" onClick={onResetTokens} title={isEn ? 'Reset total' : '重置总计'}>
+                <Button variant="ghost" size="icon" className="h-5 w-5" onClick={onResetTokens} title={t('proxyLogs.resetTokens')}>
                   <RotateCcw className="h-3 w-3" />
                 </Button>
               )}
             </span>
             <span className="text-muted-foreground">|</span>
-            <span>Credits {isEn ? 'Recent' : '最近'}: <Badge variant="outline">{recentCredits.toFixed(4)}</Badge></span>
+            <span>Credits: <Badge variant="outline">{recentCredits.toFixed(4)}</Badge></span>
             <span className="flex items-center gap-1">
-              Credits {isEn ? 'Total' : '总计'}: <Badge variant="secondary">{totalCredits.toFixed(4)}</Badge>
+              {t('proxyLogs.totalCredits')}: <Badge variant="secondary">{totalCredits.toFixed(4)}</Badge>
               {onResetCredits && (
-                <Button variant="ghost" size="icon" className="h-5 w-5" onClick={onResetCredits} title={isEn ? 'Reset total' : '重置总计'}>
+                <Button variant="ghost" size="icon" className="h-5 w-5" onClick={onResetCredits} title={t('proxyLogs.resetCredits')}>
                   <RotateCcw className="h-3 w-3" />
                 </Button>
               )}
@@ -110,18 +110,18 @@ export function ProxyLogsDialog({
           <div className="max-h-[calc(80vh-120px)] overflow-y-auto">
             {logs.length === 0 ? (
               <div className="flex items-center justify-center h-32 text-muted-foreground">
-                {isEn ? 'No logs yet' : '暂无日志'}
+                {t('proxyLogs.noLogs')}
               </div>
             ) : (
               <table className="w-full text-sm">
                 <thead className="bg-muted/50 sticky top-0">
                   <tr>
-                    <th className="text-left p-2 font-medium">{isEn ? 'Time' : '时间'}</th>
-                    <th className="text-left p-2 font-medium">{isEn ? 'Path' : '路径'}</th>
-                    <th className="text-left p-2 font-medium">{isEn ? 'Model' : '模型'}</th>
-                    <th className="text-center p-2 font-medium">{isEn ? 'Status' : '状态'}</th>
-                    <th className="text-center p-2 font-medium">{isEn ? 'In' : '输入'}</th>
-                    <th className="text-center p-2 font-medium">{isEn ? 'Out' : '输出'}</th>
+                    <th className="text-left p-2 font-medium">{t('proxyLogs.time')}</th>
+                    <th className="text-left p-2 font-medium">{t('proxyLogs.path')}</th>
+                    <th className="text-left p-2 font-medium">{t('proxyLogs.model')}</th>
+                    <th className="text-center p-2 font-medium">{t('proxyLogs.status')}</th>
+                    <th className="text-center p-2 font-medium">{t('proxyLogs.inputTokens')}</th>
+                    <th className="text-center p-2 font-medium">{t('proxyLogs.outputTokens')}</th>
                     <th className="text-right p-2 font-medium">Tokens</th>
                     <th className="text-right p-2 font-medium">Credits</th>
                   </tr>
@@ -148,7 +148,7 @@ export function ProxyLogsDialog({
                                 <div className="text-xs font-sans">
                                   <div className="font-medium text-red-600 mb-2 flex items-center gap-1">
                                     <AlertCircle className="h-3 w-3" />
-                                    {isEn ? 'Error Details' : '错误详情'}
+                                    {t('errors.errorDetails')}
                                   </div>
                                   <pre className="whitespace-pre-wrap break-all bg-red-500/10 p-2 rounded text-red-700 text-xs max-h-40 overflow-y-auto">{log.error}</pre>
                                 </div>

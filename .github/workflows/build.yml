@@ -54,3 +54,53 @@ jobs:
             dist/*.AppImage
             dist/*.deb
             dist/*.snap
+
+  release:
+    needs: [build-windows, build-macos, build-linux]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-build
+          path: release-files
+      
+      - name: Download macOS artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-build
+          path: release-files
+      
+      - name: Download Linux artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-build
+          path: release-files
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release-files/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          body: |
+            ## 🎉 Mira AI ${{ github.ref_name }}
+            
+            ### Download
+            Choose the installer for your platform:
+            - **Windows**: `mira-ai-*-setup.exe`
+            - **macOS**: `mira-ai-*.dmg`
+            - **Linux**: `mira-ai-*.AppImage` or `.deb`
+            
+            ### Auto-Update
+            Existing users will be notified of this update automatically.
+            
+            ---
+            See full changelog below.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -46,7 +46,6 @@ interface ApiKeyUsageDialogProps {
 
 export function ApiKeyUsageDialog({ open, onOpenChange, apiKey }: ApiKeyUsageDialogProps) {
   const { t } = useTranslation()
-  const isEn = t('common.unknown') === 'Unknown'
   const [activeTab, setActiveTab] = useState<'history' | 'model' | 'daily'>('history')
 
   const formatTime = (timestamp: number) => {
@@ -101,7 +100,7 @@ export function ApiKeyUsageDialog({ open, onOpenChange, apiKey }: ApiKeyUsageDia
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-primary" />
-              {isEn ? 'Usage Details' : '用量详情'} - {apiKey.name}
+              {t('apiKeyManager.usageDetails')} - {apiKey.name}
             </CardTitle>
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onOpenChange(false)}>
               <X className="h-4 w-4" />
@@ -111,19 +110,19 @@ export function ApiKeyUsageDialog({ open, onOpenChange, apiKey }: ApiKeyUsageDia
           {/* 总计统计 */}
           <div className="grid grid-cols-4 gap-4 mt-4">
             <div className="bg-primary/10 rounded-lg p-3">
-              <div className="text-xs text-muted-foreground mb-1">{isEn ? 'Total Requests' : '总请求数'}</div>
+              <div className="text-xs text-muted-foreground mb-1">{t('apiKeyManager.totalRequests')}</div>
               <div className="text-xl font-bold text-primary">{apiKey.usage.totalRequests.toLocaleString()}</div>
             </div>
             <div className="bg-green-500/10 rounded-lg p-3">
-              <div className="text-xs text-muted-foreground mb-1">{isEn ? 'Total Credits' : '总 Credits'}</div>
+              <div className="text-xs text-muted-foreground mb-1">{t('apiKeyManager.totalCredits')}</div>
               <div className="text-xl font-bold text-green-600">{apiKey.usage.totalCredits.toFixed(4)}</div>
             </div>
             <div className="bg-blue-500/10 rounded-lg p-3">
-              <div className="text-xs text-muted-foreground mb-1">{isEn ? 'Input Tokens' : '输入 Tokens'}</div>
+              <div className="text-xs text-muted-foreground mb-1">{t('apiKeyManager.inputTokens')}</div>
               <div className="text-xl font-bold text-blue-600">{apiKey.usage.totalInputTokens.toLocaleString()}</div>
             </div>
             <div className="bg-purple-500/10 rounded-lg p-3">
-              <div className="text-xs text-muted-foreground mb-1">{isEn ? 'Output Tokens' : '输出 Tokens'}</div>
+              <div className="text-xs text-muted-foreground mb-1">{t('apiKeyManager.outputTokens')}</div>
               <div className="text-xl font-bold text-purple-600">{apiKey.usage.totalOutputTokens.toLocaleString()}</div>
             </div>
           </div>
@@ -136,7 +135,7 @@ export function ApiKeyUsageDialog({ open, onOpenChange, apiKey }: ApiKeyUsageDia
               onClick={() => setActiveTab('history')}
             >
               <Clock className="h-4 w-4 mr-1" />
-              {isEn ? 'History' : '历史记录'}
+              {t('apiKeyManager.history')}
             </Button>
             <Button
               variant={activeTab === 'model' ? 'default' : 'outline'}
@@ -144,7 +143,7 @@ export function ApiKeyUsageDialog({ open, onOpenChange, apiKey }: ApiKeyUsageDia
               onClick={() => setActiveTab('model')}
             >
               <Cpu className="h-4 w-4 mr-1" />
-              {isEn ? 'By Model' : '按模型'}
+              {t('apiKeyManager.byModel')}
             </Button>
             <Button
               variant={activeTab === 'daily' ? 'default' : 'outline'}
@@ -152,7 +151,7 @@ export function ApiKeyUsageDialog({ open, onOpenChange, apiKey }: ApiKeyUsageDia
               onClick={() => setActiveTab('daily')}
             >
               <TrendingUp className="h-4 w-4 mr-1" />
-              {isEn ? 'Daily Stats' : '每日统计'}
+              {t('apiKeyManager.dailyStats')}
             </Button>
           </div>
         </CardHeader>
@@ -165,11 +164,11 @@ export function ApiKeyUsageDialog({ open, onOpenChange, apiKey }: ApiKeyUsageDia
                 <table className="w-full text-sm">
                   <thead className="bg-muted/50 sticky top-0">
                     <tr>
-                      <th className="text-left p-2 font-medium">{isEn ? 'Time' : '时间'}</th>
-                      <th className="text-left p-2 font-medium">{isEn ? 'Model' : '模型'}</th>
-                      <th className="text-left p-2 font-medium">{isEn ? 'Path' : '路径'}</th>
-                      <th className="text-right p-2 font-medium">{isEn ? 'In' : '输入'}</th>
-                      <th className="text-right p-2 font-medium">{isEn ? 'Out' : '输出'}</th>
+                      <th className="text-left p-2 font-medium">{t('proxyLogs.time')}</th>
+                      <th className="text-left p-2 font-medium">{t('proxyLogs.model')}</th>
+                      <th className="text-left p-2 font-medium">{t('proxyLogs.path')}</th>
+                      <th className="text-right p-2 font-medium">{t('proxyLogs.inputTokens')}</th>
+                      <th className="text-right p-2 font-medium">{t('proxyLogs.outputTokens')}</th>
                       <th className="text-right p-2 font-medium">Credits</th>
                     </tr>
                   </thead>
@@ -188,7 +187,7 @@ export function ApiKeyUsageDialog({ open, onOpenChange, apiKey }: ApiKeyUsageDia
                 </table>
               ) : (
                 <div className="flex items-center justify-center h-32 text-muted-foreground">
-                  {isEn ? 'No usage history yet' : '暂无用量记录'}
+                  {t('apiKeyManager.noHistory')}
                 </div>
               )}
             </div>
@@ -205,7 +204,7 @@ export function ApiKeyUsageDialog({ open, onOpenChange, apiKey }: ApiKeyUsageDia
                         <Cpu className="h-4 w-4 text-primary" />
                         {stat.model}
                       </div>
-                      <Badge variant="secondary">{stat.requests} {isEn ? 'requests' : '次请求'}</Badge>
+                      <Badge variant="secondary">{stat.requests} {t('apiKeyManager.requestsCount')}</Badge>
                     </div>
                     {/* 进度条 */}
                     <div className="h-2 bg-muted rounded-full overflow-hidden mb-3">
@@ -216,15 +215,15 @@ export function ApiKeyUsageDialog({ open, onOpenChange, apiKey }: ApiKeyUsageDia
                     </div>
                     <div className="grid grid-cols-3 gap-4 text-sm">
                       <div>
-                        <span className="text-muted-foreground">{isEn ? 'Credits' : 'Credits'}:</span>
+                        <span className="text-muted-foreground">Credits:</span>
                         <span className="ml-2 font-mono">{stat.credits.toFixed(4)}</span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">{isEn ? 'Input' : '输入'}:</span>
+                        <span className="text-muted-foreground">{t('apiKeyManager.input')}:</span>
                         <span className="ml-2 font-mono">{stat.inputTokens.toLocaleString()}</span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">{isEn ? 'Output' : '输出'}:</span>
+                        <span className="text-muted-foreground">{t('apiKeyManager.output')}:</span>
                         <span className="ml-2 font-mono">{stat.outputTokens.toLocaleString()}</span>
                       </div>
                     </div>
@@ -232,7 +231,7 @@ export function ApiKeyUsageDialog({ open, onOpenChange, apiKey }: ApiKeyUsageDia
                 ))
               ) : (
                 <div className="flex items-center justify-center h-32 text-muted-foreground">
-                  {isEn ? 'No model statistics yet' : '暂无模型统计'}
+                  {t('apiKeyManager.noModelStats')}
                 </div>
               )}
             </div>
@@ -247,7 +246,7 @@ export function ApiKeyUsageDialog({ open, onOpenChange, apiKey }: ApiKeyUsageDia
                   <div className="bg-muted/30 rounded-lg p-4">
                     <div className="text-sm font-medium mb-4 flex items-center gap-2">
                       <Coins className="h-4 w-4 text-primary" />
-                      {isEn ? 'Daily Credits (Last 7 Days)' : '每日 Credits（最近7天）'}
+                      {t('apiKeyManager.dailyCreditsLast7Days')}
                     </div>
                     <div className="flex items-end gap-2 h-32">
                       {dailyChartData.map((data, idx) => (
@@ -267,11 +266,11 @@ export function ApiKeyUsageDialog({ open, onOpenChange, apiKey }: ApiKeyUsageDia
                   <table className="w-full text-sm">
                     <thead className="bg-muted/50">
                       <tr>
-                        <th className="text-left p-2 font-medium">{isEn ? 'Date' : '日期'}</th>
-                        <th className="text-right p-2 font-medium">{isEn ? 'Requests' : '请求数'}</th>
+                        <th className="text-left p-2 font-medium">{t('apiKeyManager.date')}</th>
+                        <th className="text-right p-2 font-medium">{t('apiKeyManager.requestsLabel')}</th>
                         <th className="text-right p-2 font-medium">Credits</th>
-                        <th className="text-right p-2 font-medium">{isEn ? 'Input' : '输入'}</th>
-                        <th className="text-right p-2 font-medium">{isEn ? 'Output' : '输出'}</th>
+                        <th className="text-right p-2 font-medium">{t('apiKeyManager.input')}</th>
+                        <th className="text-right p-2 font-medium">{t('apiKeyManager.output')}</th>
                       </tr>
                     </thead>
                     <tbody className="font-mono">
@@ -292,7 +291,7 @@ export function ApiKeyUsageDialog({ open, onOpenChange, apiKey }: ApiKeyUsageDia
                 </>
               ) : (
                 <div className="flex items-center justify-center h-32 text-muted-foreground">
-                  {isEn ? 'No daily statistics yet' : '暂无每日统计'}
+                  {t('apiKeyManager.noDailyStats')}
                 </div>
               )}
             </div>

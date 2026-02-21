@@ -179,7 +179,7 @@ export function MiraSettingsPage() {
         setSteeringFiles(result.steeringFiles)
       }
     } catch (err) {
-      setError(isEn ? 'Failed to load Kiro settings' : '加载 Kiro 设置失败')
+      setError(isEn ? 'Failed to load Mira settings' : '加载 Kiro 设置失败')
       console.error(err)
     } finally {
       setLoading(false)
@@ -204,7 +204,7 @@ export function MiraSettingsPage() {
   }
 
   const openKiroSettingsFile = async () => {
-    // 打开 Kiro settings.json 文件
+    // 打开 Mira settings.json 文件
     try {
       await window.api.openKiroSettingsFile()
     } catch (err) {
@@ -253,7 +253,7 @@ export function MiraSettingsPage() {
   }
 
   const deleteSteeringFile = async (filename: string) => {
-    if (!confirm(isEn ? `Delete "${filename}"? This cannot be undone.` : `确定要删除 "${filename}" 吗？此操作无法撤销。`)) {
+    if (!confirm(t('confirm.deleteFile', { filename }))) {
       return
     }
     try {
@@ -270,7 +270,7 @@ export function MiraSettingsPage() {
   }
 
   const deleteMcpServer = async (name: string) => {
-    if (!confirm(isEn ? `Delete MCP server "${name}"?` : `确定要删除 MCP 服务器 "${name}" 吗？`)) {
+    if (!confirm(t('confirm.deleteMcpServer', { name }))) {
       return
     }
     try {
@@ -353,7 +353,7 @@ export function MiraSettingsPage() {
               <Sparkles className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-primary">{isEn ? 'Kiro Settings' : 'Kiro 设置'}</h1>
+              <h1 className="text-2xl font-bold text-primary">{isEn ? 'Mira Settings' : 'Kiro 设置'}</h1>
               <p className="text-muted-foreground">{isEn ? 'Manage Kiro IDE config, MCP servers and user rules' : '管理 Kiro IDE 的配置、MCP 服务器和用户规则'}</p>
             </div>
           </div>
