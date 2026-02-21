@@ -185,7 +185,7 @@ function buildTrayMenu(): Menu {
     menuTemplate.push({
       label: isEn 
         ? `   Identity: ${account.idp} | ${account.subscription || 'Unknown'} | ${account.status === 'active' ? 'Active' : account.status}`
-        : `   身份: ${account.idp} | ${account.subscription || '未知'} | ${account.status === 'active' ? '活跃' : account.status}`,
+        : `   Identity: ${account.idp} | ${account.subscription || 'Unknown'} | ${account.status === 'active' ? 'Active' : account.status}`,
       icon: getMenuIcon(account.status === 'active' ? 'check' : 'warning'),
       enabled: false
     })
@@ -381,15 +381,23 @@ export function getTray(): Tray | null {
 
 // 显示关闭确认对话框
 export async function showCloseConfirmDialog(mainWindow: BrowserWindow): Promise<'minimize' | 'quit' | 'cancel'> {
+  const isEn = currentLanguage === 'en'
+  
   const result = await dialog.showMessageBox(mainWindow, {
     type: 'question',
-    buttons: ['最小化到托盘', '退出程序', '取消'],
+    buttons: isEn 
+      ? ['Minimize to tray', 'Exit', 'Cancel']
+      : ['最小化到托盘', '退出程序', '取消'],
     defaultId: 0,
     cancelId: 2,
-    title: '关闭窗口',
-    message: '您想要最小化到系统托盘还是退出程序？',
-    detail: '最小化到托盘后，程序将在后台继续运行，您可以通过点击托盘图标重新打开窗口。',
-    checkboxLabel: '记住我的选择',
+    title: isEn ? 'Close Window' : '关闭窗口',
+    message: isEn 
+      ? 'Would you like to minimize to system tray or exit the application?'
+      : '您想要最小化到系统托盘还是退出程序？',
+    detail: isEn
+      ? 'When minimized to tray, the application will continue running in the background. You can reopen the window by clicking the tray icon.'
+      : '最小化到托盘后，程序将在后台继续运行，您可以通过点击托盘图标重新打开窗口。',
+    checkboxLabel: isEn ? 'Remember my choice' : '记住我的选择',
     checkboxChecked: false
   })
 

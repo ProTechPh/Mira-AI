@@ -100,12 +100,12 @@ export async function getCurrentMachineId(): Promise<MachineIdResult> {
       case 'linux':
         return await getLinuxMachineId()
       default:
-        return { success: false, error: '不支持的操作系统' }
+        return { success: false, error: 'Unsupported operating system' }
     }
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : '获取机器码失败'
+      error: error instanceof Error ? error.message : 'Failed to get machine ID'
     }
   }
 }
@@ -118,7 +118,7 @@ export async function setMachineId(newMachineId: string): Promise<MachineIdResul
 
   // 验证机器码格式
   if (!isValidMachineId(newMachineId)) {
-    return { success: false, error: '无效的机器码格式' }
+    return { success: false, error: 'Invalid machine ID format' }
   }
 
   try {
@@ -130,10 +130,10 @@ export async function setMachineId(newMachineId: string): Promise<MachineIdResul
       case 'linux':
         return await setLinuxMachineId(newMachineId)
       default:
-        return { success: false, error: '不支持的操作系统' }
+        return { success: false, error: 'Unsupported operating system' }
     }
   } catch (error) {
-    const errorMsg = error instanceof Error ? error.message : '设置机器码失败'
+    const errorMsg = error instanceof Error ? error.message : 'Failed to set machine ID'
     // 检查是否需要管理员权限
     if (
       errorMsg.includes('Access is denied') ||
@@ -142,7 +142,7 @@ export async function setMachineId(newMachineId: string): Promise<MachineIdResul
       errorMsg.includes('EPERM') ||
       errorMsg.includes('EACCES')
     ) {
-      return { success: false, error: '需要管理员权限', requiresAdmin: true }
+      return { success: false, error: 'Administrator privileges required', requiresAdmin: true }
     }
     return { success: false, error: errorMsg }
   }
@@ -292,7 +292,7 @@ export async function requestAdminRestart(): Promise<boolean> {
         return false
     }
   } catch (error) {
-    console.error('请求管理员权限失败:', error)
+    console.error('Failed to request admin privileges:', error)
     return false
   }
 }
@@ -361,7 +361,7 @@ async function getWindowsMachineId(): Promise<MachineIdResult> {
 
   return {
     success: false,
-    error: '无法获取机器码，请尝试以管理员身份运行或检查系统权限设置'
+    error: 'Unable to get machine ID. Please try running as administrator or check system permissions.'
   }
 }
 
@@ -374,10 +374,10 @@ async function setWindowsMachineId(newMachineId: string): Promise<MachineIdResul
     return { success: true, machineId: newMachineId }
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : ''
-    if (errorMsg.includes('Access is denied') || errorMsg.includes('拒绝访问')) {
-      return { success: false, error: '需要管理员权限', requiresAdmin: true }
+    if (errorMsg.includes('Access is denied') || errorMsg.includes('Access is denied')) {
+      return { success: false, error: 'Administrator privileges required', requiresAdmin: true }
     }
-    return { success: false, error: errorMsg || '设置Windows机器码失败' }
+    return { success: false, error: errorMsg || 'Failed to set Windows machine ID' }
   }
 }
 
@@ -412,11 +412,11 @@ async function getMacOSMachineId(): Promise<MachineIdResult> {
       return { success: true, machineId }
     }
 
-    return { success: false, error: '无法获取macOS机器码' }
+    return { success: false, error: 'Unable to get macOS machine ID' }
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : '获取macOS机器码失败'
+      error: error instanceof Error ? error.message : 'Failed to get macOS machine ID'
     }
   }
 }
@@ -448,7 +448,7 @@ async function setMacOSMachineId(newMachineId: string): Promise<MachineIdResult>
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : '设置macOS机器码失败'
+      error: error instanceof Error ? error.message : 'Failed to set macOS machine ID'
     }
   }
 }
@@ -473,7 +473,7 @@ async function getLinuxMachineId(): Promise<MachineIdResult> {
     }
   }
 
-  return { success: false, error: '无法获取Linux机器码' }
+  return { success: false, error: 'Unable to get Linux machine ID' }
 }
 
 async function setLinuxMachineId(newMachineId: string): Promise<MachineIdResult> {
@@ -498,14 +498,14 @@ async function setLinuxMachineId(newMachineId: string): Promise<MachineIdResult>
           return { success: true, machineId: newMachineId }
         }
         // 如果 pkexec 失败，继续尝试其他路径或返回错误
-        if (pkexecResult.error?.includes('用户取消') || pkexecResult.error?.includes('dismissed')) {
-          return { success: false, error: '用户取消了授权' }
+        if (pkexecResult.error?.includes('User cancelled') || pkexecResult.error?.includes('dismissed')) {
+          return { success: false, error: 'User cancelled authorization' }
         }
       }
     }
   }
 
-  return { success: false, error: '设置Linux机器码失败' }
+  return { success: false, error: 'Failed to set Linux machine ID' }
 }
 
 /**
@@ -547,14 +547,14 @@ async function setLinuxMachineIdWithPkexec(rawId: string, filePath: string): Pro
       
       // 用户取消授权
       if (errorMsg.includes('dismissed') || errorMsg.includes('Not authorized') || errorMsg.includes('126')) {
-        return { success: false, error: '用户取消了授权' }
+        return { success: false, error: 'User cancelled authorization' }
       }
       // 继续尝试下一个命令
       continue
     }
   }
   
-  return { success: false, error: '没有可用的权限提升工具', requiresAdmin: true }
+  return { success: false, error: 'No privilege elevation tool available', requiresAdmin: true }
 }
 
 /**
@@ -583,7 +583,7 @@ export async function backupMachineIdToFile(
     fs.writeFileSync(filePath, JSON.stringify(backupData, null, 2), 'utf-8')
     return true
   } catch (error) {
-    console.error('备份机器码失败:', error)
+    console.error('Failed to backup machine ID:', error)
     return false
   }
 }
@@ -594,18 +594,18 @@ export async function backupMachineIdToFile(
 export async function restoreMachineIdFromFile(filePath: string): Promise<MachineIdResult> {
   try {
     if (!fs.existsSync(filePath)) {
-      return { success: false, error: '备份文件不存在' }
+      return { success: false, error: 'Backup file does not exist' }
     }
     const content = fs.readFileSync(filePath, 'utf-8')
     const data = JSON.parse(content)
     if (!data.machineId || !isValidMachineId(data.machineId)) {
-      return { success: false, error: '备份文件格式无效' }
+      return { success: false, error: 'Invalid backup file format' }
     }
     return { success: true, machineId: data.machineId }
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : '读取备份文件失败'
+      error: error instanceof Error ? error.message : 'Failed to read backup file'
     }
   }
 }
@@ -616,10 +616,10 @@ export async function restoreMachineIdFromFile(filePath: string): Promise<Machin
 export async function showAdminRequiredDialog(): Promise<boolean> {
   const result = await dialog.showMessageBox({
     type: 'warning',
-    title: '需要管理员权限',
-    message: '修改机器码需要管理员权限',
-    detail: '是否以管理员权限重新启动应用程序？',
-    buttons: ['取消', '以管理员身份重启'],
+    title: 'Administrator Privileges Required',
+    message: 'Modifying machine ID requires administrator privileges',
+    detail: 'Would you like to restart the application with administrator privileges?',
+    buttons: ['Cancel', 'Restart as Administrator'],
     defaultId: 1,
     cancelId: 0
   })
