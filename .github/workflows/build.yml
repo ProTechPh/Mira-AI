@@ -29,6 +29,10 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+      - name: Install Python dependencies
+        run: |
+          pip install setuptools
+          python -m pip install --upgrade pip setuptools wheel
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
