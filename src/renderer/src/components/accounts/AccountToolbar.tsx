@@ -471,7 +471,7 @@ export function AccountToolbar({
             title={t('accounts.deleteSelected')}
           >
             <Trash2 className="h-4 w-4 mr-1" />
-            {t('common.delete')}
+            {t('Delete')}
           </Button>
           <Button
             variant="ghost"

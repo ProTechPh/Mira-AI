@@ -299,7 +299,7 @@ function initProxyServer(): ProxyServer {
               expiresAt: Date.now() + (refreshResult.expiresIn || 3600) * 1000
             }
           }
-          return { success: false, error: refreshResult.error || 'Token 刷新失败' }
+          return { success: false, error: refreshResult.error || 'Token refresh failed' }
         } catch (error) {
           return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
         }
@@ -636,7 +636,7 @@ async function ssoDeviceAuth(bearerToken: string, region: string = 'us-east-1'):
     clientSecret = regData.clientSecret
     console.log(`[SSO] Client registered: ${clientId.substring(0, 30)}...`)
   } catch (e) {
-    return { success: false, error: `注册客户端失败: ${e}` }
+    return { success: false, error: `Client registration failed: ${e}` }
   }
 
   // Step 2: 发起设备授权
@@ -654,7 +654,7 @@ async function ssoDeviceAuth(bearerToken: string, region: string = 'us-east-1'):
     interval = devData.interval || 1
     console.log(`[SSO] Device code obtained, user_code: ${userCode}`)
   } catch (e) {
-    return { success: false, error: `设备授权失败: ${e}` }
+    return { success: false, error: `Device authorization failed: ${e}` }
   }
 
   // Step 3: 验证 Bearer Token (whoAmI)
@@ -667,7 +667,7 @@ async function ssoDeviceAuth(bearerToken: string, region: string = 'us-east-1'):
     if (!whoRes.ok) throw new Error(`whoAmI failed: ${whoRes.status}`)
     console.log('[SSO] Bearer token verified')
   } catch (e) {
-    return { success: false, error: `Token 验证失败: ${e}` }
+    return { success: false, error: `Token verification failed: ${e}` }
   }
 
   // Step 4: 获取设备会话令牌
@@ -683,7 +683,7 @@ async function ssoDeviceAuth(bearerToken: string, region: string = 'us-east-1'):
     deviceSessionToken = sessData.token
     console.log('[SSO] Device session token obtained')
   } catch (e) {
-    return { success: false, error: `获取设备会话失败: ${e}` }
+    return { success: false, error: `Failed to get device session: ${e}` }
   }
 
   // Step 5: 接受用户代码
@@ -700,7 +700,7 @@ async function ssoDeviceAuth(bearerToken: string, region: string = 'us-east-1'):
     deviceContext = acceptData.deviceContext || null
     console.log('[SSO] User code accepted')
   } catch (e) {
-    return { success: false, error: `接受用户代码失败: ${e}` }
+    return { success: false, error: `Failed to accept user code: ${e}` }
   }
 
   // Step 6: 批准授权
@@ -722,7 +722,7 @@ async function ssoDeviceAuth(bearerToken: string, region: string = 'us-east-1'):
       if (!approveRes.ok) throw new Error(`Approve failed: ${approveRes.status}`)
       console.log('[SSO] Authorization approved')
     } catch (e) {
-      return { success: false, error: `批准授权失败: ${e}` }
+      return { success: false, error: `Authorization approval failed: ${e}` }
     }
   }
 
@@ -767,7 +767,7 @@ async function ssoDeviceAuth(bearerToken: string, region: string = 'us-east-1'):
         } else if (errData.error === 'slow_down') {
           interval += 5
         } else {
-          return { success: false, error: `Token 获取失败: ${errData.error}` }
+          return { success: false, error: `Token retrieval failed: ${errData.error}` }
         }
       }
     } catch (e) {
@@ -775,7 +775,7 @@ async function ssoDeviceAuth(bearerToken: string, region: string = 'us-east-1'):
     }
   }
 
-  return { success: false, error: '授权超时，请重试' }
+  return { success: false, error: 'Authorization timeout, please retry' }
 }
 
 async function kiroApiRequest<T>(
@@ -1793,7 +1793,7 @@ app.whenReady().then(async () => {
   // IPC: 检查更新
   ipcMain.handle('check-for-updates', async () => {
     if (is.dev) {
-      return { hasUpdate: false, message: '开发环境不支持更新检查' }
+      return { hasUpdate: false, message: 'Development environment does not support update checking' }
     }
     try {
       const result = await autoUpdater.checkForUpdates()
@@ -1811,7 +1811,7 @@ app.whenReady().then(async () => {
   // IPC: 下载更新
   ipcMain.handle('download-update', async () => {
     if (is.dev) {
-      return { success: false, message: '开发环境不支持更新' }
+      return { success: false, message: 'Development environment does not support updates' }
     }
     try {
       await autoUpdater.downloadUpdate()
@@ -1845,11 +1845,11 @@ app.whenReady().then(async () => {
       
       if (!response.ok) {
         if (response.status === 403) {
-          throw new Error('GitHub API 请求次数超限，请稍后再试')
+          throw new Error('GitHub API rate limit exceeded, please try again later')
         } else if (response.status === 404) {
-          throw new Error('未找到发布版本')
+          throw new Error('Release version not found')
         }
-        throw new Error(`GitHub API 错误: ${response.status}`)
+        throw new Error(`GitHub API error: ${response.status}`)
       }
       
       const release = await response.json() as {
@@ -1902,7 +1902,7 @@ app.whenReady().then(async () => {
       console.error('[Update] Manual check failed:', error)
       return {
         hasUpdate: false,
-        error: error instanceof Error ? error.message : '检查更新失败'
+        error: error instanceof Error ? error.message : 'Update check failed'
       }
     }
   })
@@ -1942,12 +1942,12 @@ app.whenReady().then(async () => {
       const { refreshToken, clientId, clientSecret, region, authMethod } = account.credentials || {}
 
       if (!refreshToken) {
-        return { success: false, error: { message: '缺少 Refresh Token' } }
+        return { success: false, error: { message: 'Missing Refresh Token' } }
       }
 
       // 社交登录只需要 refreshToken，IdC 登录需要 clientId 和 clientSecret
       if (authMethod !== 'social' && (!clientId || !clientSecret)) {
-        return { success: false, error: { message: '缺少 OIDC 刷新凭证 (clientId/clientSecret)' } }
+        return { success: false, error: { message: 'Missing OIDC refresh credentials (clientId/clientSecret)' } }
       }
 
       console.log(`[IPC] Refreshing token (authMethod: ${authMethod || 'IdC'})...`)
@@ -1962,7 +1962,7 @@ app.whenReady().then(async () => {
       )
 
       if (!refreshResult.success || !refreshResult.accessToken) {
-        return { success: false, error: { message: refreshResult.error || 'Token 刷新失败' } }
+        return { success: false, error: { message: refreshResult.error || 'Token refresh failed' } }
       }
 
       return {
@@ -1990,7 +1990,7 @@ app.whenReady().then(async () => {
       const ssoResult = await ssoDeviceAuth(bearerToken, region)
       
       if (!ssoResult.success || !ssoResult.accessToken) {
-        return { success: false, error: { message: ssoResult.error || 'SSO 授权失败' } }
+        return { success: false, error: { message: ssoResult.error || 'SSO authorization failed' } }
       }
 
       // 并行获取用户信息和使用量
@@ -2339,7 +2339,7 @@ app.whenReady().then(async () => {
 
       if (!accessToken) {
         console.log('[IPC] Missing accessToken')
-        return { success: false, error: { message: '缺少 accessToken' } }
+        return { success: false, error: { message: 'Missing accessToken' } }
       }
 
       // 获取账户绑定的设备 ID
@@ -2729,7 +2729,7 @@ app.whenReady().then(async () => {
               mainWindow?.webContents.send('background-check-result', {
                 id: account.id,
                 success: false,
-                error: '缺少 accessToken'
+                error: 'Missing accessToken'
               })
               return
             }
@@ -2897,7 +2897,7 @@ app.whenReady().then(async () => {
                 errorMessage = errorMsg
               } else if (errorMsg.includes('401')) {
                 status = 'expired'
-                errorMessage = 'Token 已过期，请刷新'
+                errorMessage = 'Token expired, please refresh'
               } else {
                 status = 'error'
                 errorMessage = errorMsg
@@ -2915,7 +2915,7 @@ app.whenReady().then(async () => {
               // 检查用户状态（Stale 视为正常，仅 Suspended/Disabled 等视为异常）
               if (rawUserInfo.status && rawUserInfo.status !== 'Active' && rawUserInfo.status !== 'Stale' && status !== 'error') {
                 status = 'error'
-                errorMessage = `用户状态异常: ${rawUserInfo.status}`
+                errorMessage = `User status abnormal: ${rawUserInfo.status}`
               }
             }
 
@@ -2968,7 +2968,7 @@ app.whenReady().then(async () => {
   ipcMain.handle('export-to-file', async (_event, data: string, filename: string) => {
     try {
       const result = await dialog.showSaveDialog(mainWindow!, {
-        title: '导出账号数据',
+        title: 'Export Account Data',
         defaultPath: filename,
         filters: [{ name: 'JSON Files', extensions: ['json'] }]
       })
@@ -2988,9 +2988,9 @@ app.whenReady().then(async () => {
   ipcMain.handle('import-from-file', async () => {
     try {
       const result = await dialog.showOpenDialog(mainWindow!, {
-        title: '导入账号数据',
+        title: 'Import Account Data',
         filters: [
-          { name: '所有支持的格式', extensions: ['json', 'csv', 'txt'] },
+          { name: 'All Supported Formats', extensions: ['json', 'csv', 'txt'] },
           { name: 'JSON Files', extensions: ['json'] },
           { name: 'CSV Files', extensions: ['csv'] },
           { name: 'TXT Files', extensions: ['txt'] }
@@ -3031,10 +3031,10 @@ app.whenReady().then(async () => {
       
       // 社交登录只需要 refreshToken，IdC 需要 clientId 和 clientSecret
       if (!refreshToken) {
-        return { success: false, error: '请填写 Refresh Token' }
+        return { success: false, error: 'Please provide Refresh Token' }
       }
       if (authMethod !== 'social' && (!clientId || !clientSecret)) {
-        return { success: false, error: '请填写 Client ID 和 Client Secret' }
+        return { success: false, error: 'Please provide Client ID and Client Secret' }
       }
       
       // Step 1: 使用合适的方式刷新获取 accessToken
@@ -3042,7 +3042,7 @@ app.whenReady().then(async () => {
       const refreshResult = await refreshTokenByMethod(refreshToken, clientId, clientSecret, region, authMethod)
       
       if (!refreshResult.success || !refreshResult.accessToken) {
-        return { success: false, error: `Token 刷新失败: ${refreshResult.error}` }
+        return { success: false, error: `Token refresh failed: ${refreshResult.error}` }
       }
       
       console.log('[Verify] Step 2: Getting user info...')
@@ -3211,7 +3211,7 @@ app.whenReady().then(async () => {
       }
     } catch (error) {
       console.error('[Verify] Error:', error)
-      return { success: false, error: error instanceof Error ? error.message : '验证失败' }
+      return { success: false, error: error instanceof Error ? error.message : 'Verification failed' }
     }
   })
 
@@ -3228,7 +3228,7 @@ app.whenReady().then(async () => {
       const tokenData = JSON.parse(tokenContent)
       
       if (!tokenData.refreshToken) {
-        return { success: false, error: '本地缓存中没有 refreshToken' }
+        return { success: false, error: 'No refreshToken in local cache' }
       }
       
       return {
@@ -3241,7 +3241,7 @@ app.whenReady().then(async () => {
         }
       }
     } catch {
-      return { success: false, error: '无法读取本地 SSO 缓存' }
+      return { success: false, error: 'Unable to read local SSO cache' }
     }
   })
 
@@ -3324,7 +3324,7 @@ app.whenReady().then(async () => {
       return { success: true }
     } catch (error) {
       console.error('[Switch Account] Error:', error)
-      return { success: false, error: error instanceof Error ? error.message : '切换失败' }
+      return { success: false, error: error instanceof Error ? error.message : 'Switch failed' }
     }
   })
 
@@ -3353,7 +3353,7 @@ app.whenReady().then(async () => {
       return { success: true, deletedCount: files.length }
     } catch (error) {
       console.error('[Logout] Error:', error)
-      return { success: false, error: error instanceof Error ? error.message : '退出失败' }
+      return { success: false, error: error instanceof Error ? error.message : 'Logout failed' }
     }
   })
 
@@ -3411,7 +3411,7 @@ app.whenReady().then(async () => {
 
       if (!regRes.ok) {
         const errText = await regRes.text()
-        return { success: false, error: `注册客户端失败: ${errText}` }
+        return { success: false, error: `Client registration failed: ${errText}` }
       }
 
       const regData = await regRes.json()
@@ -3429,7 +3429,7 @@ app.whenReady().then(async () => {
 
       if (!authRes.ok) {
         const errText = await authRes.text()
-        return { success: false, error: `设备授权失败: ${errText}` }
+        return { success: false, error: `Device authorization failed: ${errText}` }
       }
 
       const authData = await authRes.json()
@@ -3457,7 +3457,7 @@ app.whenReady().then(async () => {
       }
     } catch (error) {
       console.error('[Login] Error:', error)
-      return { success: false, error: error instanceof Error ? error.message : '登录失败' }
+      return { success: false, error: error instanceof Error ? error.message : 'Login failed' }
     }
   })
 
@@ -3466,12 +3466,12 @@ app.whenReady().then(async () => {
     console.log('[Login] Polling for authorization...')
 
     if (!currentLoginState || currentLoginState.type !== 'builderid') {
-      return { success: false, error: '没有进行中的登录' }
+      return { success: false, error: 'No login in progress' }
     }
 
     if (Date.now() > (currentLoginState.expiresAt || 0)) {
       currentLoginState = null
-      return { success: false, error: '授权已过期，请重新开始' }
+      return { success: false, error: 'Authorization expired, please restart' }
     }
 
     const oidcBase = `https://oidc.${region}.amazonaws.com`
@@ -3519,20 +3519,20 @@ app.whenReady().then(async () => {
           return { success: true, completed: false, status: 'slow_down' }
         } else if (error === 'expired_token') {
           currentLoginState = null
-          return { success: false, error: '设备码已过期' }
+          return { success: false, error: 'Device code expired' }
         } else if (error === 'access_denied') {
           currentLoginState = null
-          return { success: false, error: '用户拒绝授权' }
+          return { success: false, error: 'User denied authorization' }
         } else {
           currentLoginState = null
-          return { success: false, error: `授权错误: ${error}` }
+          return { success: false, error: `Authorization error: ${error}` }
         }
       } else {
-        return { success: false, error: `未知响应: ${tokenRes.status}` }
+        return { success: false, error: `Unknown response: ${tokenRes.status}` }
       }
     } catch (error) {
       console.error('[Login] Poll error:', error)
-      return { success: false, error: error instanceof Error ? error.message : '轮询失败' }
+      return { success: false, error: error instanceof Error ? error.message : 'Polling failed' }
     }
   })
 
@@ -3564,7 +3564,7 @@ app.whenReady().then(async () => {
     
     // 验证 startUrl 格式
     if (!startUrl || !startUrl.startsWith('https://')) {
-      return { success: false, error: 'SSO Start URL 必须以 https:// 开头' }
+      return { success: false, error: 'SSO Start URL must start with https://' }
     }
     
     const crypto = await import('crypto')
@@ -3602,11 +3602,11 @@ app.whenReady().then(async () => {
         if (errText.includes('UnauthorizedException') || errText.includes('access denied')) {
           return { 
             success: false, 
-            error: '授权失败：您的组织可能未配置 Amazon Q Developer 访问权限。请联系组织管理员在 IAM Identity Center 中启用相关权限。' 
+            error: 'Authorization failed: Your organization may not have configured Amazon Q Developer access. Please contact your organization administrator to enable relevant permissions in IAM Identity Center.' 
           }
         }
         
-        return { success: false, error: `注册客户端失败: ${errText}` }
+        return { success: false, error: `Client registration failed: ${errText}` }
       }
 
       const regData = await regRes.json()
@@ -3637,7 +3637,7 @@ app.whenReady().then(async () => {
             const p = addr.port
             server.close(() => resolve(p))
           } else {
-            reject(new Error('无法获取端口'))
+            reject(new Error('Unable to get port'))
           }
         })
       })
@@ -3659,21 +3659,21 @@ app.whenReady().then(async () => {
           
           if (error) {
             res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
-            res.end('<html><body><h1>授权失败</h1><p>您可以关闭此窗口。</p></body></html>')
-            iamSsoResult = { completed: true, success: false, error: `授权失败: ${error}` }
+            res.end('<html><body><h1>Authorization Failed</h1><p>You can close this window.</p></body></html>')
+            iamSsoResult = { completed: true, success: false, error: `Authorization failed: ${error}` }
             return
           }
           
           if (returnedState !== state) {
             res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
-            res.end('<html><body><h1>授权失败</h1><p>状态不匹配，请重试。</p></body></html>')
-            iamSsoResult = { completed: true, success: false, error: '状态不匹配' }
+            res.end('<html><body><h1>Authorization Failed</h1><p>State mismatch, please try again.</p></body></html>')
+            iamSsoResult = { completed: true, success: false, error: 'State mismatch' }
             return
           }
           
           if (code) {
             res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
-            res.end('<html><body><h1>授权成功！</h1><p>正在获取令牌，请稍候...</p></body></html>')
+            res.end('<html><body><h1>Authorization Successful!</h1><p>Getting token, please wait...</p></body></html>')
             
             // 自动完成 token 交换
             try {
@@ -3693,7 +3693,7 @@ app.whenReady().then(async () => {
               if (!tokenRes.ok) {
                 const errText = await tokenRes.text()
                 console.error('[Login] Token exchange failed:', tokenRes.status, errText)
-                iamSsoResult = { completed: true, success: false, error: `获取 Token 失败: ${errText}` }
+                iamSsoResult = { completed: true, success: false, error: `Token retrieval failed: ${errText}` }
               } else {
                 const tokenData = await tokenRes.json()
                 console.log('[Login] IAM SSO Authorization successful!')
@@ -3713,13 +3713,13 @@ app.whenReady().then(async () => {
               iamSsoResult = { 
                 completed: true, 
                 success: false, 
-                error: tokenError instanceof Error ? tokenError.message : '获取 Token 失败' 
+                error: tokenError instanceof Error ? tokenError.message : 'Token exchange failed' 
               }
             }
           } else {
             res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
-            res.end('<html><body><h1>授权失败</h1><p>未收到授权码。</p></body></html>')
-            iamSsoResult = { completed: true, success: false, error: '未收到授权码' }
+            res.end('<html><body><h1>Authorization Failed</h1><p>Authorization code not received.</p></body></html>')
+            iamSsoResult = { completed: true, success: false, error: 'Authorization code not received' }
           }
         } else {
           res.writeHead(404)
@@ -3764,14 +3764,14 @@ app.whenReady().then(async () => {
       }
     } catch (error) {
       console.error('[Login] Error:', error)
-      return { success: false, error: error instanceof Error ? error.message : '登录失败' }
+      return { success: false, error: error instanceof Error ? error.message : 'Login failed' }
     }
   })
 
   // IPC: 轮询 IAM SSO 授权状态 (检查本地服务器是否收到回调)
   ipcMain.handle('poll-iam-sso-auth', async () => {
     if (!currentLoginState || currentLoginState.type !== 'iamsso') {
-      return { success: false, error: '没有进行中的 IAM SSO 登录' }
+      return { success: false, error: 'No IAM SSO login in progress' }
     }
 
     if (Date.now() > (currentLoginState.expiresAt || 0)) {
@@ -3781,7 +3781,7 @@ app.whenReady().then(async () => {
       }
       iamSsoResult = null
       currentLoginState = null
-      return { success: false, error: '授权已过期，请重新开始' }
+      return { success: false, error: 'Authorization expired, please restart' }
     }
 
     // 检查是否已收到回调并完成 token 交换
@@ -3866,13 +3866,13 @@ app.whenReady().then(async () => {
     console.log('[Login] Exchanging Social Auth token...')
 
     if (!currentLoginState || currentLoginState.type !== 'social') {
-      return { success: false, error: '没有进行中的社交登录' }
+      return { success: false, error: 'No social login in progress' }
     }
 
     // 验证 state
     if (state !== currentLoginState.oauthState) {
       console.warn('[Login] Social auth state mismatch, ignoring stale callback')
-      return { success: false, error: '状态参数不匹配，可能存在安全风险' }
+      return { success: false, error: 'State parameter mismatch, possible security risk' }
     }
 
     const { codeVerifier, provider } = currentLoginState
@@ -3892,7 +3892,7 @@ app.whenReady().then(async () => {
       if (!tokenRes.ok) {
         const errText = await tokenRes.text()
         currentLoginState = null
-        return { success: false, error: `Token 交换失败: ${errText}` }
+        return { success: false, error: `Token exchange failed: ${errText}` }
       }
 
       const tokenData = await tokenRes.json()
@@ -3913,7 +3913,7 @@ app.whenReady().then(async () => {
     } catch (error) {
       console.error('[Login] Token exchange error:', error)
       currentLoginState = null
-      return { success: false, error: error instanceof Error ? error.message : 'Token 交换失败' }
+      return { success: false, error: error instanceof Error ? error.message : 'Token exchange failed' }
     }
   })
 
@@ -4309,7 +4309,7 @@ app.whenReady().then(async () => {
       const filePath = path.join(homeDir, '.kiro', 'steering', filename)
       
       if (!fs.existsSync(filePath)) {
-        return { success: false, error: '文件不存在' }
+        return { success: false, error: 'File does not exist' }
       }
       
       const content = fs.readFileSync(filePath, 'utf-8')
@@ -5138,7 +5138,7 @@ app.whenReady().then(async () => {
           return { success: true, message: 'CA certificate installed to Windows certificate store' }
         } catch (error) {
           const errMsg = error instanceof Error ? error.message : String(error)
-          if (errMsg.includes('already in store') || errMsg.includes('已在存储中')) {
+          if (errMsg.includes('already in store') || errMsg.includes('already in store')) {
             return { success: true, message: 'CA certificate already installed' }
           }
           throw error
@@ -5174,7 +5174,7 @@ app.whenReady().then(async () => {
           return { success: true, message: 'CA certificate removed from Windows certificate store' }
         } catch (error) {
           const errMsg = error instanceof Error ? error.message : String(error)
-          if (errMsg.includes('not found') || errMsg.includes('找不到')) {
+          if (errMsg.includes('not found') || errMsg.includes('not found')) {
             return { success: true, message: 'CA certificate not found in store' }
           }
           throw error
@@ -5250,14 +5250,14 @@ app.whenReady().then(async () => {
       const mcpPath = path.join(homeDir, '.kiro', 'settings', 'mcp.json')
       
       if (!fs.existsSync(mcpPath)) {
-        return { success: false, error: '配置文件不存在' }
+        return { success: false, error: 'Configuration file does not exist' }
       }
       
       const content = fs.readFileSync(mcpPath, 'utf-8')
       const mcpConfig = JSON.parse(content)
       
       if (!mcpConfig.mcpServers || !mcpConfig.mcpServers[name]) {
-        return { success: false, error: '服务器不存在' }
+        return { success: false, error: 'Server does not exist' }
       }
       
       delete mcpConfig.mcpServers[name]
@@ -5280,7 +5280,7 @@ app.whenReady().then(async () => {
       const filePath = path.join(homeDir, '.kiro', 'steering', filename)
       
       if (!fs.existsSync(filePath)) {
-        return { success: false, error: '文件不存在' }
+        return { success: false, error: 'File does not exist' }
       }
       
       fs.unlinkSync(filePath)
@@ -5343,7 +5343,7 @@ app.whenReady().then(async () => {
   // IPC: 备份机器码到文件
   ipcMain.handle('machine-id:backup-to-file', async (_event, machineId: string) => {
     const result = await dialog.showSaveDialog(mainWindow!, {
-      title: '备份机器码',
+      title: 'Backup Machine ID',
       defaultPath: 'machine-id-backup.json',
       filters: [{ name: 'JSON', extensions: ['json'] }]
     })
@@ -5358,13 +5358,13 @@ app.whenReady().then(async () => {
   // IPC: 从文件恢复机器码
   ipcMain.handle('machine-id:restore-from-file', async () => {
     const result = await dialog.showOpenDialog(mainWindow!, {
-      title: '恢复机器码',
+      title: 'Restore Machine ID',
       filters: [{ name: 'JSON', extensions: ['json'] }],
       properties: ['openFile']
     })
     
     if (result.canceled || !result.filePaths[0]) {
-      return { success: false, error: '用户取消' }
+      return { success: false, error: 'User cancelled' }
     }
     
     return await machineIdModule.restoreMachineIdFromFile(result.filePaths[0])
