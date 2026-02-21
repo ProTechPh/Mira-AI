@@ -1,6 +1,6 @@
 {
   "name": "mira-ai",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "description": "Mira AI - Manage your accounts, usage and subscriptions",
   "main": "./out/main/index.js",
   "author": "Mira AI",
