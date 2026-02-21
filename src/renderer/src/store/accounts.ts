@@ -1325,7 +1325,17 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
           accounts,
           groups: new Map(Object.entries(data.groups ?? {}) as [string, AccountGroup][]),
           tags: new Map(Object.entries(data.tags ?? {}) as [string, AccountTag][]),
-          activeAccountId
+          activeAccountId,
+          machineIdConfig: {
+            autoSwitchOnAccountChange: data.machineIdConfig?.autoSwitchOnAccountChange ?? false,
+            bindMachineIdToAccount: data.machineIdConfig?.bindMachineIdToAccount ?? false,
+            useBindedMachineId: data.machineIdConfig?.useBindedMachineId ?? true
+          },
+          accountMachineIds: data.accountMachineIds ?? {},
+          machineIdHistory: data.machineIdHistory ?? [],
+          currentMachineId: data.currentMachineId ?? '',
+          originalMachineId: data.originalMachineId ?? null,
+          originalBackupTime: data.originalBackupTime ?? null
         })
         
         // Save if machine IDs were generated
@@ -1333,6 +1343,8 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
           await get().saveToStorage()
         }
         
+        set({ isLoading: false })
+      } else {
         set({ isLoading: false })
       }
     } catch (e) {
