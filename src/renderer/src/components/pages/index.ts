@@ -1,0 +1,7 @@
+export { HomePage } from './HomePage'
+export { AboutPage } from './AboutPage'
+export { SettingsPage } from './SettingsPage'
+export { ProxyPage } from './ProxyPage'
+export { MProxyPage } from './MProxyPage'
+export { MachineIdPage } from './MachineIdPage'
+export { MiraSettingsPage } from './MiraSettingsPage'
