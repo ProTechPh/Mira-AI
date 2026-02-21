@@ -31,18 +31,16 @@ jobs:
           python-version: '3.11'
       - name: Install Python dependencies
         run: |
-          pip install setuptools
-          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade pip
+          pip install setuptools wheel distutils-extra
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-        env:
-          ELECTRON_SKIP_BINARY_DOWNLOAD: 1
-          ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES: true
-      - run: npm run build:mac
+      - name: Install dependencies without postinstall
+        run: npm ci --ignore-scripts
+      - name: Build application
+        run: npm run build:mac
       - uses: actions/upload-artifact@v4
         with:
           name: macos-build
