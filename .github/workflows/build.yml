@@ -10,6 +10,8 @@ on:
 
 jobs:
   version-patch-main:
+    outputs:
+      tag: ${{ steps.bump.outputs.tag }}
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     permissions:
@@ -65,18 +67,9 @@ jobs:
           git push
           git push --tags
 
-      - name: Trigger build/release workflow on new tag
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
-        run: |
-          curl -sS -X POST \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/${{ github.repository }}/actions/workflows/build.yml/dispatches \
-            -d "{\"ref\":\"${{ steps.bump.outputs.tag }}\"}"
-
   build-windows:
-    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && startsWith(github.ref_name, 'v'))
+    needs: [version-patch-main]
+    if: ${{ always() && (startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.version-patch-main.result == 'success') || (github.event_name == 'workflow_dispatch' && startsWith(github.ref_name, 'v'))) }}
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -92,7 +85,8 @@ jobs:
           path: dist/*.exe
 
   build-macos:
-    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && startsWith(github.ref_name, 'v'))
+    needs: [version-patch-main]
+    if: ${{ always() && (startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.version-patch-main.result == 'success') || (github.event_name == 'workflow_dispatch' && startsWith(github.ref_name, 'v'))) }}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -108,7 +102,8 @@ jobs:
           path: dist/*.dmg
 
   build-linux:
-    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && startsWith(github.ref_name, 'v'))
+    needs: [version-patch-main]
+    if: ${{ always() && (startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.version-patch-main.result == 'success') || (github.event_name == 'workflow_dispatch' && startsWith(github.ref_name, 'v'))) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -127,8 +122,8 @@ jobs:
             dist/*.snap
 
   release:
-    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && startsWith(github.ref_name, 'v'))
-    needs: [build-windows, build-macos, build-linux]
+    if: ${{ always() && (startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.version-patch-main.result == 'success') || (github.event_name == 'workflow_dispatch' && startsWith(github.ref_name, 'v'))) }}
+    needs: [version-patch-main, build-windows, build-macos, build-linux]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -208,8 +203,8 @@ jobs:
         with:
           token: ${{ secrets.RELEASE_REPO_TOKEN }}
           repository: ProTechPh/Mira-Release
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || needs.version-patch-main.outputs.tag }}
+          name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || needs.version-patch-main.outputs.tag }}
           body: ${{ steps.release_notes.outputs.body }}
           draft: false
           prerelease: false
