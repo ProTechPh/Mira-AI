@@ -10,7 +10,7 @@ on:
 
 jobs:
   version-patch-main:
-    if: github.ref == 'refs/heads/main' && github.actor != 'github-actions[bot]'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -19,6 +19,7 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+          token: ${{ secrets.RELEASE_REPO_TOKEN }}
 
       - uses: actions/setup-node@v4
         with:
@@ -119,6 +120,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: read
     steps:
       - uses: actions/checkout@v4
       
@@ -151,12 +153,18 @@ jobs:
 
             async function findPrByCommit(commitSha) {
               if (!commitSha) return null;
-              const { data } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
-                owner,
-                repo,
-                commit_sha: commitSha
-              });
-              return data && data.length > 0 ? data[0] : null;
+              try {
+                const { data } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+                  owner,
+                  repo,
+                  commit_sha: commitSha
+                });
+                return data && data.length > 0 ? data[0] : null;
+              } catch (err) {
+                // If integration token cannot read PR linkage, fallback to commit message flow.
+                core.warning(`Cannot resolve PR by commit ${commitSha}: ${err.message}`);
+                return null;
+              }
             }
 
             // 1) Try PR directly associated with tag commit
