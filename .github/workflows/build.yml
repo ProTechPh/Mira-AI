@@ -19,7 +19,6 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-          token: ${{ secrets.RELEASE_REPO_TOKEN }}
 
       - uses: actions/setup-node@v4
         with:
@@ -60,6 +59,7 @@ jobs:
 
           echo "Using version: v$NEXT_VERSION"
           npm version "$NEXT_VERSION" -m "Release v%s"
+          git remote set-url origin https://x-access-token:${{ secrets.RELEASE_REPO_TOKEN }}@github.com/${{ github.repository }}.git
           git push
           git push --tags
 
