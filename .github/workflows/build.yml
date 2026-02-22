@@ -18,6 +18,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          fetch-tags: true
 
       - uses: actions/setup-node@v4
         with:
@@ -29,7 +30,37 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Bump patch version and push
-        run: npm version patch -m "Release v%s" && git push && git push --tags
+        run: |
+          git fetch --tags --force
+
+          NEXT_VERSION=$(node - <<'NODE'
+          const fs = require('fs');
+          const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+          const [maj, min, pat] = String(pkg.version).split('.').map(Number);
+          if ([maj, min, pat].some((n) => Number.isNaN(n))) {
+            throw new Error(`Invalid semver in package.json: ${pkg.version}`);
+          }
+
+          let a = maj, b = min, c = pat + 1;
+          const { execSync } = require('child_process');
+          const tagExists = (v) => {
+            try {
+              execSync(`git rev-parse -q --verify refs/tags/v${v}`, { stdio: 'ignore' });
+              return true;
+            } catch {
+              return false;
+            }
+          };
+
+          while (tagExists(`${a}.${b}.${c}`)) c += 1;
+          process.stdout.write(`${a}.${b}.${c}`);
+          NODE
+          )
+
+          echo "Using version: v$NEXT_VERSION"
+          npm version "$NEXT_VERSION" -m "Release v%s"
+          git push
+          git push --tags
 
   build-windows:
     if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
