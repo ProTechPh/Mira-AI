@@ -40,6 +40,7 @@ let autoSwitchTimer: ReturnType<typeof setInterval> | null = null
 let autoSaveTimer: ReturnType<typeof setInterval> | null = null
 const AUTO_SAVE_INTERVAL = 30 * 1000 // 每 30 秒自动保存一次
 let lastSaveHash = '' // 用于检测数据是否变化
+export type LoginBrowser = 'default' | 'chrome' | 'msedge' | 'firefox' | 'brave' | 'opera' | 'chromium' | 'safari'
 
 interface AccountsState {
   // 应用版本号
@@ -80,6 +81,8 @@ interface AccountsState {
   // 代理设置
   proxyEnabled: boolean
   proxyUrl: string // 格式: http://host:port 或 socks5://host:port
+  kproxyRunning: boolean // M-Proxy 运行状态（与 Machine ID 自动化互斥）
+  kproxyDeviceId: string // M-Proxy 当前设备 ID（用于未绑定账户自动绑定）
 
   // 自动换号设置
   autoSwitchEnabled: boolean
@@ -91,6 +94,7 @@ interface AccountsState {
 
   // 登录浏览器隐私模式
   loginPrivateMode: boolean // 登录时使用浏览器隐私/无痕模式
+  loginBrowser: LoginBrowser // OAuth 登录使用的浏览器
 
   // 主题设置
   theme: string // 主题名称: default, purple, emerald, orange, rose, cyan, amber
@@ -192,6 +196,7 @@ interface AccountsActions {
 
   // 代理设置
   setProxy: (enabled: boolean, url?: string) => void
+  setKproxyRunning: (running: boolean, deviceId?: string) => void
 
   // 主题设置
   setTheme: (theme: string) => void
@@ -209,6 +214,7 @@ interface AccountsActions {
 
   // 登录浏览器隐私模式
   setLoginPrivateMode: (enabled: boolean) => void
+  setLoginBrowser: (browser: LoginBrowser) => void
 
   startAutoSwitch: () => void
   stopAutoSwitch: () => void
@@ -271,11 +277,14 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
   usagePrecision: false,
   proxyEnabled: false,
   proxyUrl: '',
+  kproxyRunning: false,
+  kproxyDeviceId: '',
   autoSwitchEnabled: false,
   autoSwitchThreshold: 0,
   autoSwitchInterval: 5,
   batchImportConcurrency: 100,
   loginPrivateMode: false,
+  loginBrowser: 'default',
   theme: 'default',
   darkMode: false,
   language: 'auto',
@@ -296,6 +305,7 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
   addAccount: (accountData) => {
     const id = uuidv4()
     const now = Date.now()
+    const { machineIdConfig } = get()
 
     // 如果没有提供 machineId，自动生成一个随机的 64 位十六进制设备 ID
     const machineId = accountData.machineId || generateRandomMachineId()
@@ -313,6 +323,29 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
     set((state) => {
       const accounts = new Map(state.accounts)
       accounts.set(id, account)
+
+      // 自动化：新账户接入时，若开启账户绑定则立即分配并写入绑定映射
+      if (machineIdConfig.bindMachineIdToAccount) {
+        return {
+          accounts,
+          accountMachineIds: {
+            ...state.accountMachineIds,
+            [id]: machineId
+          },
+          machineIdHistory: [
+            ...state.machineIdHistory,
+            {
+              id: crypto.randomUUID(),
+              machineId,
+              timestamp: now,
+              action: 'bind',
+              accountId: id,
+              accountEmail: account.email
+            }
+          ]
+        }
+      }
+
       return { accounts }
     })
 
@@ -325,7 +358,19 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
       const accounts = new Map(state.accounts)
       const account = accounts.get(id)
       if (account) {
-        accounts.set(id, { ...account, ...updates })
+        const nextUpdates: Partial<Account> = { ...updates }
+
+        // 保护账号 machineId：已有值时禁止被覆盖，避免设备指纹频繁变化
+        if (
+          typeof nextUpdates.machineId === 'string' &&
+          account.machineId &&
+          nextUpdates.machineId !== account.machineId
+        ) {
+          console.warn(`[MachineId] Prevented machineId override for account ${id}`)
+          delete nextUpdates.machineId
+        }
+
+        accounts.set(id, { ...account, ...nextUpdates })
       }
       return { accounts }
     })
@@ -341,8 +386,10 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
       selectedIds.delete(id)
 
       const activeAccountId = state.activeAccountId === id ? null : state.activeAccountId
+      const accountMachineIds = { ...state.accountMachineIds }
+      delete accountMachineIds[id]
 
-      return { accounts, selectedIds, activeAccountId }
+      return { accounts, selectedIds, activeAccountId, accountMachineIds }
     })
     get().saveToStorage()
   },
@@ -353,12 +400,14 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
     set((state) => {
       const accounts = new Map(state.accounts)
       const selectedIds = new Set(state.selectedIds)
+      const accountMachineIds = { ...state.accountMachineIds }
       let activeAccountId = state.activeAccountId
 
       for (const id of ids) {
         if (accounts.has(id)) {
           accounts.delete(id)
           selectedIds.delete(id)
+          delete accountMachineIds[id]
           if (activeAccountId === id) activeAccountId = null
           result.success++
         } else {
@@ -367,7 +416,7 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
         }
       }
 
-      return { accounts, selectedIds, activeAccountId }
+      return { accounts, selectedIds, activeAccountId, accountMachineIds }
     })
 
     get().saveToStorage()
@@ -428,8 +477,9 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
           await get().changeMachineId()
         }
         
-        // 更新历史记录
+        // 更新历史记录（仅记录当前系统机器码变化，不改写账户 machineId）
         const newMachineId = get().currentMachineId
+
         set((s) => ({
           machineIdHistory: [
             ...s.machineIdHistory,
@@ -447,6 +497,15 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
         console.log(`[MachineId] Auto-switched machine ID for account: ${account?.email}`)
       } catch (error) {
         console.error('[MachineId] Failed to auto-switch machine ID:', error)
+      }
+    }
+
+    // M-Proxy 运行时：若账户未绑定，则绑定为该账户当前 machineId（保持首个值稳定）
+    if (id && state.kproxyRunning && !state.accountMachineIds[id]) {
+      const activeAccount = get().accounts.get(id)
+      const stableMachineId = activeAccount?.machineId || state.kproxyDeviceId
+      if (stableMachineId) {
+        get().bindMachineIdToAccount(id, stableMachineId)
       }
     }
     
@@ -771,7 +830,7 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
   // ==================== 导入导出 ====================
 
   exportAccounts: (ids) => {
-    const { accounts, groups, tags } = get()
+    const { accounts, groups, tags, machineIdConfig, accountMachineIds, machineIdHistory } = get()
 
     let exportAccounts: Account[]
     if (ids?.length) {
@@ -782,13 +841,22 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
       exportAccounts = Array.from(accounts.values())
     }
 
+    const exportedAccountIds = new Set(exportAccounts.map((account) => account.id))
+    const exportedAccountMachineIds = Object.fromEntries(
+      Object.entries(accountMachineIds).filter(([accountId]) => exportedAccountIds.has(accountId))
+    )
+    const exportedMachineIdHistory = machineIdHistory.filter((entry) => !entry.accountId || exportedAccountIds.has(entry.accountId))
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const data: AccountExportData = {
       version: get().appVersion,
       exportedAt: Date.now(),
       accounts: exportAccounts.map(({ isActive, ...rest }) => rest),
       groups: Array.from(groups.values()),
-      tags: Array.from(tags.values())
+      tags: Array.from(tags.values()),
+      machineIdConfig: { ...machineIdConfig },
+      accountMachineIds: exportedAccountMachineIds,
+      machineIdHistory: exportedMachineIdHistory
     }
 
     return data
@@ -854,6 +922,7 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
   importFromExportData: (data) => {
     const result: BatchOperationResult = { success: 0, failed: 0, errors: [] }
     const { accounts: existingAccounts } = get()
+    const importedAccountIds = new Set<string>()
     
     // 检查账户是否已存在（同邮箱+同provider 或 同userId 才算重复）
     const isAccountExists = (email: string, userId?: string, provider?: string): boolean => {
@@ -911,6 +980,7 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
           accounts.set(accountData.id, { ...accountData, isActive: false })
           return { accounts }
         })
+        importedAccountIds.add(accountData.id)
         result.success++
       } catch (error) {
         result.failed++
@@ -926,6 +996,29 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
       result.errors.push({
         id: 'skipped',
         error: `跳过 ${skipped} 个已存在的账号`
+      })
+    }
+
+    // 导入并应用账户 machineId 绑定（仅应用到本次成功导入的账号）
+    const importedBindings = Object.fromEntries(
+      Object.entries(data.accountMachineIds ?? {}).filter(([accountId]) => importedAccountIds.has(accountId))
+    )
+    if (Object.keys(importedBindings).length > 0) {
+      set((state) => {
+        const accounts = new Map(state.accounts)
+        for (const [accountId, machineId] of Object.entries(importedBindings)) {
+          const account = accounts.get(accountId)
+          if (account) {
+            accounts.set(accountId, { ...account, machineId })
+          }
+        }
+        return {
+          accounts,
+          accountMachineIds: {
+            ...state.accountMachineIds,
+            ...importedBindings
+          }
+        }
       })
     }
 
@@ -1150,12 +1243,13 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
   },
 
   batchCheckStatus: async (ids) => {
-    const { accounts, autoRefreshConcurrency } = get()
+    const { accounts, autoRefreshConcurrency, accountMachineIds } = get()
     
     // 收集需要检查的账号（使用批量检查 API，不刷新 Token）
     const accountsToCheck: Array<{
       id: string
       email: string
+      machineId?: string
       credentials: {
         accessToken: string
         refreshToken?: string
@@ -1175,6 +1269,7 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
       accountsToCheck.push({
         id,
         email: account.email,
+        machineId: accountMachineIds[id] || account.machineId,
         credentials: {
           accessToken: account.credentials.accessToken,
           refreshToken: account.credentials.refreshToken,
@@ -1274,17 +1369,33 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
 
       if (data) {
         const accounts = new Map(Object.entries(data.accounts ?? {}) as [string, Account][])
+        const storedAccountMachineIds = data.accountMachineIds ?? {}
         let activeAccountId = data.activeAccountId ?? null
 
         // 为没有 machineId 的现有账户生成一个
         let needsSave = false
         for (const [id, account] of accounts) {
+          const boundMachineId = storedAccountMachineIds[id]
+          if (boundMachineId && account.machineId !== boundMachineId) {
+            account.machineId = boundMachineId
+            accounts.set(id, account)
+            needsSave = true
+          }
+
           if (!account.machineId) {
             account.machineId = generateRandomMachineId()
             accounts.set(id, account)
             needsSave = true
             console.log(`[Store] Generated machineId for account ${account.email}: ${account.machineId.substring(0, 16)}...`)
           }
+        }
+
+        // 清理已删除账户的绑定 machineId（历史数据兼容）
+        const prunedAccountMachineIds = Object.fromEntries(
+          Object.entries(storedAccountMachineIds).filter(([accountId]) => accounts.has(accountId))
+        )
+        if (Object.keys(prunedAccountMachineIds).length !== Object.keys(storedAccountMachineIds).length) {
+          needsSave = true
         }
 
         // 同步本地 SSO 缓存中的账号状态
@@ -1326,12 +1437,14 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
           groups: new Map(Object.entries(data.groups ?? {}) as [string, AccountGroup][]),
           tags: new Map(Object.entries(data.tags ?? {}) as [string, AccountTag][]),
           activeAccountId,
+          loginPrivateMode: data.loginPrivateMode ?? false,
+          loginBrowser: (data.loginBrowser as LoginBrowser) || 'default',
           machineIdConfig: {
             autoSwitchOnAccountChange: data.machineIdConfig?.autoSwitchOnAccountChange ?? false,
             bindMachineIdToAccount: data.machineIdConfig?.bindMachineIdToAccount ?? false,
             useBindedMachineId: data.machineIdConfig?.useBindedMachineId ?? true
           },
-          accountMachineIds: data.accountMachineIds ?? {},
+          accountMachineIds: prunedAccountMachineIds,
           machineIdHistory: data.machineIdHistory ?? [],
           currentMachineId: data.currentMachineId ?? '',
           originalMachineId: data.originalMachineId ?? null,
@@ -1370,6 +1483,8 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
       autoSwitchEnabled,
       autoSwitchThreshold,
       autoSwitchInterval,
+      loginPrivateMode,
+      loginBrowser,
       theme,
       darkMode,
       language,
@@ -1397,6 +1512,8 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
         autoSwitchEnabled,
         autoSwitchThreshold,
         autoSwitchInterval,
+        loginPrivateMode,
+        loginBrowser,
         theme,
         darkMode,
         language,
@@ -1484,6 +1601,43 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
     window.api.setProxy?.(enabled, url ?? get().proxyUrl)
   },
 
+  setKproxyRunning: (running, deviceId) => {
+    const prevRunning = get().kproxyRunning
+    const prevConfig = get().machineIdConfig
+    const prevDeviceId = get().kproxyDeviceId
+    const nextDeviceId = deviceId ?? prevDeviceId
+    const shouldDisableMachineIdAutomation =
+      running &&
+      (prevConfig.autoSwitchOnAccountChange || prevConfig.bindMachineIdToAccount || prevConfig.useBindedMachineId)
+
+    set((state) => ({
+      kproxyRunning: running,
+      kproxyDeviceId: nextDeviceId,
+      machineIdConfig: shouldDisableMachineIdAutomation
+        ? {
+            ...state.machineIdConfig,
+            autoSwitchOnAccountChange: false,
+            bindMachineIdToAccount: false,
+            useBindedMachineId: false
+          }
+        : state.machineIdConfig
+    }))
+
+    // 规则：开启 M-Proxy 时，如果当前活跃账户还没绑定，则绑定为该账户当前 machineId（保持稳定）
+    if (running && nextDeviceId) {
+      const { activeAccountId, accountMachineIds, accounts } = get()
+      if (activeAccountId && !accountMachineIds[activeAccountId]) {
+        const activeAccount = accounts.get(activeAccountId)
+        const stableMachineId = activeAccount?.machineId || nextDeviceId
+        get().bindMachineIdToAccount(activeAccountId, stableMachineId)
+      }
+    }
+
+    if (prevRunning !== running || shouldDisableMachineIdAutomation || prevDeviceId !== nextDeviceId) {
+      get().saveToStorage()
+    }
+  },
+
   // ==================== 主题设置 ====================
 
   setTheme: (theme) => {
@@ -1565,6 +1719,11 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
 
   setLoginPrivateMode: (enabled) => {
     set({ loginPrivateMode: enabled })
+    get().saveToStorage()
+  },
+
+  setLoginBrowser: (browser) => {
+    set({ loginBrowser: browser })
     get().saveToStorage()
   },
 
@@ -1814,7 +1973,7 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
 
   // 触发后台刷新（在主进程执行，不阻塞 UI）
   triggerBackgroundRefresh: async () => {
-    const { accounts, autoRefreshConcurrency, autoRefreshSyncInfo, autoSwitchEnabled } = get()
+    const { accounts, autoRefreshConcurrency, autoRefreshSyncInfo, autoSwitchEnabled, accountMachineIds } = get()
     const now = Date.now()
 
     // 筛选需要处理的账号
@@ -1853,7 +2012,7 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
           email: account.email,
           idp: account.idp,
           needsTokenRefresh: !!needsTokenRefresh,
-          machineId: account.machineId,  // 传递账户绑定的设备 ID
+          machineId: accountMachineIds[id] || account.machineId,  // 优先使用绑定 machineId
           credentials: {
             refreshToken: account.credentials.refreshToken || '',
             clientId: account.credentials.clientId,
@@ -2123,9 +2282,18 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
   // ==================== 机器码管理 ====================
 
   setMachineIdConfig: (config) => {
-    set((state) => ({
-      machineIdConfig: { ...state.machineIdConfig, ...config }
-    }))
+    set((state) => {
+      const mergedConfig = { ...state.machineIdConfig, ...config }
+
+      // Hard enforce: M-Proxy 运行时，Machine ID 自动化配置强制关闭
+      if (state.kproxyRunning) {
+        mergedConfig.autoSwitchOnAccountChange = false
+        mergedConfig.bindMachineIdToAccount = false
+        mergedConfig.useBindedMachineId = false
+      }
+
+      return { machineIdConfig: mergedConfig }
+    })
     get().saveToStorage()
   },
 
@@ -2226,11 +2394,28 @@ export const useAccountsStore = create<AccountsStore>()((set, get) => ({
   bindMachineIdToAccount: (accountId, machineId) => {
     const account = get().accounts.get(accountId)
     if (!account) return
+    const existingBoundMachineId = get().accountMachineIds[accountId]
+
+    // 一旦绑定后禁止覆盖，避免设备指纹频繁变化
+    if (existingBoundMachineId) {
+      if (existingBoundMachineId !== machineId) {
+        console.warn(`[MachineId] Binding for account ${accountId} is locked and cannot be overridden`)
+      }
+      return
+    }
 
     // 生成或使用提供的机器码
     const boundMachineId = machineId || crypto.randomUUID()
 
     set((state) => ({
+      accounts: (() => {
+        const accounts = new Map(state.accounts)
+        const target = accounts.get(accountId)
+        if (target) {
+          accounts.set(accountId, { ...target, machineId: boundMachineId })
+        }
+        return accounts
+      })(),
       accountMachineIds: {
         ...state.accountMachineIds,
         [accountId]: boundMachineId

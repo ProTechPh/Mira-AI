@@ -517,7 +517,7 @@ const en = {
     guide1: 'Export and install the CA certificate to your system trust store',
     guide2: 'Set your system/application proxy to',
     guide3: 'Generate or enter a device ID to use for requests',
-    guide4: 'Start the proxy and use Kiro IDE normally',
+    guide4: 'Start the proxy and use Mira normally',
     validDeviceIdFormat: '✓ Valid device ID format',
     invalidLength: '⚠ Invalid length: {{length}}/64',
     caCertificate: 'CA Certificate'

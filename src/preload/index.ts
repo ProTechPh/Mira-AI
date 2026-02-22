@@ -4,8 +4,13 @@ import { electronAPI } from '@electron-toolkit/preload'
 // Custom APIs for renderer
 const api = {
   // 打开外部链接
-  openExternal: (url: string, usePrivateMode?: boolean): void => {
-    ipcRenderer.send('open-external', url, usePrivateMode)
+  openExternal: (url: string, usePrivateMode?: boolean, browser?: string): void => {
+    ipcRenderer.send('open-external', url, usePrivateMode, browser)
+  },
+
+  // 获取已安装浏览器列表（OAuth 可选）
+  getInstalledBrowsers: (): Promise<Array<{ id: string; name: string; isDefault: boolean }>> => {
+    return ipcRenderer.invoke('get-installed-browsers')
   },
 
   // 获取应用版本
@@ -48,6 +53,7 @@ const api = {
   backgroundBatchRefresh: (accounts: Array<{
     id: string
     email: string
+    machineId?: string
     credentials: {
       accessToken: string
       refreshToken?: string
@@ -88,6 +94,7 @@ const api = {
   backgroundBatchCheck: (accounts: Array<{
     id: string
     email: string
+    machineId?: string
     credentials: {
       accessToken: string
       refreshToken?: string
@@ -313,13 +320,13 @@ const api = {
   },
 
   // 启动 Social Auth 登录 (Google/GitHub)
-  startSocialLogin: (provider: 'Google' | 'Github', usePrivateMode?: boolean): Promise<{
+  startSocialLogin: (provider: 'Google' | 'Github', usePrivateMode?: boolean, browser?: string): Promise<{
     success: boolean
     loginUrl?: string
     state?: string
     error?: string
   }> => {
-    return ipcRenderer.invoke('start-social-login', provider, usePrivateMode)
+    return ipcRenderer.invoke('start-social-login', provider, usePrivateMode, browser)
   },
 
   // 交换 Social Auth token
@@ -518,8 +525,17 @@ const api = {
   },
 
   // 打开 Kiro MCP 配置文件
-  openKiroMcpConfig: (type: 'user' | 'workspace'): Promise<{ success: boolean; error?: string }> => {
-    return ipcRenderer.invoke('open-kiro-mcp-config', type)
+  openKiroMcpConfig: (type: 'user' | 'workspace', target?: 'kiro' | 'vscode' | 'claude' | 'continue' | 'kilocode'): Promise<{ success: boolean; error?: string }> => {
+    return ipcRenderer.invoke('open-kiro-mcp-config', type, target || 'kiro')
+  },
+
+  // 获取指定客户端 MCP 配置
+  getMcpConfig: (target?: 'kiro' | 'vscode' | 'claude' | 'continue' | 'kilocode', type?: 'user' | 'workspace'): Promise<{
+    success: boolean
+    mcpConfig?: { mcpServers: Record<string, unknown> }
+    error?: string
+  }> => {
+    return ipcRenderer.invoke('get-mcp-config', target || 'kiro', type || 'user')
   },
 
   // 打开 Kiro Steering 目录
@@ -560,13 +576,13 @@ const api = {
   // ============ MCP 服务器管理 ============
 
   // 保存 MCP 服务器配置
-  saveMcpServer: (name: string, config: { command: string; args?: string[]; env?: Record<string, string> }, oldName?: string): Promise<{ success: boolean; error?: string }> => {
-    return ipcRenderer.invoke('save-mcp-server', name, config, oldName)
+  saveMcpServer: (name: string, config: { command: string; args?: string[]; env?: Record<string, string> }, oldName?: string, target?: 'kiro' | 'vscode' | 'claude' | 'continue' | 'kilocode', type?: 'user' | 'workspace'): Promise<{ success: boolean; error?: string }> => {
+    return ipcRenderer.invoke('save-mcp-server', name, config, oldName, target || 'kiro', type || 'user')
   },
 
   // 删除 MCP 服务器
-  deleteMcpServer: (name: string): Promise<{ success: boolean; error?: string }> => {
-    return ipcRenderer.invoke('delete-mcp-server', name)
+  deleteMcpServer: (name: string, target?: 'kiro' | 'vscode' | 'claude' | 'continue' | 'kilocode', type?: 'user' | 'workspace'): Promise<{ success: boolean; error?: string }> => {
+    return ipcRenderer.invoke('delete-mcp-server', name, target || 'kiro', type || 'user')
   },
 
   // ============ Kiro API 反代服务器 ============

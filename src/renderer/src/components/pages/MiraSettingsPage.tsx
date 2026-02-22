@@ -52,6 +52,8 @@ interface McpConfig {
   mcpServers: Record<string, McpServer>
 }
 
+type McpTarget = 'kiro' | 'vscode' | 'claude' | 'continue' | 'kilocode'
+
 // 默认禁止的危险命令
 const defaultDenyCommands = [
   'rm -rf *',
@@ -136,15 +138,45 @@ export function MiraSettingsPage() {
   const [newDenyCommand, setNewDenyCommand] = useState('')
   const [editingFile, setEditingFile] = useState<string | null>(null)
   const [editingMcp, setEditingMcp] = useState<{ name?: string; server?: McpServer } | null>(null)
+  const [mcpTarget, setMcpTarget] = useState<McpTarget>('kiro')
+  const [mcpScope, setMcpScope] = useState<'user' | 'workspace'>('user')
   const { t } = useTranslation()
   const isEn = t('common.unknown') === 'Unknown'
   const autonomyOptions = isEn ? autonomyOptionsEn : autonomyOptionsZh
   const mcpOptions = isEn ? mcpOptionsEn : mcpOptionsZh
+  const mcpTargetOptions = isEn
+    ? [
+        { value: 'kiro', label: 'Kiro', description: 'Kiro MCP config' },
+        { value: 'vscode', label: 'VS Code', description: 'VS Code MCP config' },
+        { value: 'claude', label: 'Claude', description: 'Claude desktop MCP config' },
+        { value: 'continue', label: 'Continue', description: 'Continue MCP config' },
+        { value: 'kilocode', label: 'Kilo Code', description: 'Kilo Code MCP config' }
+      ]
+    : [
+        { value: 'kiro', label: 'Kiro', description: 'Kiro MCP 配置' },
+        { value: 'vscode', label: 'VS Code', description: 'VS Code MCP 配置' },
+        { value: 'claude', label: 'Claude', description: 'Claude MCP 配置' },
+        { value: 'continue', label: 'Continue', description: 'Continue MCP 配置' },
+        { value: 'kilocode', label: 'Kilo Code', description: 'Kilo Code MCP 配置' }
+      ]
+  const mcpScopeOptions = isEn
+    ? [
+        { value: 'user', label: 'User', description: 'Current user config file' },
+        { value: 'workspace', label: 'Workspace', description: 'Current workspace config file' }
+      ]
+    : [
+        { value: 'user', label: '用户', description: '当前用户配置文件' },
+        { value: 'workspace', label: '工作区', description: '当前工作区配置文件' }
+      ]
 
   useEffect(() => {
     loadKiroSettings()
     loadAvailableModels()
   }, [])
+
+  useEffect(() => {
+    loadMcpConfig()
+  }, [mcpTarget, mcpScope])
 
   const loadAvailableModels = async () => {
     setLoadingModels(true)
@@ -172,9 +204,6 @@ export function MiraSettingsPage() {
         ) as Partial<KiroSettings>
         setSettings({ ...defaultSettings, ...filteredSettings })
       }
-      if (result.mcpConfig) {
-        setMcpConfig(result.mcpConfig as McpConfig)
-      }
       if (result.steeringFiles) {
         setSteeringFiles(result.steeringFiles)
       }
@@ -183,6 +212,20 @@ export function MiraSettingsPage() {
       console.error(err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const loadMcpConfig = async () => {
+    try {
+      const result = await window.api.getMcpConfig(mcpTarget, mcpScope)
+      if (result.success && result.mcpConfig) {
+        setMcpConfig(result.mcpConfig as McpConfig)
+      } else {
+        setMcpConfig({ mcpServers: {} })
+      }
+    } catch (err) {
+      console.error(err)
+      setMcpConfig({ mcpServers: {} })
     }
   }
 
@@ -214,7 +257,7 @@ export function MiraSettingsPage() {
 
   const openMcpConfig = async (type: 'user' | 'workspace') => {
     try {
-      await window.api.openKiroMcpConfig(type)
+      await window.api.openKiroMcpConfig(type, mcpTarget)
     } catch (err) {
       console.error(err)
     }
@@ -274,9 +317,9 @@ export function MiraSettingsPage() {
       return
     }
     try {
-      const result = await window.api.deleteMcpServer(name)
+      const result = await window.api.deleteMcpServer(name, mcpTarget, mcpScope)
       if (result.success) {
-        await loadKiroSettings()
+        await loadMcpConfig()
       } else {
         setError(result.error || (isEn ? 'Failed to delete server' : '删除服务器失败'))
       }
@@ -358,7 +401,15 @@ export function MiraSettingsPage() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={loadKiroSettings} className="bg-background/50 backdrop-blur-sm">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                await loadKiroSettings()
+                await loadMcpConfig()
+              }}
+              className="bg-background/50 backdrop-blur-sm"
+            >
               <RefreshCw className="h-4 w-4 mr-2" />
               {isEn ? 'Refresh' : '刷新'}
             </Button>
@@ -575,6 +626,25 @@ export function MiraSettingsPage() {
         </CardHeader>
         {expandedSections.mcp && (
           <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <p className="font-medium mb-2">{isEn ? 'MCP Client' : 'MCP 客户端'}</p>
+                <Select
+                  value={mcpTarget}
+                  options={mcpTargetOptions}
+                  onChange={(value) => setMcpTarget(value as McpTarget)}
+                />
+              </div>
+              <div>
+                <p className="font-medium mb-2">{isEn ? 'Config Scope' : '配置范围'}</p>
+                <Select
+                  value={mcpScope}
+                  options={mcpScopeOptions}
+                  onChange={(value) => setMcpScope(value as 'user' | 'workspace')}
+                />
+              </div>
+            </div>
+
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">{isEn ? 'Enable MCP' : '启用 MCP'}</p>
@@ -878,8 +948,10 @@ export function MiraSettingsPage() {
         <McpServerEditor
           serverName={editingMcp.name}
           server={editingMcp.server}
+          target={mcpTarget}
+          scope={mcpScope}
           onClose={() => setEditingMcp(null)}
-          onSaved={loadKiroSettings}
+          onSaved={loadMcpConfig}
         />
       )}
     </div>

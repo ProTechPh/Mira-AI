@@ -13,11 +13,13 @@ interface McpServer {
 interface McpServerEditorProps {
   serverName?: string
   server?: McpServer
+  target?: 'kiro' | 'vscode' | 'claude' | 'continue' | 'kilocode'
+  scope?: 'user' | 'workspace'
   onClose: () => void
   onSaved: () => void
 }
 
-export function McpServerEditor({ serverName, server, onClose, onSaved }: McpServerEditorProps) {
+export function McpServerEditor({ serverName, server, target = 'kiro', scope = 'user', onClose, onSaved }: McpServerEditorProps) {
   const [name, setName] = useState(serverName || '')
   const [command, setCommand] = useState(server?.command || '')
   const [args, setArgs] = useState<string[]>(server?.args || [])
@@ -60,7 +62,7 @@ export function McpServerEditor({ serverName, server, onClose, onSaved }: McpSer
       if (serverConfig.args?.length === 0) delete serverConfig.args
       if (Object.keys(serverConfig.env || {}).length === 0) delete serverConfig.env
 
-      const result = await window.api.saveMcpServer(name.trim(), serverConfig, isEdit ? serverName : undefined)
+      const result = await window.api.saveMcpServer(name.trim(), serverConfig, isEdit ? serverName : undefined, target, scope)
       
       if (result.success) {
         onSaved()

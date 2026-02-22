@@ -187,6 +187,20 @@ export interface AccountExportData {
   accounts: Omit<Account, 'isActive'>[]
   groups: AccountGroup[]
   tags: AccountTag[]
+  machineIdConfig?: {
+    autoSwitchOnAccountChange: boolean
+    bindMachineIdToAccount: boolean
+    useBindedMachineId: boolean
+  }
+  accountMachineIds?: Record<string, string>
+  machineIdHistory?: Array<{
+    id: string
+    machineId: string
+    timestamp: number
+    action: 'initial' | 'manual' | 'auto_switch' | 'restore' | 'bind'
+    accountId?: string
+    accountEmail?: string
+  }>
 }
 
 /**

@@ -3,6 +3,7 @@ import { autoUpdater } from 'electron-updater'
 import * as machineIdModule from './machineId'
 import { join, resolve } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { existsSync } from 'fs'
 import { writeFile, readFile } from 'fs/promises'
 import { encode, decode } from 'cbor-x'
 import { ProxyAgent, fetch as undiciFetch, type RequestInit as UndiciRequestInit } from 'undici'
@@ -133,7 +134,7 @@ export function setUseKProxyForApi(enabled: boolean): void {
   useKProxyForApi = enabled
   // 同步设置到 kiroApi.ts
   setUseKProxyForApiInProxy(enabled)
-  console.log(`[API] Use K-Proxy for API requests: ${enabled}`)
+  console.log(`[API] Use M-Proxy for API requests: ${enabled}`)
 }
 
 export function getUseKProxyForApi(): boolean {
@@ -354,8 +355,27 @@ function initProxyServer(): ProxyServer {
 // ============ 隐私模式打开浏览器 ============
 import { exec, execSync } from 'child_process'
 
+type BrowserChoice = 'default' | 'chrome' | 'msedge' | 'firefox' | 'brave' | 'opera' | 'chromium' | 'safari'
+
+interface BrowserOption {
+  id: BrowserChoice
+  name: string
+  isDefault: boolean
+}
+
+const browserDisplayNames: Record<BrowserChoice, string> = {
+  default: 'System Default',
+  chrome: 'Google Chrome',
+  msedge: 'Microsoft Edge',
+  firefox: 'Mozilla Firefox',
+  brave: 'Brave',
+  opera: 'Opera',
+  chromium: 'Chromium',
+  safari: 'Safari'
+}
+
 // 获取 Windows 默认浏览器
-function getWindowsDefaultBrowser(): string {
+function getWindowsDefaultBrowser(): BrowserChoice {
   try {
     // 从注册表读取默认浏览器
     const progId = execSync(
@@ -369,10 +389,216 @@ function getWindowsDefaultBrowser(): string {
     if (progId.includes('BraveHTML') || progId.includes('Brave')) return 'brave'
     if (progId.includes('Opera')) return 'opera'
     
-    return 'unknown'
+    return 'default'
   } catch {
-    return 'unknown'
+    return 'default'
   }
+}
+
+function getDefaultBrowser(): BrowserChoice {
+  if (process.platform === 'win32') {
+    return getWindowsDefaultBrowser()
+  }
+  return 'default'
+}
+
+function isWindowsBrowserInstalled(browser: BrowserChoice): boolean {
+  const pf = process.env.ProgramFiles || 'C:\\Program Files'
+  const pf86 = process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)'
+  const local = process.env.LOCALAPPDATA || ''
+
+  const windowsPaths: Record<Exclude<BrowserChoice, 'default' | 'safari'>, string[]> = {
+    chrome: [
+      `${pf}\\Google\\Chrome\\Application\\chrome.exe`,
+      `${pf86}\\Google\\Chrome\\Application\\chrome.exe`,
+      `${local}\\Google\\Chrome\\Application\\chrome.exe`
+    ],
+    msedge: [
+      `${pf}\\Microsoft\\Edge\\Application\\msedge.exe`,
+      `${pf86}\\Microsoft\\Edge\\Application\\msedge.exe`
+    ],
+    firefox: [
+      `${pf}\\Mozilla Firefox\\firefox.exe`,
+      `${pf86}\\Mozilla Firefox\\firefox.exe`
+    ],
+    brave: [
+      `${pf}\\BraveSoftware\\Brave-Browser\\Application\\brave.exe`,
+      `${pf86}\\BraveSoftware\\Brave-Browser\\Application\\brave.exe`,
+      `${local}\\BraveSoftware\\Brave-Browser\\Application\\brave.exe`
+    ],
+    opera: [
+      `${local}\\Programs\\Opera\\opera.exe`,
+      `${pf}\\Opera\\launcher.exe`,
+      `${pf86}\\Opera\\launcher.exe`
+    ],
+    chromium: [
+      `${pf}\\Chromium\\Application\\chrome.exe`,
+      `${pf86}\\Chromium\\Application\\chrome.exe`,
+      `${local}\\Chromium\\Application\\chrome.exe`
+    ]
+  }
+
+  if (browser === 'default' || browser === 'safari') return false
+  return windowsPaths[browser].some((p) => existsSync(p))
+}
+
+function isCommandAvailable(command: string): boolean {
+  try {
+    const checkCmd = process.platform === 'win32' ? `where ${command}` : `command -v ${command}`
+    execSync(checkCmd, { stdio: 'ignore' })
+    return true
+  } catch {
+    return false
+  }
+}
+
+function getInstalledBrowsers(): BrowserOption[] {
+  const installed = new Set<BrowserChoice>()
+  const platform = process.platform
+  const defaultBrowser = getDefaultBrowser()
+
+  if (platform === 'win32') {
+    const candidates: BrowserChoice[] = ['chrome', 'msedge', 'firefox', 'brave', 'opera', 'chromium']
+    for (const browser of candidates) {
+      if (isWindowsBrowserInstalled(browser)) {
+        installed.add(browser)
+      }
+    }
+  } else if (platform === 'darwin') {
+    const macApps: Array<{ id: BrowserChoice; appPath: string }> = [
+      { id: 'chrome', appPath: '/Applications/Google Chrome.app' },
+      { id: 'msedge', appPath: '/Applications/Microsoft Edge.app' },
+      { id: 'firefox', appPath: '/Applications/Firefox.app' },
+      { id: 'brave', appPath: '/Applications/Brave Browser.app' },
+      { id: 'opera', appPath: '/Applications/Opera.app' },
+      { id: 'chromium', appPath: '/Applications/Chromium.app' },
+      { id: 'safari', appPath: '/Applications/Safari.app' }
+    ]
+    for (const item of macApps) {
+      if (existsSync(item.appPath)) {
+        installed.add(item.id)
+      }
+    }
+  } else {
+    if (isCommandAvailable('google-chrome') || isCommandAvailable('google-chrome-stable')) installed.add('chrome')
+    if (isCommandAvailable('microsoft-edge') || isCommandAvailable('microsoft-edge-stable')) installed.add('msedge')
+    if (isCommandAvailable('firefox')) installed.add('firefox')
+    if (isCommandAvailable('brave-browser')) installed.add('brave')
+    if (isCommandAvailable('opera')) installed.add('opera')
+    if (isCommandAvailable('chromium') || isCommandAvailable('chromium-browser')) installed.add('chromium')
+  }
+
+  const options: BrowserOption[] = [
+    {
+      id: 'default',
+      name: browserDisplayNames.default,
+      isDefault: true
+    }
+  ]
+
+  const sortedInstalled = Array.from(installed).sort((a, b) => {
+    if (a === defaultBrowser) return -1
+    if (b === defaultBrowser) return 1
+    return a.localeCompare(b)
+  })
+
+  for (const browser of sortedInstalled) {
+    options.push({
+      id: browser,
+      name: browserDisplayNames[browser],
+      isDefault: browser === defaultBrowser
+    })
+  }
+
+  return options
+}
+
+function getBrowserOpenCommand(browser: BrowserChoice, url: string, usePrivateMode: boolean): string | null {
+  const platform = process.platform
+
+  if (platform === 'win32') {
+    const privateArgMap: Partial<Record<BrowserChoice, string>> = {
+      chrome: '--incognito',
+      msedge: '-inprivate',
+      firefox: '-private-window',
+      brave: '--incognito',
+      opera: '--private',
+      chromium: '--incognito'
+    }
+    const arg = usePrivateMode ? ` ${privateArgMap[browser] || ''}` : ''
+    return `start ${browser}${arg} "${url}"`
+  }
+
+  if (platform === 'darwin') {
+    const appMap: Partial<Record<BrowserChoice, string>> = {
+      chrome: 'Google Chrome',
+      msedge: 'Microsoft Edge',
+      firefox: 'Firefox',
+      brave: 'Brave Browser',
+      opera: 'Opera',
+      chromium: 'Chromium',
+      safari: 'Safari'
+    }
+
+    const appName = appMap[browser]
+    if (!appName) return null
+    if (usePrivateMode) {
+      if (browser === 'chrome' || browser === 'brave' || browser === 'chromium') {
+        return `open -na "${appName}" --args --incognito "${url}"`
+      }
+      if (browser === 'msedge') {
+        return `open -na "${appName}" --args -inprivate "${url}"`
+      }
+      if (browser === 'firefox') {
+        return `open -na "${appName}" --args -private-window "${url}"`
+      }
+      return `open -na "${appName}" "${url}"`
+    }
+    return `open -na "${appName}" "${url}"`
+  }
+
+  const linuxCmdMap: Partial<Record<BrowserChoice, string[]>> = {
+    chrome: ['google-chrome', 'google-chrome-stable'],
+    msedge: ['microsoft-edge', 'microsoft-edge-stable'],
+    firefox: ['firefox'],
+    brave: ['brave-browser'],
+    opera: ['opera'],
+    chromium: ['chromium', 'chromium-browser']
+  }
+  const cmdCandidates = linuxCmdMap[browser]
+  if (!cmdCandidates?.length) return null
+
+  const command = cmdCandidates.find((cmd) => isCommandAvailable(cmd))
+  if (!command) return null
+
+  const privateArgMap: Partial<Record<BrowserChoice, string>> = {
+    chrome: '--incognito',
+    msedge: '--inprivate',
+    firefox: '-private-window',
+    brave: '--incognito',
+    opera: '--private',
+    chromium: '--incognito'
+  }
+  const arg = usePrivateMode ? ` ${privateArgMap[browser] || ''}` : ''
+  return `${command}${arg} "${url}"`
+}
+
+function openInBrowser(url: string, browser: BrowserChoice, usePrivateMode: boolean): boolean {
+  const command = getBrowserOpenCommand(browser, url, usePrivateMode)
+  if (!command) return false
+
+  exec(command, (err) => {
+    if (err) {
+      console.warn(`[Browser] Failed to open URL in ${browser}:`, err.message)
+      if (usePrivateMode) {
+        openBrowserInPrivateMode(url)
+      } else {
+        shell.openExternal(url)
+      }
+    }
+  })
+
+  return true
 }
 
 // 使用隐私模式打开浏览器
@@ -386,81 +612,59 @@ function openBrowserInPrivateMode(url: string): void {
       const defaultBrowser = getWindowsDefaultBrowser()
       console.log(`[Browser] Detected default browser: ${defaultBrowser}`)
       
-      let command = ''
-      switch (defaultBrowser) {
-        case 'chrome':
-          command = `start chrome --incognito "${url}"`
-          break
-        case 'msedge':
-          command = `start msedge -inprivate "${url}"`
-          break
-        case 'firefox':
-          command = `start firefox -private-window "${url}"`
-          break
-        case 'brave':
-          command = `start brave --incognito "${url}"`
-          break
-        case 'opera':
-          command = `start opera --private "${url}"`
-          break
-        default:
-          // 未知浏览器，尝试常见浏览器
-          console.log('[Browser] Unknown default browser, trying common browsers...')
-          exec(`start chrome --incognito "${url}"`, (err) => {
-            if (err) {
-              exec(`start msedge -inprivate "${url}"`, (err2) => {
-                if (err2) {
-                  exec(`start firefox -private-window "${url}"`, (err3) => {
-                    if (err3) {
-                      console.log('[Browser] Fallback to default browser (non-private)')
-                      shell.openExternal(url)
-                    }
-                  })
-                }
-              })
-            }
-          })
-          return
+      // 先尝试系统默认浏览器
+      if (defaultBrowser !== 'default' && openInBrowser(url, defaultBrowser, true)) {
+        return
       }
-      
-      exec(command, (err) => {
-        if (err) {
-          console.log(`[Browser] Failed to open ${defaultBrowser}, fallback to default`)
-          shell.openExternal(url)
+
+      // 默认浏览器识别失败时，尝试常见浏览器
+      console.log('[Browser] Unknown default browser, trying common browsers...')
+      const fallbacks: BrowserChoice[] = ['chrome', 'msedge', 'firefox', 'brave', 'opera', 'chromium']
+      for (const browser of fallbacks) {
+        if (openInBrowser(url, browser, true)) {
+          return
         }
-      })
+      }
+      shell.openExternal(url)
     } else if (platform === 'darwin') {
       // macOS: 尝试 Chrome -> Firefox -> 默认浏览器
-      exec(`open -na "Google Chrome" --args --incognito "${url}"`, (err) => {
-        if (err) {
-          exec(`open -a Firefox --args -private-window "${url}"`, (err2) => {
-            if (err2) {
-              console.log('[Browser] Fallback to default browser')
-              shell.openExternal(url)
-            }
-          })
-        }
-      })
+      if (!openInBrowser(url, 'chrome', true) && !openInBrowser(url, 'firefox', true)) {
+        console.log('[Browser] Fallback to default browser')
+        shell.openExternal(url)
+      }
     } else {
       // Linux: 尝试 Chrome -> Chromium -> Firefox
-      exec(`google-chrome --incognito "${url}"`, (err) => {
-        if (err) {
-          exec(`chromium --incognito "${url}"`, (err2) => {
-            if (err2) {
-              exec(`firefox -private-window "${url}"`, (err3) => {
-                if (err3) {
-                  console.log('[Browser] Fallback to default browser')
-                  shell.openExternal(url)
-                }
-              })
-            }
-          })
-        }
-      })
+      if (!openInBrowser(url, 'chrome', true) && !openInBrowser(url, 'chromium', true) && !openInBrowser(url, 'firefox', true)) {
+        console.log('[Browser] Fallback to default browser')
+        shell.openExternal(url)
+      }
     }
   } catch (error) {
     console.error('[Browser] Error opening in private mode:', error)
     shell.openExternal(url)
+  }
+}
+
+function openUrlWithBrowser(url: string, usePrivateMode: boolean = false, browser: BrowserChoice = 'default'): void {
+  const browserChoice = browser || 'default'
+
+  if (browserChoice === 'default') {
+    if (usePrivateMode) {
+      openBrowserInPrivateMode(url)
+    } else {
+      shell.openExternal(url)
+    }
+    return
+  }
+
+  const opened = openInBrowser(url, browserChoice, usePrivateMode)
+  if (!opened) {
+    console.warn(`[Browser] Selected browser not available: ${browserChoice}, fallback to default`)
+    if (usePrivateMode) {
+      openBrowserInPrivateMode(url)
+    } else {
+      shell.openExternal(url)
+    }
   }
 }
 
@@ -1666,14 +1870,15 @@ app.whenReady().then(async () => {
   })
 
   // IPC: 打开外部链接
-  ipcMain.on('open-external', (_event, url: string, usePrivateMode?: boolean) => {
+  ipcMain.on('open-external', (_event, url: string, usePrivateMode?: boolean, browser?: BrowserChoice) => {
     if (typeof url === 'string' && (url.startsWith('http://') || url.startsWith('https://'))) {
-      if (usePrivateMode) {
-        openBrowserInPrivateMode(url)
-      } else {
-        shell.openExternal(url)
-      }
+      openUrlWithBrowser(url, Boolean(usePrivateMode), browser || 'default')
     }
+  })
+
+  // IPC: 获取可用浏览器列表（用于 OAuth 浏览器选择）
+  ipcMain.handle('get-installed-browsers', async () => {
+    return getInstalledBrowsers()
   })
 
   // ============ 托盘相关 IPC ============
@@ -2697,6 +2902,7 @@ app.whenReady().then(async () => {
   ipcMain.handle('background-batch-check', async (_event, accounts: Array<{
     id: string
     email: string
+    machineId?: string
     credentials: {
       accessToken: string
       refreshToken?: string
@@ -2741,8 +2947,9 @@ app.whenReady().then(async () => {
             }
 
             // 调用 API 获取用量和用户信息（根据配置选择 REST 或 CBOR 格式）
+            console.log(`[BackgroundCheck] Account ${account.id} machineId: ${account.machineId || 'undefined'}`)
             const [usageRes, userInfoRes] = await Promise.allSettled([
-              getUsageAndLimits(accessToken, idp, undefined, undefined, account.credentials?.region) as Promise<{
+              getUsageAndLimits(accessToken, idp, undefined, account.machineId, account.credentials?.region) as Promise<{
                 usageBreakdownList?: Array<{
                   resourceType?: string
                   displayName?: string
@@ -2779,12 +2986,7 @@ app.whenReady().then(async () => {
                   userId?: string
                 }
               }>,
-              kiroApiRequest<{
-                email?: string
-                userId?: string
-                status?: string
-                idp?: string
-              }>('GetUserInfo', { origin: 'KIRO_IDE' }, accessToken, idp).catch(() => null)
+              getUserInfo(accessToken, idp, account.machineId).catch(() => null)
             ])
 
             // 解析响应（kiroApiRequest 直接返回数据或抛出异常）
@@ -3816,8 +4018,8 @@ app.whenReady().then(async () => {
   })
 
   // IPC: 启动 Social Auth 登录 (Google/GitHub)
-  ipcMain.handle('start-social-login', async (_event, provider: 'Google' | 'Github', usePrivateMode?: boolean) => {
-    console.log(`[Login] Starting ${provider} Social Auth login... (privateMode: ${usePrivateMode})`)
+  ipcMain.handle('start-social-login', async (_event, provider: 'Google' | 'Github', usePrivateMode?: boolean, browser?: BrowserChoice) => {
+    console.log(`[Login] Starting ${provider} Social Auth login... (privateMode: ${usePrivateMode}, browser: ${browser || 'default'})`)
     
     const crypto = await import('crypto')
 
@@ -3847,12 +4049,7 @@ app.whenReady().then(async () => {
     const urlStr = loginUrl.toString()
     console.log(`[Login] Opening browser for ${provider} login...`)
 
-    // 根据是否使用隐私模式选择打开方式
-    if (usePrivateMode) {
-      openBrowserInPrivateMode(urlStr)
-    } else {
-      shell.openExternal(urlStr)
-    }
+    openUrlWithBrowser(urlStr, Boolean(usePrivateMode), browser || 'default')
 
     return {
       success: true,
@@ -3947,7 +4144,50 @@ app.whenReady().then(async () => {
     }
   })
 
-  // ============ Kiro 设置管理 IPC ============
+// ============ Kiro 设置管理 IPC ============
+
+  type McpClientTarget = 'kiro' | 'vscode' | 'claude' | 'continue' | 'kilocode'
+
+  const getMcpConfigPath = async (
+    target: McpClientTarget,
+    type: 'user' | 'workspace' = 'user'
+  ): Promise<string> => {
+    const os = await import('os')
+    const path = await import('path')
+    const homeDir = os.homedir()
+    const appData = process.env.APPDATA || path.join(homeDir, 'AppData', 'Roaming')
+    const workspaceDir = process.cwd()
+
+    if (type === 'workspace') {
+      switch (target) {
+        case 'vscode':
+          return path.join(workspaceDir, '.vscode', 'mcp.json')
+        case 'claude':
+          return path.join(workspaceDir, '.claude', 'mcp.json')
+        case 'continue':
+          return path.join(workspaceDir, '.continue', 'mcp.json')
+        case 'kilocode':
+          return path.join(workspaceDir, '.kilo', 'settings', 'mcp.json')
+        case 'kiro':
+        default:
+          return path.join(workspaceDir, '.kiro', 'settings', 'mcp.json')
+      }
+    }
+
+    switch (target) {
+      case 'vscode':
+        return path.join(appData, 'Code', 'User', 'mcp.json')
+      case 'claude':
+        return path.join(homeDir, '.claude', 'mcp.json')
+      case 'continue':
+        return path.join(homeDir, '.continue', 'mcp.json')
+      case 'kilocode':
+        return path.join(homeDir, '.kilo', 'settings', 'mcp.json')
+      case 'kiro':
+      default:
+        return path.join(homeDir, '.kiro', 'settings', 'mcp.json')
+    }
+  }
 
   // IPC: 获取 Kiro 设置
   ipcMain.handle('get-kiro-settings', async () => {
@@ -3959,7 +4199,7 @@ app.whenReady().then(async () => {
       const homeDir = os.homedir()
       const kiroSettingsPath = path.join(homeDir, 'AppData', 'Roaming', 'Kiro', 'User', 'settings.json')
       const kiroSteeringPath = path.join(homeDir, '.kiro', 'steering')
-      const kiroMcpUserPath = path.join(homeDir, '.kiro', 'settings', 'mcp.json')
+      const kiroMcpUserPath = await getMcpConfigPath('kiro', 'user')
       
       let settings = {}
       let mcpConfig = { mcpServers: {} }
@@ -4116,19 +4356,10 @@ app.whenReady().then(async () => {
   })
 
   // IPC: 打开 Kiro MCP 配置文件
-  ipcMain.handle('open-kiro-mcp-config', async (_event, type: 'user' | 'workspace') => {
+  ipcMain.handle('open-kiro-mcp-config', async (_event, type: 'user' | 'workspace', target: McpClientTarget = 'kiro') => {
     try {
-      const os = await import('os')
       const path = await import('path')
-      const homeDir = os.homedir()
-      
-      let configPath: string
-      if (type === 'user') {
-        configPath = path.join(homeDir, '.kiro', 'settings', 'mcp.json')
-      } else {
-        // 工作区配置，打开当前工作区的 .kiro/settings/mcp.json
-        configPath = path.join(process.cwd(), '.kiro', 'settings', 'mcp.json')
-      }
+      const configPath = await getMcpConfigPath(target, type)
       
       // 如果文件不存在，创建空配置
       const fs = await import('fs')
@@ -4145,6 +4376,25 @@ app.whenReady().then(async () => {
     } catch (error) {
       console.error('[KiroSettings] Failed to open MCP config:', error)
       return { success: false, error: error instanceof Error ? error.message : 'Failed to open MCP config' }
+    }
+  })
+
+  // IPC: 获取指定客户端/作用域的 MCP 配置
+  ipcMain.handle('get-mcp-config', async (_event, target: McpClientTarget = 'kiro', type: 'user' | 'workspace' = 'user') => {
+    try {
+      const fs = await import('fs')
+      const mcpPath = await getMcpConfigPath(target, type)
+      let mcpConfig: { mcpServers: Record<string, unknown> } = { mcpServers: {} }
+
+      if (fs.existsSync(mcpPath)) {
+        const content = fs.readFileSync(mcpPath, 'utf-8')
+        mcpConfig = JSON.parse(content)
+      }
+
+      return { success: true, mcpConfig }
+    } catch (error) {
+      console.error('[MCP] Failed to get MCP config:', error)
+      return { success: false, error: error instanceof Error ? error.message : 'Failed to get MCP config' }
     }
   })
 
@@ -5202,13 +5452,20 @@ app.whenReady().then(async () => {
   // ============ MCP 服务器管理 IPC ============
 
   // IPC: 保存 MCP 服务器配置
-  ipcMain.handle('save-mcp-server', async (_event, name: string, config: { command: string; args?: string[]; env?: Record<string, string> }, oldName?: string) => {
+  ipcMain.handle(
+    'save-mcp-server',
+    async (
+      _event,
+      name: string,
+      config: { command: string; args?: string[]; env?: Record<string, string> },
+      oldName?: string,
+      target: McpClientTarget = 'kiro',
+      type: 'user' | 'workspace' = 'user'
+    ) => {
     try {
-      const os = await import('os')
       const fs = await import('fs')
       const path = await import('path')
-      const homeDir = os.homedir()
-      const mcpPath = path.join(homeDir, '.kiro', 'settings', 'mcp.json')
+      const mcpPath = await getMcpConfigPath(target, type)
       
       // 读取现有配置
       let mcpConfig: { mcpServers: Record<string, unknown> } = { mcpServers: {} }
@@ -5232,22 +5489,19 @@ app.whenReady().then(async () => {
       }
       
       fs.writeFileSync(mcpPath, JSON.stringify(mcpConfig, null, 2))
-      console.log('[KiroSettings] Saved MCP server:', name)
+      console.log(`[MCP] Saved MCP server (${target}/${type}):`, name)
       return { success: true }
     } catch (error) {
-      console.error('[KiroSettings] Failed to save MCP server:', error)
+      console.error('[MCP] Failed to save MCP server:', error)
       return { success: false, error: error instanceof Error ? error.message : 'Failed to save MCP server' }
     }
   })
 
   // IPC: 删除 MCP 服务器
-  ipcMain.handle('delete-mcp-server', async (_event, name: string) => {
+  ipcMain.handle('delete-mcp-server', async (_event, name: string, target: McpClientTarget = 'kiro', type: 'user' | 'workspace' = 'user') => {
     try {
-      const os = await import('os')
       const fs = await import('fs')
-      const path = await import('path')
-      const homeDir = os.homedir()
-      const mcpPath = path.join(homeDir, '.kiro', 'settings', 'mcp.json')
+      const mcpPath = await getMcpConfigPath(target, type)
       
       if (!fs.existsSync(mcpPath)) {
         return { success: false, error: 'Configuration file does not exist' }
@@ -5262,10 +5516,10 @@ app.whenReady().then(async () => {
       
       delete mcpConfig.mcpServers[name]
       fs.writeFileSync(mcpPath, JSON.stringify(mcpConfig, null, 2))
-      console.log('[KiroSettings] Deleted MCP server:', name)
+      console.log(`[MCP] Deleted MCP server (${target}/${type}):`, name)
       return { success: true }
     } catch (error) {
-      console.error('[KiroSettings] Failed to delete MCP server:', error)
+      console.error('[MCP] Failed to delete MCP server:', error)
       return { success: false, error: error instanceof Error ? error.message : 'Failed to delete MCP server' }
     }
   })

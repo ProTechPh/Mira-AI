@@ -167,6 +167,17 @@ export function ProxyPanel() {
     }
   }, [])
 
+  const loadAvailableModels = useCallback(async () => {
+    try {
+      const result = await window.api.proxyGetModels()
+      if (result.success && result.models) {
+        setAvailableModels(result.models.map((m: { id: string; name?: string }) => ({ id: m.id, name: m.name || m.id })))
+      }
+    } catch {
+      // ignore model fetch failures in settings panel
+    }
+  }, [])
+
   // 同步账号到反代池
   const syncAccounts = useCallback(async () => {
     setIsSyncing(true)
@@ -259,6 +270,7 @@ export function ProxyPanel() {
     try {
       const result = await window.api.proxyRefreshModels()
       if (result.success) {
+        await loadAvailableModels()
         setRefreshSuccess(true)
         setTimeout(() => setRefreshSuccess(false), 2000)
       } else {
@@ -278,7 +290,7 @@ export function ProxyPanel() {
         setRecentLogs(result.logs)
       }
     })
-  }, [])
+  }, [loadAvailableModels])
 
   // 保存日志（防抖）
   useEffect(() => {
@@ -292,6 +304,7 @@ export function ProxyPanel() {
   // 初始化
   useEffect(() => {
     fetchStatus()
+    loadAvailableModels()
 
     // 监听事件
     const unsubRequest = window.api.onProxyRequest((info) => {
@@ -342,7 +355,7 @@ export function ProxyPanel() {
       unsubError()
       unsubStatus()
     }
-  }, [fetchStatus])
+  }, [fetchStatus, loadAvailableModels])
 
   // 账号变化时同步
   useEffect(() => {
@@ -728,20 +741,23 @@ export function ProxyPanel() {
               <div className="space-y-2">
                 <Label>{t('proxyPanel.modelThinkingMode')}</Label>
                 <div className="grid grid-cols-4 gap-2 px-3 py-2 rounded-md border border-input bg-transparent">
-                  {['auto', 'claude-3.7-sonnet', 'claude-haiku-4.5', 'claude-sonnet-4', 'claude-sonnet-4.5', 'deepseek-3.2', 'minimax-m2.1', 'qwen3-coder-next'].map(model => (
-                    <div key={model} className="flex items-center gap-1.5">
+                  {availableModels.map((model) => (
+                    <div key={model.id} className="flex items-center gap-1.5">
                       <Switch
-                        checked={(config as any).modelThinkingMode?.[model] || false}
+                        checked={(config as any).modelThinkingMode?.[model.id] || false}
                         onCheckedChange={(checked) => {
-                          const newMode = { ...(config as any).modelThinkingMode, [model]: checked }
+                          const newMode = { ...(config as any).modelThinkingMode, [model.id]: checked }
                           setConfig(prev => ({ ...prev, modelThinkingMode: newMode } as any))
                           window.api.proxyUpdateConfig({ modelThinkingMode: newMode } as any)
                         }}
                         disabled={isRunning}
                       />
-                      <span className="text-xs truncate">{model.replace('claude-', '')}</span>
+                      <span className="text-xs truncate" title={model.id}>{model.name || model.id}</span>
                     </div>
                   ))}
+                  {availableModels.length === 0 && (
+                    <span className="text-xs text-muted-foreground col-span-4">{t('proxyPanel.noModels')}</span>
+                  )}
                 </div>
                 <p className="text-xs text-muted-foreground">{t('proxyPanel.modelThinkingModeHint')}</p>
               </div>
