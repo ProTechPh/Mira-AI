@@ -17,6 +17,8 @@ interface AccountData {
   autoSwitchEnabled?: boolean
   autoSwitchThreshold?: number
   autoSwitchInterval?: number
+  loginPrivateMode?: boolean
+  loginBrowser?: string
   theme?: string
   darkMode?: boolean
   language?: 'auto' | 'en' | 'zh'
@@ -114,7 +116,9 @@ interface StatusResult {
 }
 
 interface KiroApi {
-  openExternal: (url: string, usePrivateMode?: boolean) => void
+  openExternal: (url: string, usePrivateMode?: boolean, browser?: string) => void
+  getInstalledBrowsers: () => Promise<Array<{ id: string; name: string; isDefault: boolean }>
+  >
   getAppVersion: () => Promise<string>
   onAuthCallback: (callback: (data: { code: string; state: string }) => void) => () => void
 
@@ -148,6 +152,7 @@ interface KiroApi {
   backgroundBatchCheck: (accounts: Array<{
     id: string
     email: string
+    machineId?: string
     credentials: {
       accessToken: string
       refreshToken?: string
@@ -349,7 +354,7 @@ interface KiroApi {
   cancelIamSsoLogin: () => Promise<{ success: boolean }>
 
   // 启动 Social Auth 登录 (Google/GitHub)
-  startSocialLogin: (provider: 'Google' | 'Github', usePrivateMode?: boolean) => Promise<{
+  startSocialLogin: (provider: 'Google' | 'Github', usePrivateMode?: boolean, browser?: string) => Promise<{
     success: boolean
     loginUrl?: string
     state?: string
@@ -478,8 +483,13 @@ interface KiroApi {
   // 保存 Kiro 设置
   saveKiroSettings: (settings: Record<string, unknown>) => Promise<{ success: boolean; error?: string }>
 
-  // 打开 Kiro MCP 配置文件
-  openKiroMcpConfig: (type: 'user' | 'workspace') => Promise<{ success: boolean; error?: string }>
+  // 打开 MCP 配置文件
+  openKiroMcpConfig: (type: 'user' | 'workspace', target?: 'kiro' | 'vscode' | 'claude' | 'continue' | 'kilocode') => Promise<{ success: boolean; error?: string }>
+  getMcpConfig: (target?: 'kiro' | 'vscode' | 'claude' | 'continue' | 'kilocode', type?: 'user' | 'workspace') => Promise<{
+    success: boolean
+    mcpConfig?: { mcpServers: Record<string, unknown> }
+    error?: string
+  }>
 
   // 打开 Kiro Steering 目录
   openKiroSteeringFolder: () => Promise<{ success: boolean; error?: string }>
@@ -505,10 +515,10 @@ interface KiroApi {
   // ============ MCP 服务器管理 ============
 
   // 保存 MCP 服务器配置
-  saveMcpServer: (name: string, config: { command: string; args?: string[]; env?: Record<string, string> }, oldName?: string) => Promise<{ success: boolean; error?: string }>
+  saveMcpServer: (name: string, config: { command: string; args?: string[]; env?: Record<string, string> }, oldName?: string, target?: 'kiro' | 'vscode' | 'claude' | 'continue' | 'kilocode', type?: 'user' | 'workspace') => Promise<{ success: boolean; error?: string }>
 
   // 删除 MCP 服务器
-  deleteMcpServer: (name: string) => Promise<{ success: boolean; error?: string }>
+  deleteMcpServer: (name: string, target?: 'kiro' | 'vscode' | 'claude' | 'continue' | 'kilocode', type?: 'user' | 'workspace') => Promise<{ success: boolean; error?: string }>
 
   // ============ Kiro API 反代服务器 ============
 

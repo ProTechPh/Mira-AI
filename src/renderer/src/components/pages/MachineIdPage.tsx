@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useAccountsStore } from '@/store/accounts'
-import { Card, CardContent, CardHeader, CardTitle, Button, Badge } from '../ui'
+import { Card, CardContent, CardHeader, CardTitle, Button, Badge, Alert, AlertDescription } from '../ui'
 import { useTranslation } from '@/hooks/useTranslation'
 import { 
   Fingerprint, 
@@ -22,7 +22,8 @@ import {
   Check,
   X,
   Users,
-  Search
+  Search,
+  Lock
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -35,6 +36,7 @@ export function MachineIdPage() {
     accountMachineIds,
     machineIdHistory,
     accounts,
+    activeAccountId,
     setMachineIdConfig,
     refreshCurrentMachineId,
     changeMachineId,
@@ -55,6 +57,8 @@ export function MachineIdPage() {
   const [editingMachineId, setEditingMachineId] = useState('')
   const [accountSearchQuery, setAccountSearchQuery] = useState('')
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [kproxyRunning, setKproxyRunning] = useState(false)
+  const [conflictWarning, setConflictWarning] = useState<string | null>(null)
 
   // 初始化
   useEffect(() => {
@@ -79,6 +83,44 @@ export function MachineIdPage() {
     }
     init()
   }, [refreshCurrentMachineId])
+
+  // 监听 M-Proxy 状态，用于冲突提示
+  useEffect(() => {
+    const loadKproxyStatus = async () => {
+      try {
+        const status = await window.api.kproxyGetStatus()
+        setKproxyRunning(status.running)
+      } catch {
+        setKproxyRunning(false)
+      }
+    }
+
+    loadKproxyStatus()
+    const unsub = window.api.onKproxyStatusChange((status) => {
+      setKproxyRunning(status.running)
+    })
+
+    return () => {
+      unsub()
+    }
+  }, [])
+
+  const handleAutomationToggle = (
+    key: 'autoSwitchOnAccountChange' | 'bindMachineIdToAccount' | 'useBindedMachineId',
+    currentValue: boolean
+  ) => {
+    const nextValue = !currentValue
+    if (nextValue && kproxyRunning) {
+      setConflictWarning(
+        isEn
+          ? 'Cannot enable Machine ID automation while M-Proxy is running. Stop M-Proxy first.'
+          : 'M-Proxy 运行中，不能启用机器码自动化。请先停止 M-Proxy。'
+      )
+      return
+    }
+    setConflictWarning(null)
+    setMachineIdConfig({ [key]: nextValue })
+  }
 
   // 复制机器码到剪贴板
   const copyToClipboard = (text: string, id: string = 'default') => {
@@ -158,12 +200,30 @@ export function MachineIdPage() {
 
   // 开始编辑账户机器码
   const startEditAccountMachineId = (accountId: string) => {
+    if (accountMachineIds[accountId]) {
+      setConflictWarning(
+        isEn
+          ? 'This account machine ID is locked after binding and cannot be overridden.'
+          : '该账户机器码绑定后已锁定，不能覆盖修改。'
+      )
+      return
+    }
     setEditingAccountId(accountId)
     setEditingMachineId(accountMachineIds[accountId] || '')
   }
 
   // 保存账户机器码
   const saveAccountMachineId = (accountId: string) => {
+    if (accountMachineIds[accountId]) {
+      setConflictWarning(
+        isEn
+          ? 'This account machine ID is locked after binding and cannot be overridden.'
+          : '该账户机器码绑定后已锁定，不能覆盖修改。'
+      )
+      setEditingAccountId(null)
+      setEditingMachineId('')
+      return
+    }
     if (editingMachineId.trim()) {
       bindMachineIdToAccount(accountId, editingMachineId.trim())
     }
@@ -179,20 +239,19 @@ export function MachineIdPage() {
 
   // 为账户生成随机机器码
   const randomizeAccountMachineId = (accountId: string) => {
+    if (accountMachineIds[accountId]) {
+      setConflictWarning(
+        isEn
+          ? 'This account machine ID is locked after binding and cannot be overridden.'
+          : '该账户机器码绑定后已锁定，不能覆盖修改。'
+      )
+      return
+    }
     const newMachineId = generateRandomUUID()
     bindMachineIdToAccount(accountId, newMachineId)
     if (editingAccountId === accountId) {
       setEditingMachineId(newMachineId)
     }
-  }
-
-  // 删除账户机器码绑定
-  const removeAccountMachineId = (accountId: string) => {
-    const { accountMachineIds: currentBindings } = useAccountsStore.getState()
-    const newBindings = { ...currentBindings }
-    delete newBindings[accountId]
-    useAccountsStore.setState({ accountMachineIds: newBindings })
-    useAccountsStore.getState().saveToStorage()
   }
 
   // 格式化时间
@@ -212,6 +271,13 @@ export function MachineIdPage() {
 
   // 获取账户绑定数量
   const boundAccountCount = Object.keys(accountMachineIds).length
+  const activeBoundMachineId = activeAccountId ? accountMachineIds[activeAccountId] : undefined
+  const activeMachineIdSource: 'M-Proxy' | 'Bound' | 'System' =
+    kproxyRunning
+      ? 'M-Proxy'
+      : (machineIdConfig.bindMachineIdToAccount && machineIdConfig.useBindedMachineId && !!activeBoundMachineId)
+        ? 'Bound'
+        : 'System'
 
   return (
     <div className="p-6 space-y-6">
@@ -532,6 +598,43 @@ export function MachineIdPage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0 divide-y">
+          <div className="flex items-center justify-between p-5 bg-muted/20">
+            <div>
+              <p className="font-medium">{isEn ? 'Active machine ID source' : '当前机器码来源'}</p>
+              <p className="text-sm text-muted-foreground">
+                {isEn
+                  ? 'Current source used for account API requests'
+                  : '当前账号 API 请求使用的机器码来源'}
+              </p>
+            </div>
+            <Badge
+              className={cn(
+                activeMachineIdSource === 'M-Proxy' && 'bg-emerald-600 hover:bg-emerald-600 text-white',
+                activeMachineIdSource === 'Bound' && 'bg-primary/90 hover:bg-primary/90 text-primary-foreground',
+                activeMachineIdSource === 'System' && 'bg-muted text-foreground'
+              )}
+            >
+              {activeMachineIdSource}
+            </Badge>
+          </div>
+          {kproxyRunning && (
+            <div className="p-4">
+              <Alert variant="destructive">
+                <AlertDescription>
+                  {isEn
+                    ? 'M-Proxy is running. Do not enable Machine ID automation and M-Proxy at the same time.'
+                    : 'M-Proxy 正在运行。请勿同时启用机器码自动化和 M-Proxy。'}
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
+          {conflictWarning && (
+            <div className="p-4">
+              <Alert variant="destructive">
+                <AlertDescription>{conflictWarning}</AlertDescription>
+              </Alert>
+            </div>
+          )}
           {/* 切号时自动更换 */}
           <div className="flex items-center justify-between p-5 hover:bg-muted/50 transition-colors">
             <div className="flex items-center gap-4">
@@ -554,7 +657,7 @@ export function MachineIdPage() {
             <Button
               variant={machineIdConfig.autoSwitchOnAccountChange ? "default" : "outline"}
               size="sm"
-              onClick={() => setMachineIdConfig({ autoSwitchOnAccountChange: !machineIdConfig.autoSwitchOnAccountChange })}
+              onClick={() => handleAutomationToggle('autoSwitchOnAccountChange', machineIdConfig.autoSwitchOnAccountChange)}
               className={cn(
                 "min-w-[80px]",
                 machineIdConfig.autoSwitchOnAccountChange && "bg-primary hover:bg-primary/90"
@@ -593,7 +696,7 @@ export function MachineIdPage() {
             <Button
               variant={machineIdConfig.bindMachineIdToAccount ? "default" : "outline"}
               size="sm"
-              onClick={() => setMachineIdConfig({ bindMachineIdToAccount: !machineIdConfig.bindMachineIdToAccount })}
+              onClick={() => handleAutomationToggle('bindMachineIdToAccount', machineIdConfig.bindMachineIdToAccount)}
               className={cn(
                 "min-w-[80px]",
                 machineIdConfig.bindMachineIdToAccount && "bg-primary hover:bg-primary/90"
@@ -626,7 +729,7 @@ export function MachineIdPage() {
               <Button
                 variant={machineIdConfig.useBindedMachineId ? "default" : "outline"}
                 size="sm"
-                onClick={() => setMachineIdConfig({ useBindedMachineId: !machineIdConfig.useBindedMachineId })}
+                onClick={() => handleAutomationToggle('useBindedMachineId', machineIdConfig.useBindedMachineId)}
                 className={cn(
                   "min-w-[80px]",
                   machineIdConfig.useBindedMachineId && "bg-primary hover:bg-primary/90"
@@ -749,6 +852,7 @@ export function MachineIdPage() {
                 .map((account) => {
                 const boundMachineId = accountMachineIds[account.id]
                 const isEditing = editingAccountId === account.id
+                const isLocked = !!boundMachineId
                 
                 return (
                   <div key={account.id} className="p-3 bg-muted rounded-lg">
@@ -773,6 +877,12 @@ export function MachineIdPage() {
                             {isEn ? 'Bound' : '已绑定'}
                           </Badge>
                         )}
+                        {isLocked && (
+                          <Badge variant="secondary" className="text-xs">
+                            <Lock className="h-3 w-3 mr-1" />
+                            {isEn ? 'Locked' : '已锁定'}
+                          </Badge>
+                        )}
                       </div>
                       <div className="flex items-center gap-1">
                         {!isEditing ? (
@@ -783,6 +893,7 @@ export function MachineIdPage() {
                               className="h-7 w-7 p-0"
                               onClick={() => startEditAccountMachineId(account.id)}
                               title={isEn ? 'Edit' : '编辑'}
+                              disabled={isLocked}
                             >
                               <Edit3 className="h-3.5 w-3.5" />
                             </Button>
@@ -792,6 +903,7 @@ export function MachineIdPage() {
                               className="h-7 w-7 p-0"
                               onClick={() => randomizeAccountMachineId(account.id)}
                               title={isEn ? 'Random' : '随机'}
+                              disabled={isLocked}
                             >
                               <Shuffle className="h-3.5 w-3.5" />
                             </Button>
@@ -809,11 +921,11 @@ export function MachineIdPage() {
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="h-7 w-7 p-0 text-destructive hover:text-destructive"
-                                  onClick={() => removeAccountMachineId(account.id)}
-                                  title={isEn ? 'Delete' : '删除'}
+                                  className="h-7 w-7 p-0"
+                                  disabled
+                                  title={isEn ? 'Locked after bind' : '绑定后锁定'}
                                 >
-                                  <Trash2 className="h-3.5 w-3.5" />
+                                  <Lock className="h-3.5 w-3.5" />
                                 </Button>
                               </>
                             )}
@@ -843,6 +955,7 @@ export function MachineIdPage() {
                               className="h-7 w-7 p-0"
                               onClick={() => randomizeAccountMachineId(account.id)}
                               title={isEn ? 'Random' : '随机'}
+                              disabled={isLocked}
                             >
                               <Shuffle className="h-3.5 w-3.5" />
                             </Button>

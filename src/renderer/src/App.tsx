@@ -19,7 +19,8 @@ function App(): React.JSX.Element {
     accounts,
     activeAccountId,
     setActiveAccount,
-    checkAndRefreshExpiringTokens
+    checkAndRefreshExpiringTokens,
+    setKproxyRunning
   } = useAccountsStore()
 
   // 切换到下一个可用账户
@@ -134,6 +135,42 @@ function App(): React.JSX.Element {
       unsubscribe()
     }
   }, [handleBackgroundCheckResult])
+
+  // 全局同步 M-Proxy 运行状态，并在运行时强制关闭 Machine ID 自动化
+  useEffect(() => {
+    let mounted = true
+
+    const syncKproxyStatus = async () => {
+      try {
+        const status = await window.api.kproxyGetStatus()
+        if (mounted) {
+          const config = (status.config || {}) as { deviceId?: string }
+          setKproxyRunning(status.running, config.deviceId)
+        }
+      } catch {
+        if (mounted) {
+          setKproxyRunning(false)
+        }
+      }
+    }
+
+    syncKproxyStatus()
+
+    const unsubscribe = window.api.onKproxyStatusChange(async (status) => {
+      try {
+        const latest = await window.api.kproxyGetStatus()
+        const config = (latest.config || {}) as { deviceId?: string }
+        setKproxyRunning(status.running, config.deviceId)
+      } catch {
+        setKproxyRunning(status.running)
+      }
+    })
+
+    return () => {
+      mounted = false
+      unsubscribe()
+    }
+  }, [setKproxyRunning])
 
   const renderPage = () => {
     switch (currentPage) {

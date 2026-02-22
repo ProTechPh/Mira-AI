@@ -60,7 +60,7 @@ type ImportMode = 'oidc' | 'sso' | 'login'
 type LoginType = 'builderid' | 'google' | 'github' | 'iamsso'
 
 export function AddAccountDialog({ isOpen, onClose }: AddAccountDialogProps): React.ReactNode {
-  const { addAccount, accounts, batchImportConcurrency, loginPrivateMode } = useAccountsStore()
+  const { addAccount, accounts, batchImportConcurrency, loginPrivateMode, loginBrowser } = useAccountsStore()
 
   // 检查账户是否已存在（同userId 或 同邮箱+同provider 才算重复）
   const isAccountExists = (email: string, userId: string, provider?: string): boolean => {
@@ -298,7 +298,7 @@ export function AddAccountDialog({ isOpen, onClose }: AddAccountDialogProps): Re
         })
 
         // 打开浏览器（支持隐私模式）
-        window.api.openExternal(result.verificationUri, usePrivateMode)
+        window.api.openExternal(result.verificationUri, usePrivateMode, loginBrowser)
 
         // 开始轮询
         startPolling(result.interval || 5)
@@ -336,7 +336,7 @@ export function AddAccountDialog({ isOpen, onClose }: AddAccountDialogProps): Re
         })
 
         // 打开浏览器（支持隐私模式）
-        window.api.openExternal(result.authorizeUrl, usePrivateMode)
+        window.api.openExternal(result.authorizeUrl, usePrivateMode, loginBrowser)
 
         // 开始轮询（等待服务器回调自动完成 token 交换）
         startIamSsoPolling(3)
@@ -473,7 +473,7 @@ export function AddAccountDialog({ isOpen, onClose }: AddAccountDialogProps): Re
     setError(null)
 
     try {
-      const result = await window.api.startSocialLogin(socialProvider, usePrivateMode)
+      const result = await window.api.startSocialLogin(socialProvider, usePrivateMode, loginBrowser)
       
       if (!result.success) {
         setError(result.error || '启动登录失败')
@@ -1027,7 +1027,7 @@ export function AddAccountDialog({ isOpen, onClose }: AddAccountDialogProps): Re
                     <Button 
                       variant="outline" 
                       className="flex-1"
-                      onClick={() => window.api.openExternal(builderIdLoginData.verificationUri, usePrivateMode)}
+                      onClick={() => window.api.openExternal(builderIdLoginData.verificationUri, usePrivateMode, loginBrowser)}
                     >
                       <ExternalLink className="h-4 w-4 mr-2" />
                       {isEn ? 'Open Browser' : '重新打开浏览器'}
@@ -1108,6 +1108,16 @@ export function AddAccountDialog({ isOpen, onClose }: AddAccountDialogProps): Re
                         }`} />
                       </div>
                     </button>
+                    <p className="text-xs text-amber-600 mt-2 px-1">
+                      {isEn
+                        ? 'Tip: For OAuth login, privacy/no-footprint browsers with Private/Incognito mode are recommended.'
+                        : '提示：OAuth 登录建议使用隐私/无痕浏览器，并开启无痕模式。'}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1 px-1">
+                      {isEn
+                        ? 'Supported browsers: Chrome, Edge, Firefox, Brave, Opera, Chromium (Safari on macOS).'
+                        : '支持浏览器：Chrome、Edge、Firefox、Brave、Opera、Chromium（macOS 也支持 Safari）。'}
+                    </p>
                   </div>
                   
                   <div className="space-y-3 px-2">

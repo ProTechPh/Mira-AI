@@ -10,6 +10,7 @@ import {
 } from '../ui'
 import { useTranslation } from '../../hooks/useTranslation'
 import { cn } from '../../lib/utils'
+import { useAccountsStore } from '@/store/accounts'
 
 interface KProxyConfig {
   enabled: boolean
@@ -40,6 +41,7 @@ interface CACertInfo {
 export function MProxyPanel() {
   const { t } = useTranslation()
   const isEn = t('common.unknown') === 'Unknown'
+  const { machineIdConfig, setMachineIdConfig } = useAccountsStore()
   
   const [isRunning, setIsRunning] = useState(false)
   const [isInitialized, setIsInitialized] = useState(false)
@@ -153,6 +155,18 @@ export function MProxyPanel() {
           setError(result.error || 'Failed to stop')
         }
       } else {
+        if (
+          machineIdConfig.autoSwitchOnAccountChange ||
+          machineIdConfig.bindMachineIdToAccount ||
+          machineIdConfig.useBindedMachineId
+        ) {
+          // Hard enforce: 启动 M-Proxy 前自动关闭 Machine ID 自动化
+          setMachineIdConfig({
+            autoSwitchOnAccountChange: false,
+            bindMachineIdToAccount: false,
+            useBindedMachineId: false
+          })
+        }
         const result = await window.api.kproxyStart(config)
         if (!result.success) {
           setError(result.error || 'Failed to start')

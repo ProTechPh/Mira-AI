@@ -1,4 +1,4 @@
-import { useAccountsStore } from '@/store/accounts'
+import { useAccountsStore, type LoginBrowser } from '@/store/accounts'
 import { Card, CardContent, CardHeader, CardTitle, Button } from '../ui'
 import { Eye, EyeOff, RefreshCw, Clock, Trash2, Download, Upload, Globe, Repeat, Palette, Moon, Sun, Fingerprint, Info, ChevronDown, ChevronUp, Settings, Database, Layers, UserX, Monitor } from 'lucide-react'
 import { useState, useEffect } from 'react'
@@ -129,6 +129,8 @@ export function SettingsPage() {
     setBatchImportConcurrency,
     loginPrivateMode,
     setLoginPrivateMode,
+    loginBrowser,
+    setLoginBrowser,
     theme,
     darkMode,
     setTheme,
@@ -146,6 +148,9 @@ export function SettingsPage() {
   const [tempProxyUrl, setTempProxyUrl] = useState(proxyUrl)
   const [themeExpanded, setThemeExpanded] = useState(false)
   const [isManualRefreshing, setIsManualRefreshing] = useState(false)
+  const [availableBrowsers, setAvailableBrowsers] = useState<Array<{ id: string; name: string; isDefault: boolean }>>([
+    { id: 'default', name: 'System Default', isDefault: true }
+  ])
   
   // 托盘设置状态
   const [traySettings, setTraySettings] = useState({
@@ -161,6 +166,21 @@ export function SettingsPage() {
   const [shortcutLoading, setShortcutLoading] = useState(true)
   const [shortcutError, setShortcutError] = useState('')
   const [isRecordingShortcut, setIsRecordingShortcut] = useState(false)
+
+  useEffect(() => {
+    const loadBrowsers = async () => {
+      try {
+        const browsers = await window.api.getInstalledBrowsers()
+        if (browsers.length > 0) {
+          setAvailableBrowsers(browsers)
+        }
+      } catch (error) {
+        console.warn('[Settings] Failed to detect installed browsers:', error)
+      }
+    }
+
+    loadBrowsers()
+  }, [])
 
   // 加载快捷键设置
   useEffect(() => {
@@ -525,6 +545,45 @@ export function SettingsPage() {
               <UserX className="h-4 w-4 mr-2" />
               {loginPrivateMode ? t('settings.privacy.on') : t('settings.privacy.off')}
             </Button>
+          </div>
+          <div className="flex items-center justify-between pt-2 border-t">
+            <div>
+              <p className="font-medium">{isEn ? 'OAuth Browser' : 'OAuth 浏览器'}</p>
+              <p className="text-sm text-muted-foreground">{isEn ? 'Select which installed browser opens login links' : '选择用于打开登录链接的已安装浏览器'}</p>
+              <p className="text-xs text-amber-600 mt-1">
+                {isEn
+                  ? 'Recommended: use a privacy/no-footprint browser and enable Private/Incognito mode for OAuth login.'
+                  : '建议：OAuth 登录优先使用隐私/无痕浏览器，并开启无痕模式。'}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {isEn
+                  ? 'Supported browsers: Chrome, Edge, Firefox, Brave, Opera, Chromium (Safari on macOS).'
+                  : '支持浏览器：Chrome、Edge、Firefox、Brave、Opera、Chromium（macOS 也支持 Safari）。'}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {isEn
+                  ? `Detected: ${availableBrowsers.filter((b) => b.id !== 'default').map((b) => b.name).join(', ') || 'None'}`
+                  : `已检测：${availableBrowsers.filter((b) => b.id !== 'default').map((b) => b.name).join('、') || '无'}`}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {isEn
+                  ? 'Recommended privacy browsers: Tor Browser, Mullvad Browser, LibreWolf, Brave, Firefox.'
+                  : '推荐隐私浏览器：Tor Browser、Mullvad Browser、LibreWolf、Brave、Firefox。'}
+              </p>
+            </div>
+            <select
+              className="w-[180px] h-9 px-3 rounded-lg border bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+              value={loginBrowser}
+              onChange={(e) => setLoginBrowser(e.target.value as LoginBrowser)}
+            >
+              {availableBrowsers.map((browser) => (
+                <option key={browser.id} value={browser.id}>
+                  {browser.isDefault && browser.id !== 'default'
+                    ? `${browser.name} (${isEn ? 'Default' : '默认'})`
+                    : browser.name}
+                </option>
+              ))}
+            </select>
           </div>
         </CardContent>
       </Card>
