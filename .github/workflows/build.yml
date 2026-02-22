@@ -30,6 +30,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Bump patch version and push
+        id: bump
         run: |
           git fetch --tags --force
 
@@ -58,13 +59,24 @@ jobs:
           )
 
           echo "Using version: v$NEXT_VERSION"
+          echo "tag=v$NEXT_VERSION" >> "$GITHUB_OUTPUT"
           npm version "$NEXT_VERSION" -m "Release v%s"
           git remote set-url origin https://x-access-token:${{ secrets.RELEASE_REPO_TOKEN }}@github.com/${{ github.repository }}.git
           git push
           git push --tags
 
+      - name: Trigger build/release workflow on new tag
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
+        run: |
+          curl -sS -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/actions/workflows/build.yml/dispatches \
+            -d "{\"ref\":\"${{ steps.bump.outputs.tag }}\"}"
+
   build-windows:
-    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && startsWith(github.ref_name, 'v'))
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -80,7 +92,7 @@ jobs:
           path: dist/*.exe
 
   build-macos:
-    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && startsWith(github.ref_name, 'v'))
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -96,7 +108,7 @@ jobs:
           path: dist/*.dmg
 
   build-linux:
-    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && startsWith(github.ref_name, 'v'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -115,7 +127,7 @@ jobs:
             dist/*.snap
 
   release:
-    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && startsWith(github.ref_name, 'v'))
     needs: [build-windows, build-macos, build-linux]
     runs-on: ubuntu-latest
     permissions:
