@@ -180,13 +180,16 @@ jobs:
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - name: Download universal DMG from GitHub Releases (retry)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
-          URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/v${VERSION}/Mira.Tools_${VERSION}_universal.dmg"
-          echo "Downloading: $URL"
+          TAG="v${VERSION}"
           for i in $(seq 1 30); do
-            if curl -fL --retry 3 --retry-delay 1 -o mira-tools.dmg "$URL"; then
+            rm -f Mira.Tools_*_universal.dmg mira-tools.dmg
+            if gh release download "$TAG" --pattern "Mira.Tools_*_universal.dmg" --clobber; then
+              mv Mira.Tools_*_universal.dmg mira-tools.dmg
               exit 0
             fi
             echo "Asset not ready yet (attempt $i/30). Sleeping 10s..."
