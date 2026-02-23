@@ -2400,7 +2400,7 @@ dependencies = [
 
 [[package]]
 name = "mira-tools"
-version = "0.8.12"
+version = "0.8.15"
 dependencies = [
  "aes",
  "aes-gcm",
