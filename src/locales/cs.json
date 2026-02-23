@@ -243,7 +243,7 @@
       "codexLaunchOnSwitchDesc": "Po přepnutí účtu automaticky spustit nebo restartovat Codex App"
     },
     "network": {
-      "apiTitle": "Antigravity Cockpit API",
+      "apiTitle": "Antigravity Mira API",
       "wsService": "Služba WebSocket",
       "wsServiceDesc": "Povolit připojení externím programům (např. rozšíření VS Code)",
       "preferredPort": "Preferovaný port",
@@ -532,7 +532,7 @@
       "importBtn": "Importovat",
       "oauthAction": "OAuth autorizace",
       "fromExtension": "Import z pluginu",
-      "syncBadge": "Synchronizovat účty pluginu Antigravity Cockpit",
+      "syncBadge": "Synchronizovat účty pluginu Antigravity Mira",
       "fromLocalDB": "Import z lokální DB",
       "localDBDesc": "Načte přihlašovací účty z Antigravity klienta v tomto zařízení",
       "toolsDescMigrate": "Migrace účtů z ~/.antigravity_tools/",

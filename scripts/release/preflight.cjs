@@ -86,7 +86,7 @@ if (steps.length === 0) {
   process.exit(0);
 }
 
-console.log('Cockpit Tools release preflight started.');
+console.log(' release preflight started.');
 console.log(
   'Enabled steps:',
   steps.map((item) => item.name).join(' | ')

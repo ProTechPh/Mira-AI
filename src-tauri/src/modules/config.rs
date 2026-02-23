@@ -21,7 +21,7 @@ const SERVER_STATUS_FILE: &str = "server.json";
 const USER_CONFIG_FILE: &str = "config.json";
 
 /// 数据目录名
-const DATA_DIR: &str = ".antigravity_cockpit";
+const DATA_DIR: &str = ".antigravity_mira";
 
 /// 服务状态（写入共享文件供其他客户端读取）
 #[derive(Debug, Clone, Serialize, Deserialize)]

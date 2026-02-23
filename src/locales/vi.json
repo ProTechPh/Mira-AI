@@ -243,7 +243,7 @@
       "codexLaunchOnSwitchDesc": "Tự động khởi động hoặc khởi động lại Codex App sau khi chuyển tài khoản"
     },
     "network": {
-      "apiTitle": "API Antigravity Cockpit",
+      "apiTitle": "API Antigravity Mira",
       "wsService": "Dịch vụ WebSocket",
       "wsServiceDesc": "Cho phép các chương trình bên ngoài (như plugin VS Code) kết nối điều khiển",
       "preferredPort": "Cổng ưu tiên",
@@ -532,7 +532,7 @@
       "importBtn": "Nhập",
       "oauthAction": "Ủy quyền OAuth",
       "fromExtension": "Nhập từ Plugin",
-      "syncBadge": "Đồng bộ tài khoản plugin Antigravity Cockpit",
+      "syncBadge": "Đồng bộ tài khoản plugin Antigravity Mira",
       "fromLocalDB": "Nhập từ DB cục bộ",
       "localDBDesc": "Đọc tài khoản đăng nhập từ Antigravity Client trên máy này",
       "toolsDescMigrate": "Di chuyển tài khoản từ ~/.antigravity_tools/",

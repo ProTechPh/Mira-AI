@@ -36,7 +36,7 @@ const MODEL_DISPLAY_NAMES: Record<string, string> = {
 };
 
 /**
- * 与 AntigravityCockpit 对齐的授权模式黑名单。
+ * 与 AntigravityMira 对齐的授权模式黑名单。
  * 同时兼容常量 ID 和桌面端常见的小写模型 ID。
  */
 const AUTH_MODEL_BLACKLIST_IDS = [

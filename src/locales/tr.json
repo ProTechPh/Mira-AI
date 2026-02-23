@@ -532,7 +532,7 @@
       "importBtn": "İçe Aktar",
       "oauthAction": "OAuth Yetkilendirme",
       "fromExtension": "Eklentiden İçe Aktar",
-      "syncBadge": "Antigravity Cockpit eklenti hesaplarını senkronize et",
+      "syncBadge": "Antigravity Mira eklenti hesaplarını senkronize et",
       "fromLocalDB": "Yerel Veritabanından İçe Aktar",
       "localDBDesc": "Bu makinedeki Antigravity İstemcisinden giriş hesaplarını oku",
       "toolsDescMigrate": "Hesapları ~/.antigravity_tools/ dizininden taşı",

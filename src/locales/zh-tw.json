@@ -532,7 +532,7 @@
       "importBtn": "匯入",
       "oauthAction": "OAuth 授權",
       "fromExtension": "從插件匯入",
-      "syncBadge": "同步 Antigravity Cockpit 插件帳號",
+      "syncBadge": "同步 Antigravity Mira 插件帳號",
       "fromLocalDB": "從本地資料庫匯入",
       "localDBDesc": "從此機器的 Antigravity 客戶端讀取登入帳號",
       "toolsDescMigrate": "從 ~/.antigravity_tools/ 遷移帳號",

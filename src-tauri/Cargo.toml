@@ -7,7 +7,7 @@ license = "CC-BY-NC-SA-4.0"
 edition = "2021"
 
 [lib]
-name = "antigravity_cockpit_tools_lib"
+name = "antigravity_mira_tools_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

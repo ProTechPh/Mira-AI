@@ -85,7 +85,7 @@ pub fn get_default_instances_root_dir() -> Result<PathBuf, String> {
     #[cfg(target_os = "macos")]
     {
         let home = dirs::home_dir().ok_or("无法获取用户主目录")?;
-        return Ok(home.join(".antigravity_cockpit/instances/codex"));
+        return Ok(home.join(".antigravity_mira/instances/codex"));
     }
 
     #[allow(unreachable_code)]

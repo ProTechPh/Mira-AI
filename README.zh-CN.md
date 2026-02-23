@@ -1,4 +1,4 @@
-# Cockpit Tools
+# 
 
 [English](README.md) · 简体中文
 
@@ -132,7 +132,7 @@ Codex 同样支持多账号多实例并行运行。比如同时打开两个 Code
 
 - **这是本地桌面工具**：不需要单独注册平台账号，也不依赖项目自建云端来存你的账号列表。
 - **数据主要保存在本机**：
-  - `~/.antigravity_cockpit`：Antigravity 账号、配置、WebSocket 状态等
+  - `~/.antigravity_mira`：Antigravity 账号、配置、WebSocket 状态等
   - `~/.codex`：Codex 官方当前登录 `auth.json`
   - 系统本地应用数据目录下 `com.protechph.mira-ai`：Codex / GitHub Copilot / Windsurf / Kiro 多账号索引等
 - **WebSocket 默认仅本机访问**：监听 `127.0.0.1`，默认端口 `19528`，可在设置中关闭或改端口。
@@ -200,26 +200,26 @@ Codex 同样支持多账号多实例并行运行。比如同时打开两个 Code
 
 ```bash
 brew tap ProTechPh/Mira-AI https://github.com/ProTechPh/Mira-AI
-brew install --cask cockpit-tools
+brew install --cask mira-tools
 ```
 
 如果遇到 macOS “应用已损坏”或无法打开，也可以使用 `--no-quarantine` 安装：
 
 ```bash
-brew install --cask --no-quarantine cockpit-tools
+brew install --cask --no-quarantine mira-tools
 ```
 
-如果提示已存在应用（例如：`already an App at '/Applications/Cockpit Tools.app'`），请先删除旧版本再安装：
+如果提示已存在应用（例如：`already an App at '/Applications/.app'`），请先删除旧版本再安装：
 
 ```bash
-rm -rf "/Applications/Cockpit Tools.app"
-brew install --cask cockpit-tools
+rm -rf "/Applications/.app"
+brew install --cask mira-tools
 ```
 
 或者直接强制覆盖安装：
 
 ```bash
-brew install --cask --force cockpit-tools
+brew install --cask --force mira-tools
 ```
 
 ### 🛠️ 常见问题排查 (Troubleshooting)
@@ -230,7 +230,7 @@ brew install --cask --force cockpit-tools
 1.  **命令行修复** (推荐):
     打开终端，执行以下命令：
     ```bash
-    sudo xattr -rd com.apple.quarantine "/Applications/Cockpit Tools.app"
+    sudo xattr -rd com.apple.quarantine "/Applications/.app"
     ```
     > **注意**: 如果您修改了应用名称，请在命令中相应调整路径。
 

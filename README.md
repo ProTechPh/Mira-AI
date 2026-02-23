@@ -133,7 +133,7 @@ These are the most common security questions answered directly:
 
 - **This is a local desktop tool**: it does not require a separate cloud account for this project, and it does not rely on a project-hosted cloud account storage.
 - **Data is mainly stored on your machine**:
-  - `~/.antigravity_cockpit`: Antigravity accounts, configs, WebSocket status, etc.
+  - `~/.antigravity_mira`: Antigravity accounts, configs, WebSocket status, etc.
   - `~/.codex`: official Codex current login `auth.json`
   - local app data folder under `com.protechph.mira-ai`: Codex / GitHub Copilot / Windsurf / Kiro multi-account index data, etc.
 - **WebSocket is local-only by default**: binds to `127.0.0.1`, default port `19528`; you can disable it or change the port in Settings.
@@ -203,26 +203,26 @@ Go to [GitHub Releases](https://github.com/ProTechPh/Mira-AI/releases) to downlo
 
 ```bash
 brew tap ProTechPh/Mira-AI https://github.com/ProTechPh/Mira-AI
-brew install --cask cockpit-tools
+brew install --cask mira-tools
 ```
 
 If you hit the macOS "App is damaged" warning, you can also install with `--no-quarantine`:
 
 ```bash
-brew install --cask --no-quarantine cockpit-tools
+brew install --cask --no-quarantine mira-tools
 ```
 
-If Homebrew says the app already exists (e.g. `already an App at '/Applications/Cockpit Tools.app'`), remove the old app and install again:
+If Homebrew says the app already exists (e.g. `already an App at '/Applications/.app'`), remove the old app and install again:
 
 ```bash
-rm -rf "/Applications/Cockpit Tools.app"
-brew install --cask cockpit-tools
+rm -rf "/Applications/.app"
+brew install --cask mira-tools
 ```
 
 Or force overwrite the existing app:
 
 ```bash
-brew install --cask --force cockpit-tools
+brew install --cask --force mira-tools
 ```
 
 ### 🛠️ Troubleshooting
@@ -233,7 +233,7 @@ Due to macOS security mechanisms, apps not downloaded from the App Store may tri
 1.  **Command Line Fix** (Recommended):
     Open Terminal and run the following command:
     ```bash
-    sudo xattr -rd com.apple.quarantine "/Applications/Cockpit Tools.app"
+    sudo xattr -rd com.apple.quarantine "/Applications/.app"
     ```
     > **Note**: If you changed the app name, please adjust the path in the command accordingly.
 

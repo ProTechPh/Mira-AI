@@ -454,7 +454,7 @@
       "codexLaunchOnSwitchDesc": "Start or restart Codex App after switching accounts"
     },
     "network": {
-      "apiTitle": "Antigravity Cockpit API",
+      "apiTitle": "Antigravity Mira API",
       "wsService": "WebSocket Service",
       "wsServiceDesc": "Allow external programs (e.g., VS Code extension) to connect",
       "preferredPort": "Preferred Port",
@@ -750,7 +750,7 @@
       "importBtn": "Import",
       "oauthAction": "OAuth Authorization",
       "fromExtension": "Import from Plugin",
-      "syncBadge": "Sync Antigravity Cockpit plugin accounts",
+      "syncBadge": "Sync Antigravity Mira plugin accounts",
       "fromLocalDB": "Import from Local DB",
       "localDBDesc": "Read login accounts from Antigravity Client on this machine",
       "toolsDescMigrate": "Migrate accounts from ~/.antigravity_tools/",
