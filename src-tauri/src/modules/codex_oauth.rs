@@ -83,7 +83,7 @@ fn find_available_port() -> Result<u16, String> {
             "{}:{}",
             OAUTH_PORT_IN_USE_CODE, OAUTH_CALLBACK_PORT
         )),
-        Err(e) => Err(format!("无法绑定端口 {}: {}", OAUTH_CALLBACK_PORT, e)),
+        Err(e) => Err(format!("Failed to bind port {}: {}", OAUTH_CALLBACK_PORT, e)),
     }
 }
 
@@ -153,7 +153,7 @@ pub async fn start_oauth_login(
         let oauth_state = OAUTH_STATE.lock().unwrap();
         if let Some(state) = oauth_state.as_ref() {
             logger::log_info(&format!(
-                "Codex OAuth 复用进行中的登录会话: login_id={}, port={}, redirect_uri={}",
+                "Codex OAuth reusing active login session: login_id={}, port={}, redirect_uri={}",
                 state.login_id, state.port, state.redirect_uri
             ));
             return Ok(to_start_response(state));
@@ -202,7 +202,7 @@ pub async fn start_oauth_login(
     });
 
     logger::log_info(&format!(
-        "Codex OAuth 登录会话已创建: login_id={}, port={}, redirect_uri={}",
+        "Codex OAuth login session created: login_id={}, port={}, redirect_uri={}",
         login_id, port, redirect_uri
     ));
 
@@ -219,11 +219,11 @@ async fn start_callback_server(
     use tiny_http::{Response, Server};
 
     let server = Server::http(format!("127.0.0.1:{}", port))
-        .map_err(|e| format!("启动服务器失败: {}", e))?;
+        .map_err(|e| format!("Failed to start server: {}", e))?;
     let timeout = std::time::Duration::from_secs(300);
 
     logger::log_info(&format!(
-        "Codex OAuth 回调服务器启动: login_id={}, port={}, timeout_seconds={}",
+        "Codex OAuth callback server started: login_id={}, port={}, timeout_seconds={}",
         expected_login_id,
         port,
         timeout.as_secs()
@@ -243,7 +243,7 @@ async fn start_callback_server(
 
         if should_stop {
             logger::log_info(&format!(
-                "Codex OAuth 已取消或状态已变更，停止回调监听: login_id={}",
+                "Codex OAuth canceled or state changed, stopping callback listener: login_id={}",
                 expected_login_id
             ));
             break;
@@ -251,7 +251,7 @@ async fn start_callback_server(
 
         if start.elapsed() > timeout {
             logger::log_error(&format!(
-                "Codex OAuth 回调超时: login_id={}, callback_url={}, elapsed={}s",
+                "Codex OAuth callback timed out: login_id={}, callback_url={}, elapsed={}s",
                 expected_login_id,
                 callback_url,
                 start.elapsed().as_secs()
@@ -266,7 +266,7 @@ async fn start_callback_server(
             if url.starts_with("/auth/callback") {
                 let has_query = url.contains('?');
                 logger::log_info(&format!(
-                    "Codex OAuth 收到回调请求: login_id={}, path=/auth/callback, has_query={}",
+                    "Codex OAuth callback received: login_id={}, path=/auth/callback, has_query={}",
                     expected_login_id, has_query
                 ));
                 let query = url.split('?').nth(1).unwrap_or("");
@@ -274,7 +274,7 @@ async fn start_callback_server(
                 let code = params.get("code").cloned().unwrap_or_default();
                 let state = params.get("state").cloned().unwrap_or_default();
                 logger::log_info(&format!(
-                    "Codex OAuth 回调参数检查: login_id={}, has_code={}, has_state={}",
+                    "Codex OAuth callback params checked: login_id={}, has_code={}, has_state={}",
                     expected_login_id,
                     !code.is_empty(),
                     !state.is_empty()
@@ -282,7 +282,7 @@ async fn start_callback_server(
 
                 if state != expected_state {
                     logger::log_warn(&format!(
-                        "Codex OAuth 回调 state 不匹配: login_id={}, expected_state={}, actual_state={}",
+                        "Codex OAuth callback state mismatch: login_id={}, expected_state={}, actual_state={}",
                         expected_login_id, expected_state, state
                     ));
                     let response = Response::from_string("State mismatch").with_status_code(400);
@@ -292,7 +292,7 @@ async fn start_callback_server(
 
                 if code.is_empty() {
                     logger::log_warn(&format!(
-                        "Codex OAuth 回调缺少 code: login_id={}, params={}",
+                        "Codex OAuth callback missing code: login_id={}, params={}",
                         expected_login_id,
                         serde_json::to_string(&params)
                             .unwrap_or_else(|_| "<serialize_failed>".to_string())
@@ -306,7 +306,7 @@ async fn start_callback_server(
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>授权成功</title>
+    <title>Authorization Successful</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .container { text-align: center; color: white; }
@@ -316,8 +316,8 @@ async fn start_callback_server(
 </head>
 <body>
     <div class="container">
-        <h1>✅ 授权成功</h1>
-        <p>您可以关闭此窗口并返回应用</p>
+        <h1>✅ Authorization Successful</h1>
+        <p>You can close this window and return to the app</p>
     </div>
 </body>
 </html>"#;
@@ -361,7 +361,7 @@ async fn start_callback_server(
                         },
                     );
                     logger::log_info(&format!(
-                        "Codex OAuth 回调校验通过并已通知前端: login_id={}",
+                        "Codex OAuth callback validated and frontend notified: login_id={}",
                         expected_login_id
                     ));
                 }
@@ -372,7 +372,7 @@ async fn start_callback_server(
                 let _ = request.respond(response);
                 clear_oauth_state_if_matches(&expected_state, &expected_login_id);
                 logger::log_info(&format!(
-                    "Codex OAuth 收到本地取消请求: login_id={}",
+                    "Codex OAuth local cancel request received: login_id={}",
                     expected_login_id
                 ));
                 break;
@@ -388,7 +388,7 @@ async fn start_callback_server(
     if clear_state_on_exit {
         clear_oauth_state_if_matches(&expected_state, &expected_login_id);
         logger::log_info(&format!(
-            "Codex OAuth 已在超时后清理状态: login_id={}",
+            "Codex OAuth state cleared after timeout: login_id={}",
             expected_login_id
         ));
         let _ = app_handle.emit(
@@ -408,7 +408,7 @@ async fn start_callback_server(
             },
         );
         logger::log_info(&format!(
-            "Codex OAuth 已发送超时事件到前端: login_id={}, callback_url={}, timeout_seconds={}",
+            "Codex OAuth timeout event emitted to frontend: login_id={}, callback_url={}, timeout_seconds={}",
             expected_login_id,
             callback_url,
             timeout.as_secs()
@@ -441,34 +441,34 @@ async fn exchange_code_for_token_internal(
         .form(&params)
         .send()
         .await
-        .map_err(|e| format!("Token 请求失败: {}", e))?;
+        .map_err(|e| format!("Token request failed: {}", e))?;
 
     let status = response.status();
     let body = response
         .text()
         .await
-        .map_err(|e| format!("读取响应失败: {}", e))?;
+        .map_err(|e| format!("Failed to read response: {}", e))?;
 
     if !status.is_success() {
  logger::log_error(&format!("Token failed: {} - {}", status, body));
-        return Err(format!("Token 交换失败: {}", body));
+        return Err(format!("Token exchange failed: {}", body));
     }
 
  logger::log_info("Codex OAuth Token succeeded");
 
     let token_response: serde_json::Value =
-        serde_json::from_str(&body).map_err(|e| format!("解析 Token 响应失败: {}", e))?;
+        serde_json::from_str(&body).map_err(|e| format!("Failed to parse token response: {}", e))?;
 
     let id_token = token_response
         .get("id_token")
         .and_then(|v| v.as_str())
-        .ok_or("响应中缺少 id_token")?
+        .ok_or("Response missing id_token")?
         .to_string();
 
     let access_token = token_response
         .get("access_token")
         .and_then(|v| v.as_str())
-        .ok_or("响应中缺少 access_token")?
+        .ok_or("Response missing access_token")?
         .to_string();
 
     let refresh_token = token_response
@@ -487,26 +487,26 @@ pub async fn complete_oauth_login(login_id: &str) -> Result<CodexTokens, String>
     let attempt_id = COMPLETE_ATTEMPT_SEQ.fetch_add(1, Ordering::Relaxed) + 1;
     let started_at_ms = chrono::Utc::now().timestamp_millis();
     logger::log_info(&format!(
-        "Codex OAuth 开始完成登录: attempt_id={}, login_id={}, started_at_ms={}",
+        "Codex OAuth complete-login started: attempt_id={}, login_id={}, started_at_ms={}",
         attempt_id, login_id, started_at_ms
     ));
     let (code, code_verifier, port) = {
         let oauth_state = OAUTH_STATE.lock().unwrap();
-        let state = oauth_state.as_ref().ok_or("OAuth 状态不存在")?;
+        let state = oauth_state.as_ref().ok_or("OAuth state does not exist")?;
         if state.login_id != login_id {
             logger::log_warn(&format!(
-                "Codex OAuth loginId 不匹配: attempt_id={}, requested={}, current={}",
+                "Codex OAuth loginId mismatch: attempt_id={}, requested={}, current={}",
                 attempt_id, login_id, state.login_id
             ));
-            return Err("OAuth loginId 不匹配".to_string());
+            return Err("OAuth loginId mismatch".to_string());
         }
 
         let code = state
             .code
             .clone()
-            .ok_or("授权尚未完成，请先在浏览器中授权")?;
+            .ok_or("Authorization is not finished yet, please authorize in browser first")?;
         logger::log_info(&format!(
-            "Codex OAuth 准备完成登录: attempt_id={}, login_id={}",
+            "Codex OAuth preparing complete-login: attempt_id={}, login_id={}",
             attempt_id, login_id
         ));
         (code, state.code_verifier.clone(), state.port)
@@ -517,7 +517,7 @@ pub async fn complete_oauth_login(login_id: &str) -> Result<CodexTokens, String>
         Err(e) => {
             let finished_ms = chrono::Utc::now().timestamp_millis();
             logger::log_error(&format!(
-                "Codex OAuth 完成登录失败: attempt_id={}, login_id={}, duration_ms={}, error={}",
+                "Codex OAuth complete-login failed: attempt_id={}, login_id={}, duration_ms={}, error={}",
                 attempt_id,
                 login_id,
                 finished_ms - started_at_ms,
@@ -538,7 +538,7 @@ pub async fn complete_oauth_login(login_id: &str) -> Result<CodexTokens, String>
     }
 
     logger::log_info(&format!(
-        "Codex OAuth 完成并清理状态: attempt_id={}, login_id={}, duration_ms={}",
+        "Codex OAuth completed and state cleared: attempt_id={}, login_id={}, duration_ms={}",
         attempt_id,
         login_id,
         chrono::Utc::now().timestamp_millis() - started_at_ms
@@ -554,17 +554,17 @@ pub fn cancel_oauth_flow_for(login_id: Option<&str>) -> Result<(), String> {
             return Ok(());
         };
         logger::log_info(&format!(
-            "Codex OAuth 收到取消请求: current_login_id={}, current_port={}",
+            "Codex OAuth cancel request received: current_login_id={}, current_port={}",
             current.login_id, current.port,
         ));
 
         if let Some(login_id) = login_id {
             if current.login_id != login_id {
                 logger::log_warn(&format!(
-                    "Codex OAuth 取消失败，loginId 不匹配: requested={}, current={}",
+                    "Codex OAuth cancel failed, loginId mismatch: requested={}, current={}",
                     login_id, current.login_id
                 ));
-                return Err("OAuth loginId 不匹配".to_string());
+                return Err("OAuth loginId mismatch".to_string());
             }
         }
 
@@ -575,7 +575,7 @@ pub fn cancel_oauth_flow_for(login_id: Option<&str>) -> Result<(), String> {
 
     notify_cancel(port);
     logger::log_info(&format!(
-        "Codex OAuth 流程已取消: login_id={}",
+        "Codex OAuth flow canceled: login_id={}",
         login_id.unwrap_or("<none>")
     ));
     Ok(())
@@ -628,38 +628,38 @@ pub async fn refresh_access_token(refresh_token: &str) -> Result<CodexTokens, St
         .form(&params)
         .send()
         .await
-        .map_err(|e| format!("Token 刷新请求失败: {}", e))?;
+        .map_err(|e| format!("Token refresh request failed: {}", e))?;
 
     let status = response.status();
     let body = response
         .text()
         .await
-        .map_err(|e| format!("读取响应失败: {}", e))?;
+        .map_err(|e| format!("Failed to read response: {}", e))?;
 
     if !status.is_success() {
         logger::log_error(&format!(
-            "Token 刷新失败: {} - {}",
+            "Token refresh failed: {} - {}",
             status,
             &body[..body.len().min(200)]
         ));
-        return Err(format!("Token 刷新失败: {}", status));
+        return Err(format!("Token refresh failed: {}", status));
     }
 
     logger::log_info("Codex Token refreshsucceeded");
 
     let token_response: serde_json::Value =
-        serde_json::from_str(&body).map_err(|e| format!("解析 Token 响应失败: {}", e))?;
+        serde_json::from_str(&body).map_err(|e| format!("Failed to parse token response: {}", e))?;
 
     let id_token = token_response
         .get("id_token")
         .and_then(|v| v.as_str())
-        .ok_or("响应中缺少 id_token")?
+        .ok_or("Response missing id_token")?
         .to_string();
 
     let access_token = token_response
         .get("access_token")
         .and_then(|v| v.as_str())
-        .ok_or("响应中缺少 access_token")?
+        .ok_or("Response missing access_token")?
         .to_string();
 
     let new_refresh_token = token_response
@@ -674,3 +674,4 @@ pub async fn refresh_access_token(refresh_token: &str) -> Result<CodexTokens, St
         refresh_token: new_refresh_token,
     })
 }
+

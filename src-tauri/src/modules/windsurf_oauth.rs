@@ -254,10 +254,10 @@ fn clear_pending_if_matches(expected_login_id: &str, expected_state: &str) {
 
 fn find_available_port() -> Result<u16, String> {
     let listener = TcpListener::bind(("127.0.0.1", 0))
-        .map_err(|e| format!("无法绑定本地 OAuth 回调端口: {}", e))?;
+        .map_err(|e| format!("Failed to bind local OAuth callback port: {}", e))?;
     let port = listener
         .local_addr()
-        .map_err(|e| format!("读取本地 OAuth 回调端口失败: {}", e))?
+        .map_err(|e| format!("Failed to read local OAuth callback port: {}", e))?
         .port();
     drop(listener);
     Ok(port)
@@ -278,7 +278,7 @@ fn oauth_success_html() -> &'static str {
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>Windsurf 授权成功</title>
+  <title>Windsurf Authorization Successful</title>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; background:#0f172a; color:#e2e8f0; }
     .box { text-align:center; max-width:460px; padding:24px; border-radius:12px; background:#111827; border:1px solid #1f2937; }
@@ -288,8 +288,8 @@ fn oauth_success_html() -> &'static str {
 </head>
 <body>
   <div class="box">
-    <h1>授权成功</h1>
-    <p>你可以关闭此页面并返回 Antigravity Mira Tools。</p>
+    <h1>Authorization Successful</h1>
+    <p>You can close this page and return to Antigravity Mira Tools.</p>
   </div>
 </body>
 </html>"#
@@ -301,7 +301,7 @@ fn oauth_fail_html(message: &str) -> String {
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>Windsurf 授权失败</title>
+  <title>Windsurf Authorization Failed</title>
   <style>
     body {{ font-family: -apple-system, BlinkMacSystemFont, sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; background:#0f172a; color:#e2e8f0; }}
     .box {{ text-align:center; max-width:520px; padding:24px; border-radius:12px; background:#111827; border:1px solid #1f2937; }}
@@ -311,7 +311,7 @@ fn oauth_fail_html(message: &str) -> String {
 </head>
 <body>
   <div class="box">
-    <h1>授权失败</h1>
+    <h1>Authorization Failed</h1>
     <p>{}</p>
   </div>
 </body>
@@ -328,11 +328,11 @@ async fn start_callback_server(
     use tiny_http::{Header, Response, Server};
 
     let server = Server::http(format!("127.0.0.1:{}", port))
-        .map_err(|e| format!("启动 Windsurf OAuth 本地回调服务失败: {}", e))?;
+        .map_err(|e| format!("Failed to start Windsurf OAuth local callback service: {}", e))?;
     let started = std::time::Instant::now();
 
     logger::log_info(&format!(
-        "[Windsurf OAuth] 本地回调服务启动: login_id={}, port={}",
+        "[Windsurf OAuth] Local callback service started: login_id={}, port={}",
         expected_login_id, port
     ));
 
@@ -340,7 +340,7 @@ async fn start_callback_server(
         let should_stop = {
             let guard = PENDING_OAUTH_STATE
                 .lock()
-                .map_err(|_| "OAuth 状态锁不可用".to_string())?;
+                .map_err(|_| "OAuth state lock unavailable".to_string())?;
             match guard.as_ref() {
                 Some(state) => state.login_id != expected_login_id || state.state != expected_state,
                 None => true,
@@ -354,7 +354,7 @@ async fn start_callback_server(
         if started.elapsed().as_secs() > OAUTH_TIMEOUT_SECONDS {
             clear_pending_if_matches(&expected_login_id, &expected_state);
             logger::log_warn(&format!(
-                "[Windsurf OAuth] 回调等待超时: login_id={}",
+                "[Windsurf OAuth] Callback wait timed out: login_id={}",
                 expected_login_id
             ));
             break;
@@ -384,7 +384,7 @@ async fn start_callback_server(
                 .unwrap_or_else(String::new);
 
             if state != expected_state {
-                let html = oauth_fail_html("state 校验失败，请重新授权。");
+                let html = oauth_fail_html("State validation failed, please authorize again.");
                 let _ = request.respond(
                     Response::from_string(html)
                         .with_status_code(400)
@@ -401,9 +401,9 @@ async fn start_callback_server(
 
             if let Some(error) = error {
                 let message = if error_desc.is_empty() {
-                    format!("授权失败: {}", error)
+                    format!("Authorization failed: {}", error)
                 } else {
-                    format!("授权失败: {} ({})", error, error_desc)
+                    format!("Authorization failed: {} ({})", error, error_desc)
                 };
                 if let Ok(mut guard) = PENDING_OAUTH_STATE.lock() {
                     if let Some(current) = guard.as_mut() {
@@ -429,7 +429,7 @@ async fn start_callback_server(
             }
 
             if access_token.trim().is_empty() {
-                let message = "回调缺少 access_token，请重新授权。";
+                let message = "Callback missing access_token, please authorize again.";
                 if let Ok(mut guard) = PENDING_OAUTH_STATE.lock() {
                     if let Some(current) = guard.as_mut() {
                         if current.login_id == expected_login_id && current.state == expected_state
@@ -498,7 +498,7 @@ async fn post_seat_management_json(
         .json(&body)
         .send()
         .await
-        .map_err(|e| format!("请求 Windsurf {} 失败: {}", method, e))?;
+        .map_err(|e| format!("Windsurf {} request failed: {}", method, e))?;
 
     let status = response.status();
     let text = response
@@ -508,13 +508,13 @@ async fn post_seat_management_json(
 
     if !status.is_success() {
         return Err(format!(
-            "请求 Windsurf {} 失败: status={}, body={}",
+            "Windsurf {} request failed: status={}, body={}",
             method, status, text
         ));
     }
 
     serde_json::from_str::<Value>(&text)
-        .map_err(|e| format!("解析 Windsurf {} 响应失败: {} (body={})", method, e, text))
+        .map_err(|e| format!("Failed to parse Windsurf {} response: {} (body={})", method, e, text))
 }
 
 async fn register_user(firebase_id_token: &str) -> Result<RegisterResult, String> {
@@ -525,7 +525,7 @@ async fn register_user(firebase_id_token: &str) -> Result<RegisterResult, String
         post_seat_management_json(WINDSURF_REGISTER_API_BASE_URL, "RegisterUser", payload).await?;
 
     let api_key = pick_string_from_object(Some(&value), &["apiKey", "api_key"])
-        .ok_or_else(|| "RegisterUser 响应缺少 apiKey".to_string())?;
+        .ok_or_else(|| "RegisterUser response missing apiKey".to_string())?;
     let api_server_url = pick_string_from_object(Some(&value), &["apiServerUrl", "api_server_url"])
         .unwrap_or_else(|| WINDSURF_DEFAULT_API_SERVER_URL.to_string());
     let name = pick_string_from_object(Some(&value), &["name"]);
@@ -546,7 +546,7 @@ async fn get_one_time_auth_token(
     });
     let value = post_seat_management_json(api_server_url, "GetOneTimeAuthToken", payload).await?;
     pick_string_from_object(Some(&value), &["authToken", "auth_token"])
-        .ok_or_else(|| "GetOneTimeAuthToken 响应缺少 authToken".to_string())
+        .ok_or_else(|| "GetOneTimeAuthToken response missing authToken".to_string())
 }
 
 async fn get_current_user(api_server_url: &str, auth_token: &str) -> Result<Value, String> {
@@ -785,7 +785,7 @@ async fn build_payload_from_firebase_token(
             Ok(token) => Some(token),
             Err(err) => {
                 logger::log_warn(&format!(
-                    "[Windsurf OAuth] GetOneTimeAuthToken 失败（将继续尝试用 apiKey 拉用户态）: {}",
+                    "[Windsurf OAuth] GetOneTimeAuthToken failed (will continue with apiKey): {}",
                     err
                 ));
                 None
@@ -796,7 +796,7 @@ async fn build_payload_from_firebase_token(
             Ok(value) => Some(value),
             Err(err) => {
                 logger::log_warn(&format!(
-                    "[Windsurf OAuth] GetCurrentUser 失败（已忽略）: {}",
+                    "[Windsurf OAuth] GetCurrentUser failed (ignored): {}",
                     err
                 ));
                 None
@@ -810,7 +810,7 @@ async fn build_payload_from_firebase_token(
             Ok(value) => Some(value),
             Err(err) => {
                 logger::log_warn(&format!(
-                    "[Windsurf OAuth] GetPlanStatus 失败（已忽略）: {}",
+                    "[Windsurf OAuth] GetPlanStatus failed (ignored): {}",
                     err
                 ));
                 None
@@ -824,7 +824,7 @@ async fn build_payload_from_firebase_token(
             Ok(value) => Some(value),
             Err(err) => {
                 logger::log_warn(&format!(
-                    "[Windsurf OAuth] GetUserStatus 失败（将导致邮箱/配额缺失）: {}",
+                    "[Windsurf OAuth] GetUserStatus failed (email/quota may be missing): {}",
                     err
                 ));
                 None
@@ -855,7 +855,7 @@ async fn build_payload_from_api_key(
         Ok(value) => Some(value),
         Err(err) => {
             logger::log_warn(&format!(
-                "[Windsurf OAuth] API Key 模式 GetUserStatus 失败（将导致邮箱/配额缺失）: {}",
+                "[Windsurf OAuth] API-key mode GetUserStatus failed (email/quota may be missing): {}",
                 err
             ));
             None
@@ -881,7 +881,7 @@ pub async fn start_login() -> Result<WindsurfOAuthStartResponse, String> {
         if let Some(state) = guard.as_ref() {
             if state.expires_at > now_timestamp() {
                 logger::log_info(&format!(
-                    "[Windsurf OAuth] 复用进行中的登录会话: login_id={}, port={}, age={}s",
+                    "[Windsurf OAuth] Reusing active login session: login_id={}, port={}, age={}s",
                     state.login_id,
                     state.port,
                     now_timestamp() - state.created_at
@@ -917,14 +917,14 @@ pub async fn start_login() -> Result<WindsurfOAuthStartResponse, String> {
     tokio::spawn(async move {
         if let Err(e) = start_callback_server(port, callback_login_id, callback_state).await {
             logger::log_error(&format!(
-                "[Windsurf OAuth] 回调服务异常: login_id={}, error={}",
+                "[Windsurf OAuth] Callback service error: login_id={}, error={}",
                 login_id, e
             ));
         }
     });
 
     logger::log_info(&format!(
-        "[Windsurf OAuth] 登录会话已创建: login_id={}, callback_url={}",
+        "[Windsurf OAuth] Login session created: login_id={}, callback_url={}",
         pending.login_id, pending.callback_url
     ));
     Ok(to_start_response(&pending))
@@ -935,16 +935,16 @@ pub async fn complete_login(login_id: &str) -> Result<WindsurfOAuthCompletePaylo
         let state = {
             let guard = PENDING_OAUTH_STATE
                 .lock()
-                .map_err(|_| "OAuth 状态锁不可用".to_string())?;
+                .map_err(|_| "OAuth state lock unavailable".to_string())?;
             guard.clone()
         };
-        let state = state.ok_or_else(|| "登录流程已取消，请重新发起授权".to_string())?;
+        let state = state.ok_or_else(|| "Login flow was canceled, please start authorization again".to_string())?;
         if state.login_id != login_id {
-            return Err("登录会话已变更，请刷新后重试".to_string());
+            return Err("Login session has changed, please refresh and retry".to_string());
         }
         if state.expires_at <= now_timestamp() {
             clear_pending_if_matches(&state.login_id, &state.state);
-            return Err("等待 Windsurf 授权超时，请重新发起授权".to_string());
+            return Err("Timed out waiting for Windsurf authorization, please start again".to_string());
         }
         if let Some(error) = state.callback_error {
             clear_pending_if_matches(&state.login_id, &state.state);
@@ -965,11 +965,11 @@ pub async fn complete_login(login_id: &str) -> Result<WindsurfOAuthCompletePaylo
 pub fn cancel_login(login_id: Option<&str>) -> Result<(), String> {
     let mut state = PENDING_OAUTH_STATE
         .lock()
-        .map_err(|_| "OAuth 状态锁不可用".to_string())?;
+        .map_err(|_| "OAuth state lock unavailable".to_string())?;
 
     match (state.as_ref(), login_id) {
         (Some(current), Some(input)) if current.login_id != input => {
-            return Err("登录会话不匹配，取消失败".to_string());
+            return Err("Login session mismatch, cancel failed".to_string());
         }
         (Some(current), _) => {
             notify_cancel(current.port);
@@ -983,7 +983,7 @@ pub fn cancel_login(login_id: Option<&str>) -> Result<(), String> {
 pub async fn build_payload_from_token(token: &str) -> Result<WindsurfOAuthCompletePayload, String> {
     let trimmed = token.trim();
     if trimmed.is_empty() {
-        return Err("Token 不能为空".to_string());
+        return Err("Token cannot be empty".to_string());
     }
 
     if trimmed.starts_with("sk-ws-") {
@@ -999,7 +999,7 @@ pub async fn build_payload_from_token(token: &str) -> Result<WindsurfOAuthComple
         Ok(payload) => Ok(payload),
         Err(api_err) => build_payload_from_firebase_token(trimmed, None)
             .await
-            .map_err(|firebase_err| format!("Token 解析失败: {}; {}", api_err, firebase_err)),
+            .map_err(|firebase_err| format!("Token parse failed: {}; {}", api_err, firebase_err)),
     }
 }
 
@@ -1014,7 +1014,7 @@ pub async fn build_payload_from_password(
 ) -> Result<WindsurfOAuthCompletePayload, String> {
     let email = email.trim();
     if email.is_empty() || password.is_empty() {
-        return Err("邮箱和密码不能为空".to_string());
+        return Err("Email and password cannot be empty".to_string());
     }
 
  logger::log_info("[Windsurf PasswordLogin] start Firebase ");
@@ -1034,7 +1034,7 @@ pub async fn build_payload_from_password(
         .json(&body)
         .send()
         .await
-        .map_err(|e| format!("Firebase 登录请求失败: {}", e))?;
+        .map_err(|e| format!("Firebase login request failed: {}", e))?;
 
     let status = response.status();
     let text = response
@@ -1053,23 +1053,23 @@ pub async fn build_payload_from_password(
             })
             .unwrap_or_else(|| text.clone());
         let friendly = match error_msg.as_str() {
-            "EMAIL_NOT_FOUND" => "邮箱不存在".to_string(),
-            "INVALID_PASSWORD" => "密码错误".to_string(),
-            "INVALID_LOGIN_CREDENTIALS" => "邮箱或密码错误".to_string(),
-            "USER_DISABLED" => "账号已被禁用".to_string(),
-            "TOO_MANY_ATTEMPTS_TRY_LATER" => "尝试次数过多，请稍后再试".to_string(),
-            _ => format!("Firebase 登录失败: {}", error_msg),
+            "EMAIL_NOT_FOUND" => "Email not found".to_string(),
+            "INVALID_PASSWORD" => "Incorrect password".to_string(),
+            "INVALID_LOGIN_CREDENTIALS" => "Invalid email or password".to_string(),
+            "USER_DISABLED" => "Account is disabled".to_string(),
+            "TOO_MANY_ATTEMPTS_TRY_LATER" => "Too many attempts, please try again later".to_string(),
+            _ => format!("Firebase login failed: {}", error_msg),
         };
         return Err(friendly);
     }
 
     let firebase_resp: Value = serde_json::from_str(&text)
-        .map_err(|e| format!("解析 Firebase 响应失败: {}", e))?;
+        .map_err(|e| format!("Failed to parse Firebase response: {}", e))?;
 
     let id_token = firebase_resp
         .get("idToken")
         .and_then(Value::as_str)
-        .ok_or_else(|| "Firebase 响应缺少 idToken".to_string())?;
+        .ok_or_else(|| "Firebase response missing idToken".to_string())?;
 
  logger::log_info("[Windsurf PasswordLogin] Firebase succeeded，start account");
 
@@ -1081,7 +1081,7 @@ pub async fn build_payload_from_local_auth_status(
     auth_status: Value,
 ) -> Result<WindsurfOAuthCompletePayload, String> {
     let api_key = pick_string_from_object(Some(&auth_status), &["apiKey", "api_key"])
-        .ok_or_else(|| "本地 Windsurf 登录信息缺少 apiKey".to_string())?;
+        .ok_or_else(|| "Local Windsurf login info missing apiKey".to_string())?;
 
     let payload = if auth_status
         .get("firebaseIdToken")
@@ -1183,7 +1183,8 @@ pub async fn refresh_payload_for_account(
 #[allow(dead_code)]
 fn _map_io_error(err: std::io::Error) -> String {
     match err.kind() {
-        ErrorKind::AddrInUse => "OAuth 回调端口已被占用".to_string(),
-        _ => format!("I/O 错误: {}", err),
+        ErrorKind::AddrInUse => "OAuth callback port is already in use".to_string(),
+        _ => format!("I/O error: {}", err),
     }
 }
+

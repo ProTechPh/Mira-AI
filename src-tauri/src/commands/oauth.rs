@@ -16,12 +16,12 @@ pub async fn start_oauth_login(app_handle: AppHandle) -> Result<models::Account,
  modules::logger::log_info("OAuth succeeded， refresh_token...");
 
     let refresh_token = token_res.refresh_token.ok_or_else(|| {
-        let msg = "未获取到 Refresh Token。\n\n\
-         可能原因：您之前已授权过此应用\n\n\
-         解决方案：\n\
-         1. 访问 https://myaccount.google.com/permissions\n\
-         2. 撤销 'Antigravity Tools' 的访问权限\n\
-         3. 重新进行 OAuth 授权"
+        let msg = "Refresh token was not returned.\n\n\
+         Possible cause: this app was authorized before\n\n\
+         Solution:\n\
+         1. Visit https://myaccount.google.com/permissions\n\
+         2. Revoke access for 'Antigravity Tools'\n\
+         3. Run OAuth authorization again"
             .to_string();
         modules::logger::log_error(&msg);
         msg
@@ -36,9 +36,9 @@ pub async fn start_oauth_login(app_handle: AppHandle) -> Result<models::Account,
         })?;
 
     modules::logger::log_info(&format!(
-        "用户: {} ({})",
+        "User: {} ({})",
         user_info.email,
-        user_info.name.as_deref().unwrap_or("无名称")
+        user_info.name.as_deref().unwrap_or("No name")
     ));
 
     let token_data = models::TokenData::new(
@@ -82,12 +82,12 @@ pub async fn complete_oauth_login(app_handle: AppHandle) -> Result<models::Accou
  modules::logger::log_info("OAuth succeeded， refresh_token...");
 
     let refresh_token = token_res.refresh_token.ok_or_else(|| {
-        let msg = "未获取到 Refresh Token。\n\n\
-         可能原因：您之前已授权过此应用\n\n\
-         解决方案：\n\
-         1. 访问 https://myaccount.google.com/permissions\n\
-         2. 撤销 'Antigravity Tools' 的访问权限\n\
-         3. 重新进行 OAuth 授权"
+        let msg = "Refresh token was not returned.\n\n\
+         Possible cause: this app was authorized before\n\n\
+         Solution:\n\
+         1. Visit https://myaccount.google.com/permissions\n\
+         2. Revoke access for 'Antigravity Tools'\n\
+         3. Run OAuth authorization again"
             .to_string();
         modules::logger::log_error(&msg);
         msg
@@ -102,9 +102,9 @@ pub async fn complete_oauth_login(app_handle: AppHandle) -> Result<models::Accou
         })?;
 
     modules::logger::log_info(&format!(
-        "用户: {} ({})",
+        "User: {} ({})",
         user_info.email,
-        user_info.name.as_deref().unwrap_or("无名称")
+        user_info.name.as_deref().unwrap_or("No name")
     ));
 
     let token_data = models::TokenData::new(
@@ -142,3 +142,4 @@ pub async fn cancel_oauth_login() -> Result<(), String> {
     modules::oauth_server::cancel_oauth_flow();
     Ok(())
 }
+

@@ -374,7 +374,7 @@ fn find_available_callback_port() -> Result<u16, String> {
             return Ok(port);
         }
     }
-    Err("本地回调端口已被占用，请关闭占用进程后重试".to_string())
+    Err("Local callback port is in use. Close the occupying process and retry.".to_string())
 }
 
 fn set_callback_result_for_login(
@@ -524,7 +524,7 @@ async fn exchange_code_for_token(
         .code
         .as_deref()
         .and_then(|value| normalize_non_empty(Some(value)))
-        .ok_or_else(|| "Kiro 回调缺少 code，无法完成登录".to_string())?;
+        .ok_or_else(|| "Kiro callback missing code, cannot complete login".to_string())?;
 
     let response = reqwest::Client::new()
         .post(KIRO_TOKEN_ENDPOINT)
@@ -536,7 +536,7 @@ async fn exchange_code_for_token(
         }))
         .send()
         .await
-        .map_err(|e| format!("请求 Kiro oauth/token 接口失败: {}", e))?;
+        .map_err(|e| format!("Failed to request Kiro oauth/token: {}", e))?;
 
     let status = response.status();
     let body = response
@@ -545,14 +545,14 @@ async fn exchange_code_for_token(
         .unwrap_or_else(|_| "<no-body>".to_string());
     if !status.is_success() {
         return Err(format!(
-            "Kiro oauth/token 接口返回异常: status={}, body={}",
+            "Kiro oauth/token returned error: status={}, body={}",
             status, body
         ));
     }
 
     let mut token = unwrap_token_response(
         serde_json::from_str::<Value>(&body)
-            .map_err(|e| format!("解析 Kiro oauth/token 响应失败: {} (body={})", e, body))?,
+            .map_err(|e| format!("Failed to parse Kiro oauth/token response: {} (body={})", e, body))?,
     );
     inject_callback_context_into_token(&mut token, callback);
     Ok(token)
@@ -566,11 +566,11 @@ async fn start_callback_server(
     use tiny_http::{Header, Response, Server};
 
     let server = Server::http(format!("127.0.0.1:{}", callback_port))
-        .map_err(|e| format!("启动 Kiro OAuth 回调服务失败: {}", e))?;
+        .map_err(|e| format!("Failed to start Kiro OAuth callback service: {}", e))?;
     let started = std::time::Instant::now();
 
     logger::log_info(&format!(
-        "[Kiro OAuth] 本地回调服务启动: login_id={}, port={}",
+        "[Kiro OAuth] Local callback service started: login_id={}, port={}",
         expected_login_id, callback_port
     ));
 
@@ -578,7 +578,7 @@ async fn start_callback_server(
         let should_stop = {
             let guard = PENDING_OAUTH_STATE
                 .lock()
-                .map_err(|_| "OAuth 状态锁不可用".to_string())?;
+                .map_err(|_| "OAuth state lock unavailable".to_string())?;
             match guard.as_ref() {
                 Some(state) => {
                     state.login_id != expected_login_id || state.state_token != expected_state
@@ -594,7 +594,7 @@ async fn start_callback_server(
             set_callback_result_for_login(
                 &expected_login_id,
                 &expected_state,
-                Err("等待 Kiro 登录超时，请重新发起授权".to_string()),
+                Err("Timed out waiting for Kiro login, please start authorization again".to_string()),
             );
             break;
         }
@@ -610,7 +610,7 @@ async fn start_callback_server(
                 set_callback_result_for_login(
                     &expected_login_id,
                     &expected_state,
-                    Err("登录已取消".to_string()),
+                    Err("Login canceled".to_string()),
                 );
                 let _ = request.respond(Response::from_string("cancelled").with_status_code(200));
                 break;
@@ -629,9 +629,9 @@ async fn start_callback_server(
                 .unwrap_or_else(String::new);
             if let Some(error_code) = error_code {
                 let message = if error_description.trim().is_empty() {
-                    format!("授权失败: {}", error_code)
+                    format!("Authorization failed: {}", error_code)
                 } else {
-                    format!("授权失败: {} ({})", error_code, error_description)
+                    format!("Authorization failed: {} ({})", error_code, error_description)
                 };
                 set_callback_result_for_login(
                     &expected_login_id,
@@ -649,7 +649,7 @@ async fn start_callback_server(
 
             let callback_state = params.get("state").cloned().unwrap_or_default();
             if callback_state.is_empty() || callback_state != expected_state {
-                let message = "授权状态校验失败，请重新发起登录".to_string();
+                let message = "Authorization state validation failed, please start login again".to_string();
                 set_callback_result_for_login(
                     &expected_login_id,
                     &expected_state,
@@ -703,7 +703,7 @@ async fn start_callback_server(
             };
 
             logger::log_info(&format!(
-                "[Kiro OAuth] 收到回调: login_id={}, path={}, login_option={}, has_code={}",
+                "[Kiro OAuth] Callback received: login_id={}, path={}, login_option={}, has_code={}",
                 expected_login_id,
                 callback.path,
                 callback.login_option,
@@ -1008,7 +1008,7 @@ pub(crate) fn build_payload_from_snapshot(
             &["accessTokenJwt"],
         ],
     )
-    .ok_or_else(|| "Kiro 本地授权信息缺少 access token".to_string())?;
+    .ok_or_else(|| "Kiro local auth info missing access token".to_string())?;
 
     let refresh_token = pick_string(
         Some(&auth_token),
@@ -1244,7 +1244,7 @@ pub fn payload_from_account(account: &KiroAccount) -> KiroOAuthCompletePayload {
 
 pub fn build_payload_from_local_files() -> Result<KiroOAuthCompletePayload, String> {
     let auth_token = kiro_account::read_local_auth_token_json()?.ok_or_else(|| {
-        "未在本机找到 Kiro 登录信息（~/.aws/sso/cache/kiro-auth-token.json）".to_string()
+        "Kiro login info not found on this machine (~/.aws/sso/cache/kiro-auth-token.json)".to_string()
     })?;
     let profile = kiro_account::read_local_profile_json()?;
     let usage = kiro_account::read_local_usage_snapshot()?;
@@ -1260,7 +1260,7 @@ async fn refresh_token_via_remote(refresh_token: &str) -> Result<Value, String> 
         }))
         .send()
         .await
-        .map_err(|e| format!("请求 Kiro refreshToken 接口失败: {}", e))?;
+        .map_err(|e| format!("Failed to request Kiro refreshToken: {}", e))?;
 
     let status = response.status();
     let body = response
@@ -1270,13 +1270,13 @@ async fn refresh_token_via_remote(refresh_token: &str) -> Result<Value, String> 
 
     if !status.is_success() {
         return Err(format!(
-            "Kiro refreshToken 接口返回异常: status={}, body={}",
+            "Kiro refreshToken returned error: status={}, body={}",
             status, body
         ));
     }
 
     serde_json::from_str::<Value>(&body)
-        .map_err(|e| format!("解析 Kiro refreshToken 响应失败: {}", e))
+        .map_err(|e| format!("Failed to parse Kiro refreshToken response: {}", e))
 }
 
 async fn fetch_usage_limits_via_runtime(
@@ -1300,7 +1300,7 @@ async fn fetch_usage_limits_via_runtime(
         .header("Authorization", format!("Bearer {}", access_token.trim()))
         .send()
         .await
-        .map_err(|e| format!("请求 Kiro runtime usage 接口失败: {}", e))?;
+        .map_err(|e| format!("Failed to request Kiro runtime usage: {}", e))?;
 
     let status = response.status();
     let body = response
@@ -1315,13 +1315,13 @@ async fn fetch_usage_limits_via_runtime(
             return Err(format!("BANNED:{}", reason));
         }
         return Err(format!(
-            "Kiro runtime usage 接口返回异常: status={}, body={}",
+            "Kiro runtime usage returned error: status={}, body={}",
             status, body
         ));
     }
 
     serde_json::from_str::<Value>(&body)
-        .map_err(|e| format!("解析 Kiro runtime usage 响应失败: {}", e))
+        .map_err(|e| format!("Failed to parse Kiro runtime usage response: {}", e))
 }
 
 fn merge_refreshed_auth_token_into_payload(
@@ -1556,7 +1556,7 @@ pub async fn enrich_payload_with_runtime_usage(
             }
             set_payload_status(&mut payload, KIRO_ACCOUNT_STATUS_ERROR, Some(err.clone()));
             logger::log_warn(&format!(
-                "[Kiro Refresh] runtime usage 首次请求失败，准备尝试 refresh token: {}",
+                "[Kiro Refresh] First runtime usage request failed, trying refresh token: {}",
                 err
             ));
         }
@@ -1577,7 +1577,7 @@ pub async fn enrich_payload_with_runtime_usage(
         Err(err) => {
             set_payload_status(&mut payload, KIRO_ACCOUNT_STATUS_ERROR, Some(err.clone()));
             logger::log_warn(&format!(
-                "[Kiro Refresh] refresh token 失败，跳过 runtime usage 回填: {}",
+                "[Kiro Refresh] Refresh token failed, skipping runtime usage backfill: {}",
                 err
             ));
             return payload;
@@ -1599,7 +1599,7 @@ pub async fn enrich_payload_with_runtime_usage(
                 set_payload_status(&mut payload, KIRO_ACCOUNT_STATUS_ERROR, Some(err.clone()));
             }
             logger::log_warn(&format!(
-                "[Kiro Refresh] runtime usage 二次请求失败: {}",
+                "[Kiro Refresh] Second runtime usage request failed: {}",
                 err
             ));
         }
@@ -1774,7 +1774,7 @@ pub async fn refresh_payload_for_account(
             }
             Err(err) => {
                 logger::log_warn(&format!(
-                    "[Kiro Refresh] refreshToken 接口失败，回退为现有账号快照: {}",
+                    "[Kiro Refresh] refreshToken request failed, falling back to existing account snapshot: {}",
                     err
                 ));
             }
@@ -1843,19 +1843,19 @@ pub async fn start_login() -> Result<KiroOAuthStartResponse, String> {
         .await
         {
             logger::log_error(&format!(
-                "[Kiro OAuth] 本地回调服务异常: login_id={}, error={}",
+                "[Kiro OAuth] Local callback service error: login_id={}, error={}",
                 expected_login_id, err
             ));
             set_callback_result_for_login(
                 &expected_login_id,
                 &expected_state,
-                Err(format!("本地回调服务异常: {}", err)),
+                Err(format!("Local callback service error: {}", err)),
             );
         }
     });
 
     logger::log_info(&format!(
-        "[Kiro OAuth] 登录会话已创建: login_id={}, callback_url={}, expires_in={}s",
+        "[Kiro OAuth] Login session created: login_id={}, callback_url={}, expires_in={}s",
         pending.login_id, pending.callback_url, OAUTH_TIMEOUT_SECONDS
     ));
 
@@ -1875,17 +1875,17 @@ pub async fn complete_login(login_id: &str) -> Result<KiroOAuthCompletePayload, 
         let state = {
             let guard = PENDING_OAUTH_STATE
                 .lock()
-                .map_err(|_| "OAuth 状态锁不可用".to_string())?;
+                .map_err(|_| "OAuth state lock unavailable".to_string())?;
             guard.clone()
         };
 
-        let state = state.ok_or_else(|| "登录流程已取消，请重新发起授权".to_string())?;
+        let state = state.ok_or_else(|| "Login flow was canceled, please start authorization again".to_string())?;
         if state.login_id != login_id {
-            return Err("登录会话已变更，请刷新后重试".to_string());
+            return Err("Login session has changed, please refresh and retry".to_string());
         }
         if state.expires_at <= now_timestamp() {
             let _ = cancel_login(Some(login_id));
-            return Err("等待 Kiro 登录超时，请重新发起授权".to_string());
+            return Err("Timed out waiting for Kiro login, please start authorization again".to_string());
         }
 
         if let Some(result) = state.callback_result.clone() {
@@ -1896,12 +1896,12 @@ pub async fn complete_login(login_id: &str) -> Result<KiroOAuthCompletePayload, 
             if callback.code.is_none() {
                 let reason = match login_option.as_str() {
                     "builderid" | "awsidc" | "internal" => {
-                        "当前登录方式需要 Kiro 客户端后续认证流程，暂不支持直接导入，请改用 Google/GitHub 登录。"
+                        "Current login method requires Kiro client follow-up auth flow and is not supported for direct import. Please use Google/GitHub login."
                     }
                     "external_idp" => {
-                        "当前登录方式为 External IdP，未返回授权 code，暂不支持自动导入。"
+                        "Current login method is External IdP and no authorization code was returned. Automatic import is not supported."
                     }
-                    _ => "回调缺少授权 code，无法完成登录。",
+                    _ => "Callback missing authorization code, cannot complete login.",
                 };
                 return Err(reason.to_string());
             }
@@ -1920,11 +1920,11 @@ pub async fn complete_login(login_id: &str) -> Result<KiroOAuthCompletePayload, 
 pub fn cancel_login(login_id: Option<&str>) -> Result<(), String> {
     let mut state = PENDING_OAUTH_STATE
         .lock()
-        .map_err(|_| "OAuth 状态锁不可用".to_string())?;
+        .map_err(|_| "OAuth state lock unavailable".to_string())?;
 
     match (state.as_ref(), login_id) {
         (Some(current), Some(input)) if current.login_id != input => {
-            return Err("登录会话不匹配，取消失败".to_string());
+            return Err("Login session mismatch, cancel failed".to_string());
         }
         (Some(_), _) => {
             *state = None;
@@ -1937,7 +1937,7 @@ pub fn cancel_login(login_id: Option<&str>) -> Result<(), String> {
 pub async fn build_payload_from_token(token: &str) -> Result<KiroOAuthCompletePayload, String> {
     let trimmed = token.trim();
     if trimmed.is_empty() {
-        return Err("Token 不能为空".to_string());
+        return Err("Token cannot be empty".to_string());
     }
 
     let mut snapshot = json!({
@@ -2045,3 +2045,4 @@ mod tests {
         );
     }
 }
+

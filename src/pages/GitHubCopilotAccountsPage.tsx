@@ -194,20 +194,20 @@ export function GitHubCopilotAccountsPage() {
 
   const handleOauthPrepareError = useCallback((e: unknown) => {
     const msg = String(e).replace(/^Error:\s*/, '');
-    console.error('[GitHubCopilotOAuth] 准备授权信息失败', { error: msg });
+    console.error('[GitHubCopilotOAuth] Failed to prepare authorization info', { error: msg });
     oauthActiveRef.current = false;
     oauthCompletingRef.current = false;
     setOauthPolling(false);
-    setOauthPrepareError(t('common.shared.oauth.failed', '授权失败') + ': ' + msg);
+    setOauthPrepareError(t('common.shared.oauth.failed', 'Authorization failed') + ': ' + msg);
   }, [t]);
 
   const completeOauthSuccess = useCallback(async () => {
-    oauthLog('授权完成并保存成功', {
+    oauthLog('Authorization completed and saved successfully', {
       loginId: oauthLoginIdRef.current,
     });
     await fetchAccounts();
     setAddStatus('success');
-    setAddMessage(t('common.shared.oauth.success', '授权成功'));
+    setAddMessage(t('common.shared.oauth.success', 'Authorization successful'));
     setTimeout(() => {
       setShowAddModal(false);
       resetAddModalState();
@@ -221,7 +221,7 @@ export function GitHubCopilotAccountsPage() {
     setOauthPolling(false);
     oauthCompletingRef.current = false;
     oauthActiveRef.current = false;
-    oauthLog('Device Flow 授权失败', { loginId: oauthLoginIdRef.current, error: msg });
+    oauthLog('Device Flow Authorization failed', { loginId: oauthLoginIdRef.current, error: msg });
   }, [oauthLog]);
 
   const prepareOauthUrl = useCallback(() => {
@@ -237,7 +237,7 @@ export function GitHubCopilotAccountsPage() {
     setOauthUserCodeCopied(false);
     setOauthMeta(null);
     setOauthUserCode(null);
-    oauthLog('开始准备 GitHub Device Flow 授权信息');
+    oauthLog('Start preparing GitHub Device Flow authorization info');
 
     let started = false;
 
@@ -252,14 +252,14 @@ export function GitHubCopilotAccountsPage() {
         setOauthUserCode(resp.userCode);
         setOauthMeta({ expiresIn: resp.expiresIn, intervalSeconds: resp.intervalSeconds });
 
-        oauthLog('授权信息已就绪并展示在弹框', {
+        oauthLog('Authorization info is ready and shown in modal', {
           loginId: resp.loginId,
           url,
           expiresIn: resp.expiresIn,
           intervalSeconds: resp.intervalSeconds,
         });
 
-        // 后台开始轮询 GitHub 授权结果
+        // Start polling GitHub authorization result in background.
         setOauthPolling(true);
         oauthCompletingRef.current = true;
         oauthActiveRef.current = false;
@@ -291,7 +291,7 @@ export function GitHubCopilotAccountsPage() {
     if (showAddModal && addTab === 'oauth') return;
     const loginId = oauthLoginIdRef.current ?? undefined;
     if (!loginId) return;
-    oauthLog('弹框关闭或切换标签，准备取消授权流程', { loginId });
+    oauthLog('Modal closed or tab switched, canceling authorization flow', { loginId });
     githubCopilotService.cancelGitHubCopilotOAuthLogin(loginId).catch(() => {});
     oauthActiveRef.current = false;
     oauthLoginIdRef.current = null;
@@ -492,7 +492,7 @@ export function GitHubCopilotAccountsPage() {
     if (!oauthUrl) return;
     try {
       await navigator.clipboard.writeText(oauthUrl);
-      oauthLog('已复制授权链接', {
+      oauthLog('Authorization link copied', {
         loginId: oauthLoginIdRef.current,
         authUrl: oauthUrl,
       });
@@ -507,7 +507,7 @@ export function GitHubCopilotAccountsPage() {
     if (!oauthUserCode) return;
     try {
       await navigator.clipboard.writeText(oauthUserCode);
-      oauthLog('已复制 user_code', { loginId: oauthLoginIdRef.current });
+      oauthLog('User code copied', { loginId: oauthLoginIdRef.current });
       setOauthUserCodeCopied(true);
       window.setTimeout(() => setOauthUserCodeCopied(false), 1200);
     } catch (e) {
@@ -516,7 +516,7 @@ export function GitHubCopilotAccountsPage() {
   };
 
   const handleRetryOauth = () => {
-    oauthLog('用户点击刷新授权信息', {
+    oauthLog('User clicked Refresh authorization info', {
       loginId: oauthLoginIdRef.current,
       error: oauthCompleteError,
       timedOut: oauthTimedOut,
@@ -538,7 +538,7 @@ export function GitHubCopilotAccountsPage() {
 
   const handleOpenOauthUrl = async () => {
     if (!oauthUrl) return;
-    oauthLog('用户点击在浏览器打开授权链接', {
+    oauthLog('User clicked Open authorization link in browser', {
       loginId: oauthLoginIdRef.current,
       authUrl: oauthUrl,
     });
@@ -1438,7 +1438,7 @@ export function GitHubCopilotAccountsPage() {
               {addTab === 'oauth' && (
                 <div className="add-section">
                   <p className="section-desc">
-                    {t('githubCopilot.oauth.desc', '点击下方按钮，在浏览器中完成 GitHub Copilot 授权登录。')}
+                    {t('githubCopilot.oauth.desc', 'Click the button below and complete GitHub Copilot authorization in your browser.')}
                   </p>
 
                   {oauthPrepareError ? (
@@ -1446,7 +1446,7 @@ export function GitHubCopilotAccountsPage() {
                       <CircleAlert size={16} />
                       <span>{oauthPrepareError}</span>
                       <button className="btn btn-sm btn-outline" onClick={handleRetryOauth}>
-                        {t('common.shared.oauth.retry', '重新生成授权信息')}
+                        {t('common.shared.oauth.retry', 'Regenerate authorization info')}
                       </button>
                     </div>
                   ) : oauthUrl ? (
@@ -1467,7 +1467,7 @@ export function GitHubCopilotAccountsPage() {
                       )}
                       {oauthMeta && (
                         <p className="oauth-hint">
-                          {t('common.shared.oauth.meta', '授权有效期：{{expires}}s；轮询间隔：{{interval}}s', {
+                          {t('common.shared.oauth.meta', 'Auth expires in {{expires}}s; polling interval {{interval}}s', {
                             expires: oauthMeta.expiresIn,
                             interval: oauthMeta.intervalSeconds,
                           })}
@@ -1478,12 +1478,12 @@ export function GitHubCopilotAccountsPage() {
                         onClick={handleOpenOauthUrl}
                       >
                         <Globe size={16} />
-                        {t('common.shared.oauth.openBrowser', '在浏览器中打开')}
+                        {t('common.shared.oauth.openBrowser', 'Open in Browser')}
                       </button>
                       {oauthPolling && (
                         <div className="add-status loading">
                           <RefreshCw size={16} className="loading-spinner" />
-                          <span>{t('common.shared.oauth.waiting', '等待授权完成...')}</span>
+                          <span>{t('common.shared.oauth.waiting', 'Waiting for authorization...')}</span>
                         </div>
                       )}
                       {oauthCompleteError && (
@@ -1492,7 +1492,7 @@ export function GitHubCopilotAccountsPage() {
                           <span>{oauthCompleteError}</span>
                           {oauthTimedOut && (
                             <button className="btn btn-sm btn-outline" onClick={handleRetryOauth}>
-                              {t('common.shared.oauth.timeoutRetry', '刷新授权链接')}
+                              {t('common.shared.oauth.timeoutRetry', 'Refresh authorization link')}
                             </button>
                           )}
                         </div>
@@ -1504,7 +1504,7 @@ export function GitHubCopilotAccountsPage() {
                   ) : (
                     <div className="oauth-loading">
                       <RefreshCw size={24} className="loading-spinner" />
-                      <span>{t('common.shared.oauth.preparing', '正在准备授权信息...')}</span>
+                      <span>{t('common.shared.oauth.preparing', 'Preparing authorization info...')}</span>
                     </div>
                   )}
                 </div>
@@ -1642,3 +1642,5 @@ export function GitHubCopilotAccountsPage() {
     </div>
   );
 }
+
+

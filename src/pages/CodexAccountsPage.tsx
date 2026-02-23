@@ -151,7 +151,7 @@ export function CodexAccountsPage() {
   }, [fetchAccounts, fetchCurrentAccount]);
 
   const handleOauthPrepareError = useCallback((e: unknown) => {
-    console.error('[CodexOAuth] 准备授权链接失败', { error: String(e) });
+    console.error('[CodexOAuth] Failed to prepare authorization link', { error: String(e) });
     oauthActiveRef.current = false;
     setOauthTimeoutInfo(null);
     const match = String(e).match(/CODEX_OAUTH_PORT_IN_USE:(\d+)/);
@@ -161,18 +161,18 @@ export function CodexAccountsPage() {
       setOauthPrepareError(t('codex.oauth.portInUse', { port: match[1] }));
       return;
     }
-    setOauthPrepareError(t('common.shared.oauth.failed', '授权失败') + ': ' + String(e));
-    console.error('准备 Codex OAuth 链接失败:', e);
+    setOauthPrepareError(t('common.shared.oauth.failed', 'Authorization failed') + ': ' + String(e));
+    console.error('Failed to prepare Codex OAuth link:', e);
   }, [t]);
 
   const completeOauthSuccess = useCallback(async () => {
-    oauthLog('授权完成并保存成功', {
+    oauthLog('Authorization completed and saved successfully', {
       loginId: oauthLoginIdRef.current,
     });
     await fetchAccounts();
     await fetchCurrentAccount();
     setAddStatus('success');
-    setAddMessage(t('common.shared.oauth.success', '授权成功'));
+    setAddMessage(t('common.shared.oauth.success', 'Authorization successful'));
     setTimeout(() => {
       setShowAddModal(false);
       resetAddModalState();
@@ -180,12 +180,12 @@ export function CodexAccountsPage() {
   }, [fetchAccounts, fetchCurrentAccount, t]);
 
   const completeOauthError = useCallback((e: unknown) => {
-    console.error('[CodexOAuth] 授权完成失败', {
+    console.error('[CodexOAuth] Authorization complete failed', {
       loginId: oauthLoginIdRef.current,
       error: String(e),
     });
     setAddStatus('error');
-    setAddMessage(t('common.shared.oauth.failed', '授权失败') + ': ' + String(e));
+    setAddMessage(t('common.shared.oauth.failed', 'Authorization failed') + ': ' + String(e));
   }, [t]);
 
   const getCallbackUrlFromAuthUrl = useCallback((authUrl: string): string | null => {
@@ -202,11 +202,11 @@ export function CodexAccountsPage() {
     let unlistenExtension: UnlistenFn | undefined;
     let unlistenTimeout: UnlistenFn | undefined;
     let disposed = false;
-    oauthLog('OAuth 事件监听 effect 挂载');
+    oauthLog('OAuth event listener effect mounted');
 
     listen<{ loginId?: string }>('codex-oauth-login-completed', async (event) => {
       const eventSeq = ++oauthEventSeqRef.current;
-      oauthLog('收到 OAuth 回调事件', {
+      oauthLog('Received OAuth callback event', {
         eventSeq,
         payload: event.payload,
         showAddModal: showAddModalRef.current,
@@ -216,29 +216,29 @@ export function CodexAccountsPage() {
         expectedLoginId: oauthLoginIdRef.current,
       });
       if (!showAddModalRef.current) {
-        oauthLog('OAuth 回调事件被忽略：弹框已关闭', { eventSeq });
+        oauthLog('OAuth callback event ignored: modal closed', { eventSeq });
         return;
       }
       if (addTabRef.current !== 'oauth') {
-        oauthLog('OAuth 回调事件被忽略：当前不在 OAuth Tab', { eventSeq, addTab: addTabRef.current });
+        oauthLog('OAuth callback event ignored: not on OAuth tab', { eventSeq, addTab: addTabRef.current });
         return;
       }
       if (addStatusRef.current === 'loading') {
-        oauthLog('OAuth 回调事件被忽略：UI 已是 loading', { eventSeq });
+        oauthLog('OAuth callback event ignored: UI already loading', { eventSeq });
         return;
       }
       if (oauthCompletingRef.current) {
-        oauthLog('OAuth 回调事件被忽略：complete 正在进行中', { eventSeq });
+        oauthLog('OAuth callback event ignored: complete in progress', { eventSeq });
         return;
       }
 
       const loginId = event.payload?.loginId;
       if (!loginId) {
-        oauthLog('OAuth 回调事件被忽略：payload 没有 loginId', { eventSeq });
+        oauthLog('OAuth callback event ignored: payload has no loginId', { eventSeq });
         return;
       }
       if (oauthLoginIdRef.current && oauthLoginIdRef.current !== loginId) {
-        console.warn('[CodexOAuth] 收到非当前登录会话的完成事件，已忽略', {
+        console.warn('[CodexOAuth] Received completion event for non-current session, ignored', {
           eventSeq,
           expectedLoginId: oauthLoginIdRef.current,
           receivedLoginId: loginId,
@@ -248,7 +248,7 @@ export function CodexAccountsPage() {
       }
       const attemptId = ++oauthAttemptSeqRef.current;
       const startedAt = Date.now();
-      oauthLog('收到 OAuth 回调事件，开始完成登录', {
+      oauthLog('Received OAuth callback event, starting complete-login', {
         eventSeq,
         attemptId,
         loginId,
@@ -256,12 +256,12 @@ export function CodexAccountsPage() {
       });
 
       setAddStatus('loading');
-      setAddMessage(t('codex.oauth.exchanging', '正在交换令牌...'));
+      setAddMessage(t('codex.oauth.exchanging', 'Exchanging token...'));
       oauthCompletingRef.current = true;
 
       try {
         const account = await codexService.completeCodexOAuthLogin(loginId);
-        oauthLog('completeCodexOAuthLogin 成功', {
+        oauthLog('completeCodexOAuthLogin succeeded', {
           eventSeq,
           attemptId,
           durationMs: Date.now() - startedAt,
@@ -269,7 +269,7 @@ export function CodexAccountsPage() {
         });
         await completeOauthSuccess();
       } catch (e) {
-        oauthLog('completeCodexOAuthLogin 失败', {
+        oauthLog('completeCodexOAuthLogin failed', {
           eventSeq,
           attemptId,
           durationMs: Date.now() - startedAt,
@@ -278,20 +278,20 @@ export function CodexAccountsPage() {
         completeOauthError(e);
       } finally {
         oauthCompletingRef.current = false;
-        oauthLog('OAuth complete 收尾', { eventSeq, attemptId });
+        oauthLog('OAuth complete finalizing', { eventSeq, attemptId });
       }
     }).then((fn) => {
       if (disposed) {
         fn();
       } else {
         unlistenExtension = fn;
-        oauthLog('已注册监听: codex-oauth-login-completed');
+        oauthLog('Listener registered: codex-oauth-login-completed');
       }
     });
 
     listen<{ loginId?: string; callbackUrl?: string; timeoutSeconds?: number }>('codex-oauth-login-timeout', async (event) => {
       if (!showAddModalRef.current) {
-        oauthLog('收到超时事件，但弹框已关闭，忽略', event.payload);
+        oauthLog('Timeout event received but modal is closed, ignored', event.payload);
         return;
       }
       if (addTabRef.current !== 'oauth') return;
@@ -299,7 +299,7 @@ export function CodexAccountsPage() {
       const payload = event.payload ?? {};
       const loginId = payload.loginId;
       if (oauthLoginIdRef.current && loginId && oauthLoginIdRef.current !== loginId) {
-        console.warn('[CodexOAuth] 收到非当前登录会话的超时事件，已忽略', {
+        console.warn('[CodexOAuth] Timeout event for non-current session received, ignored', {
           expectedLoginId: oauthLoginIdRef.current,
           receivedLoginId: loginId,
           payload,
@@ -311,23 +311,23 @@ export function CodexAccountsPage() {
       setOauthUrlCopied(false);
       setOauthPortInUse(null);
       setOauthTimeoutInfo(payload);
-      // 超时场景保持 oauthUrl 区域可见，通过主按钮切换为“刷新授权链接”来重试
+      // Keep oauthUrl visible on timeout and switch main CTA to "Refresh authorization link" for retry.
       setOauthPrepareError(null);
       setAddStatus('idle');
       setAddMessage('');
-      oauthLog('收到授权超时事件，已展示重试入口', payload);
+      oauthLog('Authorization timeout event received, retry entry shown', payload);
     }).then((fn) => {
       if (disposed) {
         fn();
       } else {
         unlistenTimeout = fn;
-        oauthLog('已注册监听: codex-oauth-login-timeout');
+        oauthLog('Listener registered: codex-oauth-login-timeout');
       }
     });
 
     return () => {
       disposed = true;
-      oauthLog('OAuth 事件监听 effect 卸载，准备取消监听');
+      oauthLog('OAuth event listener effect unmounted, removing listeners');
       if (unlistenExtension) unlistenExtension();
       if (unlistenTimeout) unlistenTimeout();
     };
@@ -340,19 +340,19 @@ export function CodexAccountsPage() {
     setOauthPrepareError(null);
     setOauthPortInUse(null);
     setOauthTimeoutInfo(null);
-    oauthLog('开始准备授权链接');
+    oauthLog('Start preparing authorization link');
 
     const openPreparedUrl = (url: string) => {
       if (typeof url === 'string' && url.length > 0 && showAddModalRef.current && addTabRef.current === 'oauth') {
         setOauthUrl(url);
-        oauthLog('授权链接已就绪并展示在弹框', {
+        oauthLog('Authorization link is ready and shown in modal', {
           loginId: oauthLoginIdRef.current,
           authUrl: url,
           callbackUrl: getCallbackUrlFromAuthUrl(url),
         });
         return true;
       }
-      console.warn('[CodexOAuth] 授权链接返回后界面状态已变化，放弃展示');
+      console.warn('[CodexOAuth] UI state changed after auth link returned, skip showing');
       oauthActiveRef.current = false;
       return false;
     };
@@ -360,7 +360,7 @@ export function CodexAccountsPage() {
     codexService.startCodexOAuthLogin()
       .then(({ loginId, authUrl }) => {
         oauthLoginIdRef.current = loginId ?? null;
-        oauthLog('OAuth start 成功', {
+        oauthLog('OAuth start succeeded', {
           loginId: oauthLoginIdRef.current,
           authUrl,
           callbackUrl: getCallbackUrlFromAuthUrl(authUrl),
@@ -384,7 +384,7 @@ export function CodexAccountsPage() {
     if (showAddModal && addTab === 'oauth') return;
     if (!oauthActiveRef.current) return;
     const loginId = oauthLoginIdRef.current ?? undefined;
-    oauthLog('弹框关闭或切换标签，准备取消授权流程', { loginId });
+    oauthLog('Modal closed or tab switched, canceling authorization flow', { loginId });
     codexService.cancelCodexOAuthLogin(loginId).catch(() => {});
     oauthActiveRef.current = false;
     oauthLoginIdRef.current = null;
@@ -580,7 +580,7 @@ export function CodexAccountsPage() {
     if (!oauthUrl) return;
     try {
       await navigator.clipboard.writeText(oauthUrl);
-      oauthLog('已复制授权链接', {
+      oauthLog('Authorization link copied', {
         loginId: oauthLoginIdRef.current,
         authUrl: oauthUrl,
       });
@@ -618,7 +618,7 @@ export function CodexAccountsPage() {
   };
 
   const handleRetryOauthAfterTimeout = () => {
-    oauthLog('用户点击刷新授权链接', {
+    oauthLog('User clicked Refresh authorization link', {
       lastTimeout: oauthTimeoutInfo,
     });
     oauthActiveRef.current = false;
@@ -633,7 +633,7 @@ export function CodexAccountsPage() {
 
   const handleOpenOauthUrl = async () => {
     if (!oauthUrl) return;
-    oauthLog('用户点击在浏览器打开授权链接', {
+    oauthLog('User clicked Open authorization link in browser', {
       loginId: oauthLoginIdRef.current,
       authUrl: oauthUrl,
       callbackUrl: getCallbackUrlFromAuthUrl(oauthUrl),
@@ -1523,7 +1523,7 @@ export function CodexAccountsPage() {
               {addTab === 'oauth' && (
                 <div className="add-section">
                   <p className="section-desc">
-                    {t('codex.oauth.desc', '通过 OpenAI 官方 OAuth 授权登录您的 Codex 账号。')}
+                    {t('codex.oauth.desc', 'Sign in to your Codex account with official OpenAI OAuth.')}
                   </p>
 
                   {oauthPrepareError ? (
@@ -1537,7 +1537,7 @@ export function CodexAccountsPage() {
                       )}
                       {!oauthPortInUse && oauthTimeoutInfo && (
                         <button className="btn btn-sm btn-outline" onClick={handleRetryOauthAfterTimeout}>
-                          {t('codex.oauth.timeoutRetry', '刷新授权链接')}
+                          {t('codex.oauth.timeoutRetry', 'Refresh authorization link')}
                         </button>
                       )}
                     </div>
@@ -1555,13 +1555,13 @@ export function CodexAccountsPage() {
                       >
                         {isOauthTimeoutState ? <RefreshCw size={16} /> : <Globe size={16} />}
                         {isOauthTimeoutState
-                          ? t('codex.oauth.timeoutRetry', '刷新授权链接')
+                          ? t('codex.oauth.timeoutRetry', 'Refresh authorization link')
                           : t('common.shared.oauth.openBrowser', 'Open in Browser')}
                       </button>
                       {isOauthTimeoutState && (
                         <div className="add-status error">
                           <CircleAlert size={16} />
-                          <span>{t('codex.oauth.timeout', '授权超时，请点击“刷新授权链接”后重试。')}</span>
+                          <span>{t('codex.oauth.timeout', 'Authorization timed out. Click "Refresh authorization link" and try again.')}</span>
                         </div>
                       )}
                       <p className="oauth-hint">
@@ -1571,7 +1571,7 @@ export function CodexAccountsPage() {
                   ) : (
                     <div className="oauth-loading">
                       <RefreshCw size={24} className="loading-spinner" />
-                      <span>{t('codex.oauth.preparing', '正在准备授权链接...')}</span>
+                      <span>{t('codex.oauth.preparing', 'Preparing authorization link...')}</span>
                     </div>
                   )}
                 </div>
@@ -1696,3 +1696,5 @@ export function CodexAccountsPage() {
     </div>
   );
 }
+
+

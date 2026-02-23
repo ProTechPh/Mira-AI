@@ -131,9 +131,9 @@ fn clear_pending_login_if_matches(login_id: &str) {
 }
 
 fn get_pending_login_for(login_id: &str) -> Result<PendingDeviceLogin, String> {
-    let state = get_pending_login().ok_or_else(|| "登录流程已取消，请重新发起授权".to_string())?;
+    let state = get_pending_login().ok_or_else(|| "Login flow was canceled, please start authorization again".to_string())?;
     if state.login_id != login_id {
-        return Err("登录会话已变更，请刷新后重试".to_string());
+        return Err("Login session has changed, please refresh and retry".to_string());
     }
     Ok(state)
 }
@@ -171,7 +171,7 @@ async fn request_device_code() -> Result<DeviceCodeResponse, String> {
         ])
         .send()
         .await
-        .map_err(|e| format!("请求 GitHub 设备码失败: {}", e))?;
+        .map_err(|e| format!("Failed to request GitHub device code: {}", e))?;
 
     if !response.status().is_success() {
         let status = response.status();
@@ -180,7 +180,7 @@ async fn request_device_code() -> Result<DeviceCodeResponse, String> {
             .await
             .unwrap_or_else(|_| "<no-body>".to_string());
         return Err(format!(
-            "请求 GitHub 设备码失败: status={}, body={}",
+            "GitHub device code request failed: status={}, body={}",
             status, body
         ));
     }
@@ -188,14 +188,14 @@ async fn request_device_code() -> Result<DeviceCodeResponse, String> {
     response
         .json::<DeviceCodeResponse>()
         .await
-        .map_err(|e| format!("解析 GitHub 设备码响应失败: {}", e))
+        .map_err(|e| format!("Failed to parse GitHub device code response: {}", e))
 }
 
 pub async fn start_login() -> Result<GitHubCopilotOAuthStartResponse, String> {
     if let Some(existing) = get_pending_login() {
         if existing.expires_at > now_timestamp() {
             logger::log_info(&format!(
-                "GitHub Copilot OAuth 复用登录会话: login_id={}",
+                "GitHub Copilot OAuth reusing login session: login_id={}",
                 existing.login_id
             ));
             return Ok(to_start_response(&existing));
@@ -214,7 +214,7 @@ pub async fn start_login() -> Result<GitHubCopilotOAuthStartResponse, String> {
     };
 
     logger::log_info(&format!(
-        "GitHub Copilot OAuth 登录会话已创建: login_id={}, expires_in={}s, interval={}s",
+        "GitHub Copilot OAuth login session created: login_id={}, expires_in={}s, interval={}s",
         login.login_id,
         (login.expires_at - now_timestamp()).max(0),
         login.interval_seconds
@@ -240,7 +240,7 @@ async fn exchange_device_token(
         ])
         .send()
         .await
-        .map_err(|e| format!("请求 GitHub access token 失败: {}", e))?;
+        .map_err(|e| format!("Failed to request GitHub access token: {}", e))?;
 
     if !response.status().is_success() {
         let status = response.status();
@@ -249,7 +249,7 @@ async fn exchange_device_token(
             .await
             .unwrap_or_else(|_| "<no-body>".to_string());
         return Err(format!(
-            "请求 GitHub access token 失败: status={}, body={}",
+            "GitHub access token request failed: status={}, body={}",
             status, body
         ));
     }
@@ -257,7 +257,7 @@ async fn exchange_device_token(
     response
         .json::<DeviceTokenResponse>()
         .await
-        .map_err(|e| format!("解析 GitHub access token 响应失败: {}", e))
+        .map_err(|e| format!("Failed to parse GitHub access token response: {}", e))
 }
 
 async fn fetch_github_user(
@@ -271,7 +271,7 @@ async fn fetch_github_user(
         .header(AUTHORIZATION, format!("Bearer {}", github_access_token))
         .send()
         .await
-        .map_err(|e| format!("请求 GitHub 用户信息失败: {}", e))?;
+        .map_err(|e| format!("Failed to request GitHub user info: {}", e))?;
 
     if !response.status().is_success() {
         let status = response.status();
@@ -280,7 +280,7 @@ async fn fetch_github_user(
             .await
             .unwrap_or_else(|_| "<no-body>".to_string());
         return Err(format!(
-            "请求 GitHub 用户信息失败: status={}, body={}",
+            "GitHub user info request failed: status={}, body={}",
             status, body
         ));
     }
@@ -288,7 +288,7 @@ async fn fetch_github_user(
     response
         .json::<GitHubUser>()
         .await
-        .map_err(|e| format!("解析 GitHub 用户信息失败: {}", e))
+        .map_err(|e| format!("Failed to parse GitHub user info: {}", e))
 }
 
 async fn fetch_github_email(
@@ -302,7 +302,7 @@ async fn fetch_github_email(
         .header(AUTHORIZATION, format!("Bearer {}", github_access_token))
         .send()
         .await
-        .map_err(|e| format!("请求 GitHub 邮箱列表失败: {}", e))?;
+        .map_err(|e| format!("Failed to request GitHub email list: {}", e))?;
 
     if !response.status().is_success() {
         let status = response.status();
@@ -311,7 +311,7 @@ async fn fetch_github_email(
             .await
             .unwrap_or_else(|_| "<no-body>".to_string());
         return Err(format!(
-            "请求 GitHub 邮箱列表失败: status={}, body={}",
+            "GitHub email list request failed: status={}, body={}",
             status, body
         ));
     }
@@ -319,7 +319,7 @@ async fn fetch_github_email(
     let emails = response
         .json::<Vec<GitHubEmail>>()
         .await
-        .map_err(|e| format!("解析 GitHub 邮箱列表失败: {}", e))?;
+        .map_err(|e| format!("Failed to parse GitHub email list: {}", e))?;
 
     let primary = emails
         .iter()
@@ -346,7 +346,7 @@ async fn fetch_copilot_token(
         .header(AUTHORIZATION, format!("token {}", github_access_token))
         .send()
         .await
-        .map_err(|e| format!("请求 Copilot token 失败: {}", e))?;
+        .map_err(|e| format!("Failed to request Copilot token: {}", e))?;
 
     if !response.status().is_success() {
         let status = response.status();
@@ -355,7 +355,7 @@ async fn fetch_copilot_token(
             .await
             .unwrap_or_else(|_| "<no-body>".to_string());
         return Err(format!(
-            "请求 Copilot token 失败: status={}, body={}",
+            "Copilot token request failed: status={}, body={}",
             status, body
         ));
     }
@@ -363,12 +363,12 @@ async fn fetch_copilot_token(
     let payload = response
         .json::<CopilotTokenResponse>()
         .await
-        .map_err(|e| format!("解析 Copilot token 响应失败: {}", e))?;
+        .map_err(|e| format!("Failed to parse Copilot token response: {}", e))?;
 
     let token = payload.token.ok_or_else(|| {
         payload
             .message
-            .unwrap_or_else(|| "Copilot token 缺失".to_string())
+            .unwrap_or_else(|| "Copilot token missing".to_string())
     })?;
 
     let user_info = fetch_copilot_user_info(client, github_access_token)
@@ -407,7 +407,7 @@ async fn fetch_copilot_user_info(
         .header(AUTHORIZATION, format!("token {}", github_access_token))
         .send()
         .await
-        .map_err(|e| format!("请求 Copilot user 信息失败: {}", e))?;
+        .map_err(|e| format!("Failed to request Copilot user info: {}", e))?;
 
     if !response.status().is_success() {
         let status = response.status();
@@ -416,7 +416,7 @@ async fn fetch_copilot_user_info(
             .await
             .unwrap_or_else(|_| "<no-body>".to_string());
         return Err(format!(
-            "请求 Copilot user 信息失败: status={}, body={}",
+            "Copilot user info request failed: status={}, body={}",
             status, body
         ));
     }
@@ -424,7 +424,7 @@ async fn fetch_copilot_user_info(
     response
         .json::<CopilotUserInfoResponse>()
         .await
-        .map_err(|e| format!("解析 Copilot user 信息失败: {}", e))
+        .map_err(|e| format!("Failed to parse Copilot user info: {}", e))
 }
 
 pub async fn refresh_copilot_token(
@@ -438,11 +438,11 @@ pub async fn complete_login(login_id: &str) -> Result<GitHubCopilotOAuthComplete
     let pending = get_pending_login_for(login_id)?;
     if pending.expires_at <= now_timestamp() {
         clear_pending_login_if_matches(login_id);
-        return Err("登录会话已过期，请重新发起授权".to_string());
+        return Err("Login session expired, please start authorization again".to_string());
     }
 
     logger::log_info(&format!(
-        "GitHub Copilot OAuth 开始轮询授权结果: login_id={}",
+        "GitHub Copilot OAuth polling started: login_id={}",
         pending.login_id
     ));
 
@@ -453,7 +453,7 @@ pub async fn complete_login(login_id: &str) -> Result<GitHubCopilotOAuthComplete
         let pending = get_pending_login_for(login_id)?;
         if now_timestamp() >= pending.expires_at {
             clear_pending_login_if_matches(login_id);
-            return Err("等待 GitHub 授权超时，请重新发起授权".to_string());
+            return Err("Timed out waiting for GitHub authorization, please start again".to_string());
         }
 
         let response = exchange_device_token(&client, &pending.device_code).await?;
@@ -476,18 +476,18 @@ pub async fn complete_login(login_id: &str) -> Result<GitHubCopilotOAuthComplete
             }
             Some("expired_token") => {
                 clear_pending_login_if_matches(login_id);
-                return Err("授权码已过期，请重新发起授权".to_string());
+                return Err("Authorization code expired, please start authorization again".to_string());
             }
             Some("access_denied") => {
                 clear_pending_login_if_matches(login_id);
-                return Err("用户取消了 GitHub 授权".to_string());
+                return Err("User canceled GitHub authorization".to_string());
             }
             Some(other) => {
                 let detail = response
                     .error_description
-                    .unwrap_or_else(|| "未知错误".to_string());
+                    .unwrap_or_else(|| "Unknown error".to_string());
                 clear_pending_login_if_matches(login_id);
-                return Err(format!("GitHub 授权失败: {} ({})", other, detail));
+                return Err(format!("GitHub authorization failed: {} ({})", other, detail));
             }
             None => {
                 sleep_with_cancel_check(login_id, interval_seconds).await?;
@@ -509,7 +509,7 @@ pub async fn complete_login(login_id: &str) -> Result<GitHubCopilotOAuthComplete
     clear_pending_login_if_matches(login_id);
 
     logger::log_info(&format!(
-        "GitHub Copilot OAuth 登录完成: login_id={}, github_login={}",
+        "GitHub Copilot OAuth login completed: login_id={}, github_login={}",
         pending.login_id, github_user.login
     ));
 
@@ -537,7 +537,7 @@ pub fn cancel_login(login_id: Option<&str>) -> Result<(), String> {
     let current = get_pending_login();
     match (current, login_id) {
         (Some(state), Some(id)) if state.login_id != id => {
-            Err("登录会话不匹配，取消失败".to_string())
+            Err("Login session mismatch, cancel failed".to_string())
         }
         (Some(_), _) => {
             set_pending_login(None);
@@ -578,3 +578,4 @@ pub async fn build_payload_from_github_access_token(
         copilot_limited_user_reset_date: copilot.limited_user_reset_date,
     })
 }
+
