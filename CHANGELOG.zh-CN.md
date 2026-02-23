@@ -2,7 +2,7 @@
 
 简体中文 · [English](CHANGELOG.md)
 
-本文件记录 Cockpit Tools 的所有重要变更。
+本文件记录  的所有重要变更。
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)。
 
@@ -10,17 +10,17 @@
 ## [0.8.12] - 2026-02-22
 
 ### 新增
-- **GitHub Release + Homebrew Cask 一键发布脚本**：新增 `scripts/release/publish_github_release_and_cask.cjs` 与 `npm run release:github-and-cask`，支持 `universal.dmg` 构建、GitHub Release 上传与 `Casks/cockpit-tools.rb` 更新（含 `--skip-build` / `--skip-gh` / `--skip-cask` / `--dry-run` 等参数）。
+- **GitHub Release + Homebrew Cask 一键发布脚本**：新增 `scripts/release/publish_github_release_and_cask.cjs` 与 `npm run release:github-and-cask`，支持 `universal.dmg` 构建、GitHub Release 上传与 `Casks/mira-tools.rb` 更新（含 `--skip-build` / `--skip-gh` / `--skip-cask` / `--dry-run` 等参数）。
 
 ### 变更
 - **启动路径探测策略优化**：应用启动时改为先读取本地配置，仅探测未配置路径的平台，并使用延迟 + 错峰执行，降低启动阶段集中调用系统探测命令的概率。
 - **发布流程文档补充 Homebrew 场景**：更新 `docs/release-process.md`，补充 `universal` 构建推荐方式、`SHA256SUMS` 生成示例、GitHub CLI/Rust target 前置条件及 cask 更新顺序说明。
-- **Release 工作流恢复 Homebrew Cask 自动更新**：`release.yml` 恢复 `update-homebrew-cask` 任务，基于已发布的 `*_universal.dmg` 自动计算 `sha256`、更新 `Casks/cockpit-tools.rb` 并创建 cask PR。
+- **Release 工作流恢复 Homebrew Cask 自动更新**：`release.yml` 恢复 `update-homebrew-cask` 任务，基于已发布的 `*_universal.dmg` 自动计算 `sha256`、更新 `Casks/mira-tools.rb` 并创建 cask PR。
 - **仅自动合并 cask 自动生成 PR**：Release 工作流现仅对 `automation/update-cask-v*` 分支创建的 Homebrew cask PR 启用自动合并（squash + 删除分支），不影响其他普通 PR。
 
 ### 修复
 - **Windows 启动黑色命令行窗口闪烁**：修复 VS Code 路径注册表回退探测中 `cmd /c reg query` 未隐藏窗口的问题，后台命令改为隐藏执行，减少部分 Windows 用户启动时出现多个黑色窗口闪现。
-- **品牌名与套餐标签误翻译**：修复非英语语言中品牌名/产品名与原始套餐标签被本地化的问题，恢复 `Cockpit Tools`、`Antigravity`、`Codex`、`GitHub Copilot`、`Windsurf` 以及 `accounts.tier.*`、`codex.plan.*`、`kiro.plan.*` 的原始显示值。
+- **品牌名与套餐标签误翻译**：修复非英语语言中品牌名/产品名与原始套餐标签被本地化的问题，恢复 ``、`Antigravity`、`Codex`、`GitHub Copilot`、`Windsurf` 以及 `accounts.tier.*`、`codex.plan.*`、`kiro.plan.*` 的原始显示值。
 - **翻译校验误报品牌名**：为多语言校验脚本补充品牌名英文复用白名单，避免后续再次将品牌名误判为“未本地化”。
 
 ---
@@ -474,7 +474,7 @@
   - 查看 5小时 (Hourly) 和周 (Weekly) 配额。
   - 自动识别账号订阅计划 (Basic, Plus, Team, Enterprise)。
   - 独立的账号列表和卡片视图。
-- **品牌重塑**: 项目正式更名为 **Cockpit Tools**。
+- **品牌重塑**: 项目正式更名为 ****。
 - **赞助与反馈**: 在 设置 -> 关于 页面新增 "赞助支持" 和 "意见反馈" 入口，加强社区互动。
 
 ### 变更
@@ -560,7 +560,7 @@
   - 自定义唤醒词和最大 Token 限制。
   - 触发历史记录，包含详细日志。
   - 全局唤醒开关，快速启用/禁用。
-- **Antigravity Cockpit 集成**: 与 VS Code 插件深度集成。
+- **Antigravity Mira 集成**: 与 VS Code 插件深度集成。
   - WebSocket 服务器实现双向通信。
   - 支持从插件端远程切换账号。
   - 账号导入/导出同步。

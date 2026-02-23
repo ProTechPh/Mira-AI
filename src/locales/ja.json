@@ -532,7 +532,7 @@
       "importBtn": "インポート",
       "oauthAction": "OAuth 認証",
       "fromExtension": "プラグインからインポート",
-      "syncBadge": "Antigravity Cockpit プラグインのアカウントを同期",
+      "syncBadge": "Antigravity Mira プラグインのアカウントを同期",
       "fromLocalDB": "ローカル DB からインポート",
       "localDBDesc": "このマシンの Antigravity クライアントからログインアカウントを読み込む",
       "toolsDescMigrate": "~/.antigravity_tools/ からアカウントを移行",

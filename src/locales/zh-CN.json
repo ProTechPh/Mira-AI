@@ -750,7 +750,7 @@
       "importBtn": "导入",
       "oauthAction": "OAuth 授权",
       "fromExtension": "从插件导入",
-      "syncBadge": "同步 Antigravity Cockpit 插件账号",
+      "syncBadge": "同步 Antigravity Mira 插件账号",
       "fromLocalDB": "从本地数据库导入",
       "localDBDesc": "读取本机 Antigravity 客户端登录账号",
       "toolsDescMigrate": "从 ~/.antigravity_tools/ 迁移历史账号",

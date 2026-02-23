@@ -1,6 +1,6 @@
 # Release Process (Open Source, No Code Signing)
 
-> 适用于 Cockpit Tools 当前开源发布流程（未接入代码签名）。
+> 适用于  当前开源发布流程（未接入代码签名）。
 
 ## 1. 目标
 
@@ -33,7 +33,7 @@ node scripts/release/preflight.cjs --skip-locales --skip-typecheck --skip-build 
 
 当前推荐使用 `universal` 安装包（同时兼容 Apple Silicon / Intel），并在上传 GitHub Release 后同步更新 Homebrew cask。
 
-推荐一键脚本（会执行 `universal.dmg` 构建、上传 GitHub Release 资产、更新 `Casks/cockpit-tools.rb`）：
+推荐一键脚本（会执行 `universal.dmg` 构建、上传 GitHub Release 资产、更新 `Casks/mira-tools.rb`）：
 
 ```bash
 npm run release:github-and-cask
@@ -92,8 +92,8 @@ node scripts/release/gen_checksums.cjs \
 
 补充说明（Homebrew 自维护 Tap）：
 
-1. 先上传 GitHub Release 资产，再推送 `Casks/cockpit-tools.rb` 更新，避免 cask 链接短暂 404。
-2. `Casks/cockpit-tools.rb` 中的 `version`、`sha256` 必须与 Release 中实际 `*_universal.dmg` 一致。
+1. 先上传 GitHub Release 资产，再推送 `Casks/mira-tools.rb` 更新，避免 cask 链接短暂 404。
+2. `Casks/mira-tools.rb` 中的 `version`、`sha256` 必须与 Release 中实际 `*_universal.dmg` 一致。
 
 ## 6. VirusTotal 单引擎误报处理
 
@@ -107,7 +107,7 @@ node scripts/release/gen_checksums.cjs \
 ## 7. Git 发布建议（与你当前规则对齐）
 
 1. 修改更新日志（`CHANGELOG.md` / `CHANGELOG.zh-CN.md`）。
-2. 若使用 Homebrew 自维护 Tap，先运行 `npm run release:github-and-cask`（或 `--skip-build` 变体）并确认 `Casks/cockpit-tools.rb` 已更新。
+2. 若使用 Homebrew 自维护 Tap，先运行 `npm run release:github-and-cask`（或 `--skip-build` 变体）并确认 `Casks/mira-tools.rb` 已更新。
 3. 发布前若涉及“发布 + 推远端 + 打标签”，先运行：
 
 ```bash

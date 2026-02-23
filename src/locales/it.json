@@ -532,7 +532,7 @@
       "importBtn": "Importa",
       "oauthAction": "Autorizzazione OAuth",
       "fromExtension": "Importa dal Plugin",
-      "syncBadge": "Sincronizza account plugin Antigravity Cockpit",
+      "syncBadge": "Sincronizza account plugin Antigravity Mira",
       "fromLocalDB": "Importa dal DB locale",
       "localDBDesc": "Leggi gli account dal client Antigravity su questa macchina",
       "toolsDescMigrate": "Migra gli account da ~/.antigravity_tools/",

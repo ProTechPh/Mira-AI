@@ -532,7 +532,7 @@
       "importBtn": "Importuj",
       "oauthAction": "Autoryzacja OAuth",
       "fromExtension": "Import z wtyczki",
-      "syncBadge": "Synchronizuj konta wtyczki Antigravity Cockpit",
+      "syncBadge": "Synchronizuj konta wtyczki Antigravity Mira",
       "fromLocalDB": "Import z lokalnej bazy danych",
       "localDBDesc": "Odczytaj konta logowania z klienta Antigravity na tym urządzeniu",
       "toolsDescMigrate": "Migracja kont z ~/.antigravity_tools/",

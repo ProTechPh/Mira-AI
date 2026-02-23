@@ -532,7 +532,7 @@
       "importBtn": "가져오기",
       "oauthAction": "OAuth 인증",
       "fromExtension": "플러그인에서 가져오기",
-      "syncBadge": "Antigravity Cockpit 플러그인 계정 동기화",
+      "syncBadge": "Antigravity Mira계정 동기화",
       "fromLocalDB": "로컬 DB에서 가져오기",
       "localDBDesc": "이 기기의 Antigravity 클라이언트에서 로그인 계정 읽기",
       "toolsDescMigrate": "~/.antigravity_tools/에서 계정 마이그레이션",

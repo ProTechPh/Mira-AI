@@ -20,8 +20,8 @@ static QUOTA_ALERT_LAST_SENT: std::sync::LazyLock<Mutex<HashMap<String, i64>>> =
 
 const QUOTA_ALERT_COOLDOWN_SECONDS: i64 = 300;
 
-// 使用与 AntigravityCockpit 插件相同的数据目录
-const DATA_DIR: &str = ".antigravity_cockpit";
+// 使用与 Antigravitymira 插件相同的数据目录
+const DATA_DIR: &str = ".antigravity_mira";
 const ACCOUNTS_INDEX: &str = "accounts.json";
 const ACCOUNTS_DIR: &str = "accounts";
 

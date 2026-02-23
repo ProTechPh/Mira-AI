@@ -85,7 +85,7 @@ fn powershell_output_file(script: &str) -> std::io::Result<std::process::Output>
         .duration_since(UNIX_EPOCH)
         .unwrap_or_default()
         .as_nanos();
-    path.push(format!("cockpit_ps_{}_{}.ps1", std::process::id(), unique));
+    path.push(format!("mira_ps_{}_{}.ps1", std::process::id(), unique));
 
     let file_script = format!(
         "[Console]::OutputEncoding=[System.Text.Encoding]::UTF8; $OutputEncoding=[System.Text.Encoding]::UTF8; {}\n",
@@ -627,13 +627,13 @@ pub fn detect_windows_exec_path_by_signatures(
 }
 
 fn should_detach_child() -> bool {
-    if let Ok(value) = std::env::var("COCKPIT_CHILD_LOGS") {
+    if let Ok(value) = std::env::var("mira_CHILD_LOGS") {
         let lowered = value.trim().to_lowercase();
         if matches!(lowered.as_str(), "1" | "true" | "yes" | "on") {
             return false;
         }
     }
-    if let Ok(value) = std::env::var("COCKPIT_CHILD_DETACH") {
+    if let Ok(value) = std::env::var("mira_CHILD_DETACH") {
         let lowered = value.trim().to_lowercase();
         if matches!(lowered.as_str(), "0" | "false" | "no" | "off") {
             return false;

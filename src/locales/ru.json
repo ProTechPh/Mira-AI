@@ -532,7 +532,7 @@
       "importBtn": "Импортировать",
       "oauthAction": "OAuth авторизация",
       "fromExtension": "Импорт из плагина",
-      "syncBadge": "Синхронизировать аккаунты плагина Antigravity Cockpit",
+      "syncBadge": "Синхронизировать аккаунты плагина Antigravity Mira",
       "fromLocalDB": "Импорт из локальной БД",
       "localDBDesc": "Чтение аккаунтов из клиента Antigravity на этом устройстве",
       "toolsDescMigrate": "Миграция аккаунтов из ~/.antigravity_tools/",

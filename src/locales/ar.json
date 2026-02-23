@@ -532,7 +532,7 @@
       "importBtn": "استيراد",
       "oauthAction": "تفويض OAuth",
       "fromExtension": "استيراد من الملحق",
-      "syncBadge": "مزامنة حسابات ملحق Antigravity Cockpit",
+      "syncBadge": "مزامنة حسابات ملحق Antigravity Mira",
       "fromLocalDB": "استيراد من قاعدة البيانات المحلية",
       "localDBDesc": "قراءة حسابات تسجيل الدخول من عميل Antigravity على هذا الجهاز",
       "toolsDescMigrate": "ترحيل الحسابات من ~/.antigravity_tools/",
