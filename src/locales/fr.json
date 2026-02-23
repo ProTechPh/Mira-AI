@@ -1,0 +1,1391 @@
+{
+  "common": {
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "delete": "Supprimer",
+    "refresh": "Actualiser",
+    "loading": "Chargement...",
+    "success": "Succès",
+    "failed": "Échec",
+    "enabled": "Activé",
+    "disabled": "Désactivé",
+    "close": "Fermer",
+    "open": "Ouvrir",
+    "copy": "Copier",
+    "add": "Ajouter",
+    "enable": "Activer",
+    "disable": "Désactiver",
+    "none": "Aucun",
+    "detail": "Détails",
+    "editable": "Modifiable",
+    "preview": "Aperçu",
+    "shared": {
+      "addAccount": "Ajouter un compte",
+      "columns": {
+        "actions": "Actions",
+        "plan": "Plan",
+        "addOnPromptCredits": "Crédits de prompts additionnels",
+        "credits": "Crédits",
+        "email": "E-mail",
+        "promptCredits": "Crédits de prompts"
+      },
+      "empty": {
+        "title": "Aucun compte"
+      },
+      "export": "Exporter",
+      "filter": {
+        "all": "Tous ({{count}})",
+        "enterprise": "ENTREPRISE ({{count}})",
+        "free": "GRATUIT ({{count}})",
+        "pro": "PRO ({{count}})",
+        "business": "ENTREPRISE ({{count}})",
+        "individual": "INDIVIDUEL ({{count}})"
+      },
+      "filterLabel": "Filtrer",
+      "import": {
+        "failedMsg": "Échec de l'importation : {{error}}",
+        "label": "Importer",
+        "importing": "Importation du compte local...",
+        "pickFile": "Sélectionner un fichier JSON à importer",
+        "orJson": "Ou importer depuis un fichier JSON"
+      },
+      "instances": {
+        "unsupported": {
+          "title": "Non pris en charge sur ce système"
+        },
+        "quota": {
+          "chat": "Messages de discussion",
+          "inline": "Suggestions en ligne"
+        },
+        "subtitle": "Configuration indépendante par instance, fonctionnement parallèle avec plusieurs comptes.",
+        "title": "Instances multiples"
+      },
+      "noMatch": {
+        "desc": "Essayez d'autres filtres",
+        "title": "Aucun compte correspondant"
+      },
+      "oauth": {
+        "failed": "Autorisation échouée",
+        "hint": "Une fois l'autorisation terminée, cette fenêtre se mettra à jour automatiquement",
+        "openBrowser": "Ouvrir dans le navigateur",
+        "success": "Autorisation réussie",
+        "meta": "Expire dans : {{expires}}s ; intervalle d'interrogation : {{interval}}s",
+        "preparing": "Préparation du lien d'autorisation...",
+        "retry": "Régénérer les informations d'autorisation",
+        "timeoutRetry": "Actualiser le lien d'autorisation",
+        "waiting": "En attente d'autorisation..."
+      },
+      "refreshAll": "Tout rafraîchir",
+      "refreshQuota": "Rafraîchir le quota",
+      "search": "Rechercher des comptes...",
+      "sort": {
+        "ascTooltip": "Ascendant (cliquer pour descendant)",
+        "createdAt": "Date de création",
+        "descTooltip": "Descendant (cliquer pour ascendant)",
+        "toggleDirection": "Changer la direction",
+        "credits": "Par crédits restants",
+        "planEnd": "Par heure de fin de cycle"
+      },
+      "sortLabel": "Trier",
+      "token": {
+        "empty": "Veuillez saisir un token ou du JSON",
+        "import": "Importer",
+        "importFailedMsg": "Échec de l'import : {{error}}",
+        "importing": "Importation...",
+        "importSuccessMsg": "{{count}} compte(s) importé(s)",
+        "placeholder": "Coller le contenu JSON..."
+      },
+      "view": {
+        "grid": "Vue cartes",
+        "list": "Vue liste"
+      },
+      "addModal": {
+        "import": "Import local",
+        "oauth": "Connexion OAuth",
+        "token": "Import JSON"
+      },
+      "overview": {
+        "title": "Aperçu des comptes"
+      },
+      "quota": {
+        "noData": "Aucune donnée de quota",
+        "resetDone": "Réinitialisé",
+        "hourly": "Quota de 5 heures",
+        "weekly": "Quota hebdomadaire"
+      },
+      "subtitle": "Gérez vos comptes GitHub Copilot",
+      "time": {
+        "lessThanMinute": "<1 min",
+        "relativeDays": "{{days}} j",
+        "relativeDaysHours": "{{days}} j {{hours}} h",
+        "relativeHours": "{{hours}} h",
+        "relativeHoursMinutes": "{{hours}} h {{minutes}} min",
+        "relativeMinutes": "{{minutes}} min",
+        "relativeWithAbsolute": "{{relative}} ({{absolute}})"
+      },
+      "credits": {
+        "leftInline": "{{left}} restants",
+        "periodEndOnly": "Fin du cycle : {{end}}",
+        "periodRange": "Cycle : {{start}} - {{end}}",
+        "planEndsIn": "Le cycle se réinitialise dans {{days}} jours",
+        "planEndsUnknown": "Période du cycle indisponible",
+        "usedLine": "{{used}} / {{total}} utilisés"
+      },
+      "flowNotice": {
+        "alternative": "Alternative : utiliser l'isolation multi-instance (--user-data-dir différent). Connectez-vous une fois par instance, puis lancez par instance pour basculer rapidement vers l'environnement du compte cible."
+      },
+      "injecting": "Injection en cours...",
+      "usage": {
+        "resetLine": "L'allocation se réinitialise {{dateText}}.",
+        "resetUnknown": "Réinitialisation de l'allocation -"
+      }
+    }
+  },
+  "nav": {
+    "overview": "Compte Antigravity",
+    "accounts": "Comptes",
+    "wakeup": "Tâches de réveil",
+    "fingerprints": "Empreintes",
+    "settings": "Paramètres",
+    "codex": "Comptes Codex",
+    "dashboard": "Tableau de bord",
+    "instances": "Multi-Instance",
+    "githubCopilot": "GitHub Copilot",
+    "windsurf": "Windsurf",
+    "morePlatforms": "Plus de plateformes"
+  },
+  "settings": {
+    "title": "Paramètres de l'application",
+    "subtitle": "Personnalisez votre expérience Mira Tools.",
+    "tabs": {
+      "general": "Général",
+      "network": "Réseau",
+      "about": "À propos"
+    },
+    "general": {
+      "appearance": "Apparence",
+      "language": "Langue",
+      "languageDesc": "Sélectionnez la langue de l'interface",
+      "theme": "Thème",
+      "themeDesc": "Basculer entre le mode clair et sombre",
+      "themeLight": "Clair",
+      "themeDark": "Sombre",
+      "themeSystem": "Système",
+      "accountManagement": "Gestion des comptes",
+      "autoRefresh": "Actualisation automatique du quota Antigravity",
+      "codexAutoRefresh": "Actualisation automatique du quota Codex",
+      "autoRefreshDesc": "Fréquence de mise à jour en arrière-plan",
+      "codexAutoRefreshDesc": "Fréquence de mise à jour en arrière-plan",
+      "autoRefreshDisabled": "Désactivé",
+      "autoRefreshCustom": "Personnalisé...",
+      "every15min": "Toutes les 15 minutes",
+      "every30min": "Toutes les 30 minutes",
+      "every1hour": "Toutes les heures",
+      "minutes": "min",
+      "refreshIntervalLimited": "Le réveil lors de la réinitialisation du quota est activé, l'intervalle d'actualisation est donc de 2 minutes minimum.",
+      "storageTitle": "Répertoires et stockage",
+      "dataDir": "Répertoire de données",
+      "dataDirDesc": "Emplacement de stockage des comptes et fichiers de configuration.",
+      "fpDir": "Stockage Antigravity",
+      "fpDirDesc": "Emplacement des fichiers de données Antigravity.",
+      "closeBehavior": "Comportement à la fermeture",
+      "closeBehaviorDesc": "Action à la fermeture de la fenêtre",
+      "closeBehaviorAsk": "Demander à chaque fois",
+      "closeBehaviorMinimize": "Minimiser dans la barre d'état",
+      "closeBehaviorQuit": "Quitter l'application",
+      "opencodeAppPathDesc": "Laisser vide pour utiliser le chemin par défaut",
+      "opencodeTitle": "Intégration OpenCode",
+      "opencodeRestart": "Redémarrer OpenCode lors du changement de Codex",
+      "opencodeRestartDesc": "Synchroniser les informations du compte Codex dans OpenCode",
+      "opencodeAppPath": "Chemin de lancement OpenCode",
+      "opencodeAppPathPlaceholder": "Chemin par défaut",
+      "opencodePathReset": "Réinitialiser par défaut",
+      "opencodePathSelect": "Sélectionner",
+      "codexTitle": "Lancement de Codex",
+      "codexAppPath": "Chemin de l’app Codex",
+      "codexAppPathDesc": "Laissez vide pour utiliser le chemin par défaut",
+      "codexAppPathPlaceholder": "Chemin par défaut",
+      "codexPathSelect": "Sélectionner",
+      "codexPathReset": "Réinitialiser par défaut",
+      "vscodeTitle": "Lancement de VS Code",
+      "vscodeAppPath": "Chemin de l’app VS Code",
+      "vscodeAppPathDesc": "Laissez vide pour utiliser le chemin par défaut",
+      "vscodeAppPathPlaceholder": "Chemin par défaut",
+      "vscodePathSelect": "Sélectionner",
+      "vscodePathReset": "Réinitialiser par défaut",
+      "antigravityAppPath": "Chemin de l’app Antigravity",
+      "antigravityTitle": "Lancement d’Antigravity",
+      "commonTitle": "Général",
+      "antigravitySettingsTitle": "Paramètres Antigravity",
+      "codexSettingsTitle": "Paramètres Codex",
+      "githubCopilotSettingsTitle": "Paramètres GitHub Copilot",
+      "ghcpAutoRefresh": "Actualisation automatique du quota GitHub Copilot",
+      "ghcpAutoRefreshDesc": "Fréquence de mise à jour en arrière-plan",
+      "windsurfSettingsTitle": "Paramètres Windsurf",
+      "windsurfAutoRefresh": "Actualisation automatique du quota Windsurf",
+      "windsurfAutoRefreshDesc": "Fréquence de mise à jour en arrière-plan",
+      "windsurfAppPath": "Chemin de l’app Windsurf",
+      "windsurfAppPathDesc": "Laissez vide pour utiliser le chemin par défaut",
+      "windsurfAppPathPlaceholder": "Chemin par défaut",
+      "windsurfPathSelect": "Sélectionner",
+      "windsurfPathReset": "Réinitialiser par défaut",
+      "kiroSettingsTitle": "Paramètres Kiro",
+      "kiroAutoRefresh": "Quota de rafraîchissement automatique Kiro",
+      "kiroAutoRefreshDesc": "Fréquence de mise à jour en arrière-plan",
+      "kiroAppPath": "Chemin de l’application Kiro",
+      "kiroAppPathDesc": "Laisser vide pour utiliser le chemin par défaut",
+      "kiroAppPathPlaceholder": "Chemin par défaut",
+      "kiroPathSelect": "Sélectionner",
+      "kiroPathReset": "Réinitialiser aux valeurs par défaut",
+      "codexLaunchOnSwitch": "Lancer Codex App lors du changement de Codex",
+      "codexLaunchOnSwitchDesc": "Démarrer ou redémarrer automatiquement Codex App après un changement de compte"
+    },
+    "network": {
+      "apiTitle": "API du cockpit antigravité",
+      "wsService": "Service WebSocket",
+      "wsServiceDesc": "Autoriser les programmes externes (ex. extension VS Code) à se connecter",
+      "preferredPort": "Port préféré",
+      "preferredPortDesc": "Le port par défaut est {{port}}, redémarrage requis après modification",
+      "currentPort": "Port actuel",
+      "portNormal": "Service fonctionnant normalement",
+      "portFallback": "Le port {{configured}} est utilisé, {{actual}} est utilisé à la place",
+      "restartRequired": "Configuration modifiée, veuillez redémarrer l'application pour appliquer",
+      "saveSuccess": "Paramètres enregistrés !",
+      "saveSuccessRestart": "Paramètres enregistrés ! Veuillez redémarrer l'application pour que les changements de port prennent effet.",
+      "saveFailed": "Échec de l'enregistrement : {{error}}"
+    },
+    "about": {
+      "appName": "Mira Tools",
+      "slogan": "Solution professionnelle de gestion de comptes",
+      "author": "Auteur",
+      "wechat": "WeChat",
+      "github": "Dépôt GitHub",
+      "alipay": "Alipay",
+      "wechatpay": "Paiement WeChat",
+      "sponsor": "Soutenir",
+      "sponsorDesc": "Accompagner le développement",
+      "feedback": "Retour",
+      "feedbackDesc": "Signaler des problèmes/suggestions",
+      "supportDev": "Soutenir le développement",
+      "checkUpdate": "Vérifier les mises à jour",
+      "checking": "Vérification...",
+      "upToDate": "À jour",
+      "newVersion": "v{{version}} disponible",
+      "download": "Télécharger",
+      "checkFailed": "Échec de la vérification"
+    },
+    "saveSettings": "Enregistrer les paramètres"
+  },
+  "accounts": {
+    "title": "Gestion des comptes",
+    "subtitle": "Gérez votre liste de comptes Antigravity.",
+    "total": "{{count}} comptes",
+    "search": "Rechercher des comptes...",
+    "addAccount": "Ajouter un compte",
+    "refreshAll": "Tout actualiser",
+    "export": "Exporter",
+    "import": "Importer",
+    "switchLogin": "Changer de login",
+    "refreshQuota": "Actualiser le quota",
+    "copyToken": "Copier le token",
+    "deleteAccount": "Supprimer le compte",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer le compte {{email}} ?",
+    "columns": {
+      "email": "E-mail",
+      "subscription": "Abonnement",
+      "quota": "Statut du quota",
+      "fingerprint": "Empreinte",
+      "lastUsed": "Dernière utilisation",
+      "actions": "Actions"
+    },
+    "status": {
+      "current": "Actuel",
+      "disabled": "Désactivé",
+      "authInvalid": "Identifiants invalides",
+      "refreshFailed": "Échec de l'actualisation",
+      "normal": "Normale",
+      "forbidden": "403",
+      "forbidden_tooltip": "API a retourné 403 Forbidden, le compte n'a pas accès à Gemini Code Assist",
+      "forbidden_msg": "Compte interdit, actualisation automatique ignorée"
+    },
+    "tier": {
+      "pro": "PRO",
+      "ultra": "ULTRA",
+      "free": "FREE"
+    },
+    "empty": {
+      "title": "Aucun compte",
+      "desc": "Cliquez sur \"Ajouter\" pour commencer",
+      "btn": "Ajouter un compte"
+    },
+    "noMatch": {
+      "title": "Aucun compte correspondant",
+      "desc": "Aucun compte ne correspond aux filtres"
+    },
+    "view": {
+      "compact": "Vue compacte",
+      "list": "Vue liste",
+      "grid": "Vue cartes"
+    },
+    "filterLabel": "Filtrer les comptes",
+    "filter": {
+      "all": "Tous ({{count}})",
+      "pro": "PRO ({{count}})",
+      "ultra": "ULTRA ({{count}})",
+      "free": "GRATUIT ({{count}})"
+    },
+    "sortLabel": "Trier",
+    "sort": {
+      "default": "Par défaut",
+      "overall": "Par quota global",
+      "byGroup": "Par quota de {{group}}",
+      "byGroupReset": "Par heure de réinitialisation de {{group}}",
+      "createdAt": "Par date de création",
+      "descTooltip": "Descendant, cliquer pour Ascendant",
+      "ascTooltip": "Ascendant, cliquer pour Descendant",
+      "toggleDirection": "Changer la direction"
+    },
+    "actions": {
+      "viewDetails": "Voir les détails",
+      "viewError": "Voir l'erreur",
+      "fingerprint": "Empreinte",
+      "switch": "Changer de compte",
+      "switchTo": "Basculer vers ce compte",
+      "selectFingerprint": "Sélectionner l'empreinte"
+    },
+    "tabs": {
+      "oauth": "OAuth",
+      "token": "Jeton d’actualisation",
+      "import": "Importer"
+    },
+    "oauth": {
+      "authorizing": "Autorisation OAuth...",
+      "success": "OAuth autorisé",
+      "failed": "Échec de l'autorisation OAuth : {{error}}",
+      "hint": "Nous recommandons de terminer Google OAuth dans le navigateur.",
+      "start": "Démarrer l'autorisation OAuth",
+      "continue": "J'ai autorisé, continuer",
+      "linkLabel": "Lien d'autorisation",
+      "generatingLink": "Génération du lien d'autorisation..."
+    },
+    "token": {
+      "desc": "Collez refresh_token ou un JSON de comptes pour importer en lot.",
+      "placeholder": "Format pris en charge : [{\"email\":\"xxx\",\"refresh_token\":\"1//...\"}] ou collez refresh_token",
+      "importStart": "Démarrer l'import",
+      "invalid": "Aucun refresh_token valide trouvé",
+      "importProgress": "Importation {{current}}/{{total}}...",
+      "importSuccess": "Importé {{count}} comptes",
+      "importPartial": "Importé {{success}} comptes, échec {{fail}}",
+      "importFailed": "Échec de l'import, vérifiez refresh_token"
+    },
+    "confirmDeleteTag": "Supprimer l'étiquette \"{{tag}}\" ? Cette étiquette sera supprimée de {{count}} comptes.",
+    "defaultGroup": "Groupe par défaut",
+    "filterTags": "Filtrer les tags",
+    "filterTagsCount": "Balises",
+    "noAvailableTags": "Aucun tag disponible",
+    "clearFilter": "Effacer le filtre",
+    "editTags": "Modifier les tags",
+    "groupByTag": "Grouper par tag",
+    "untagged": "Sans tag",
+    "deleteTagAria": "Supprimer le tag {{tag}}",
+    "tagModal": {
+      "title": "Modifier les tags",
+      "hint": "Jusqu'à {{max}} tags. Chaque tag peut contenir au maximum {{maxLength}} caractères.",
+      "empty": "Aucun tag disponible",
+      "suggestionsTitle": "Filtrer les tags",
+      "suggestionsEmpty": "Aucun tag disponible",
+      "inputPlaceholder": "Saisir un tag ({{remaining}} restants)",
+      "inputDisabledPlaceholder": "Limite de tags atteinte",
+      "add": "Ajouter",
+      "save": "Enregistrer les tags",
+      "error": {
+        "empty": "Le tag ne peut pas être vide",
+        "tooLong": "Le tag ne peut pas dépasser {{max}} caractères",
+        "duplicate": "Le tag existe déjà",
+        "tooMany": "Vous pouvez ajouter jusqu'à {{max}} tags"
+      }
+    }
+  },
+  "overview": {
+    "title": "Aperçu des comptes",
+    "subtitle": "Surveillance en temps réel des quotas de tous les comptes.",
+    "total": "{{count}} comptes",
+    "accountDisabled": "Compte désactivé",
+    "noQuotaData": "Aucune donnée de quota",
+    "currentAccount": "Actuellement utilisé",
+    "switchTo": "Basculer vers ce compte",
+    "switching": "Bascule en cours...",
+    "fingerprint": "Empreinte",
+    "bound": "Lié",
+    "brandTitle": "Gestion du compte Antigravity"
+  },
+  "fingerprints": {
+    "title": "Empreintes d'appareil",
+    "subtitle": "Gérez les empreintes d'appareil liées aux comptes.",
+    "toolbar": {
+      "generate": "Générer nouvelle",
+      "capture": "Capturer actuelle",
+      "import": "Importer",
+      "folder": "Dossier",
+      "delete": "Supprimer"
+    },
+    "table": {
+      "name": "Nom de l'empreinte",
+      "machineId": "ID de machine",
+      "accounts": "Comptes liés",
+      "actions": "Actions",
+      "accountCount": "{{count}} comptes",
+      "apply": "Appliquer",
+      "noData": "Aucune donnée d'empreinte",
+      "preview": "Aperçu",
+      "rename": "Renommer"
+    },
+    "modals": {
+      "generate": {
+        "title": "Générer empreinte",
+        "btn": "Générer"
+      },
+      "capture": {
+        "title": "Capturer empreinte",
+        "btn": "Capturer"
+      },
+      "rename": {
+        "title": "Renommer empreinte",
+        "label": "Nom de l'empreinte"
+      },
+      "import": {
+        "title": "Importer empreintes",
+        "fromTools": "Importer depuis Antigravity Tools",
+        "desc": "Importation depuis le répertoire ~/.antigravity_tools/",
+        "fromJsonBtn": "Importer depuis JSON",
+        "jsonExample": "Exemple de format :",
+        "jsonPlaceholder": "Empreinte de travail",
+        "orPasteJson": "Ou coller le JSON"
+      },
+      "bound": {
+        "title": "Comptes liés",
+        "add": "Ajouter des comptes",
+        "empty": "Aucun compte lié",
+        "emptyAll": "Tous les comptes sont liés",
+        "select": "Sélectionnez les comptes à ajouter",
+        "from": "Depuis : {{name}}",
+        "back": "Retour"
+      },
+      "detail": {
+        "title": "Détails de l'empreinte",
+        "created": "Créé le {{time}}"
+      }
+    },
+    "messages": {
+      "deleteConfirm": "Supprimer cette empreinte ? Les comptes liés reviendront à l'original.",
+      "batchDeleteConfirm": "Supprimer {{count}} empreintes ? Les comptes liés reviendront à l'original.",
+      "generated": "Nouvelle empreinte générée",
+      "captured": "Empreinte actuelle capturée",
+      "renamed": "Renommé",
+      "deleted": "Empreinte supprimée",
+      "imported": "{{count}} empreintes importées",
+      "addedAccounts": "{{count}} comptes ajoutés",
+      "enterName": "Entrez le nom de l'empreinte",
+      "previewNotReady": "Prévisualisation pas prête, veuillez patienter",
+      "duplicate": "Une empreinte identique existe déjà : {{name}}",
+      "readOnly": "Lecture seule",
+      "current": "Actuelle",
+      "addCount": "{{count}} comptes ajoutés",
+      "addFailed": "Échec de l'ajout",
+      "adding": "Ajout en cours...",
+      "applyFailed": "Échec de l'application",
+      "boundCount": "{{count}} comptes liés",
+      "captureFailed": "Échec de la capture",
+      "count": "{{count}}",
+      "deleteFailed": "Échec de la suppression",
+      "fpLabel": "Empreinte :",
+      "generateFailed": "Échec de la génération",
+      "importFailed": "Échec de l'importation",
+      "importing": "Importation en cours...",
+      "loadFailed": "Échec du chargement de la liste d'empreintes",
+      "processing": "Traitement en cours...",
+      "renameFailed": "Échec du renommage",
+      "serviceMachineIdEmpty": "Vide"
+    }
+  },
+  "modals": {
+    "addAccount": {
+      "title": "Ajouter un compte",
+      "desc": "Ajoutez votre compte Antigravity via Google OAuth",
+      "loginBtn": "Connexion Google OAuth",
+      "waiting": "Attente..."
+    },
+    "import": {
+      "title": "Importer des comptes",
+      "desc": "Choisissez une méthode d'importation",
+      "local": "Importer compte local",
+      "localDesc": "Importer le compte actuel du client Antigravity",
+      "tools": "Importer Antigravity Tools",
+      "toolsDesc": "Importation depuis le répertoire ~/.antigravity_tools/",
+      "jsonDivider": "ou Coller JSON",
+      "orJson": "ou Coller JSON",
+      "jsonPlaceholder": "Coller le contenu JSON du compte",
+      "jsonBtn": "Importer depuis JSON",
+      "importing": "Importation...",
+      "importBtn": "Importer",
+      "oauthAction": "Autorisation OAuth",
+      "fromExtension": "Importer depuis l'extension",
+      "syncBadge": "Synchroniser les comptes de l'extension Antigravity Cockpit",
+      "fromLocalDB": "Importer depuis la base de données locale",
+      "localDBDesc": "Lire les comptes de connexion du client Antigravity sur cette machine",
+      "toolsDescMigrate": "Migrer les comptes depuis ~/.antigravity_tools/",
+      "importingTools": "Importation depuis Antigravity Tools...",
+      "importingLocal": "Importation du compte local...",
+      "importingExtension": "Importation du compte de l'extension...",
+      "noAccountsFound": "Aucun compte importable trouvé"
+    },
+    "fingerprint": {
+      "title": "Sélectionner empreinte",
+      "desc": "Sélectionnez l'empreinte pour le compte <1>{{email}}</1>",
+      "original": "Empreinte originale",
+      "new": "Ajouter nouvelle empreinte",
+      "bind": "Confirmer liaison",
+      "selectLabel": "Sélectionner empreinte",
+      "boundCount": "comptes"
+    },
+    "quota": {
+      "title": "Détails du quota",
+      "noData": "Pas de données de quota",
+      "close": "Fermer",
+      "resetTime": "Heure de réinitialisation"
+    },
+    "errors": {
+      "title": "Détails de l'erreur",
+      "empty": "Aucun détail d'erreur",
+      "account": "Compte",
+      "code": "Code d'erreur",
+      "time": "Survenu le"
+    }
+  },
+  "pagination": {
+    "info": "Affichage de {{start}} - {{end}} sur {{total}}",
+    "perPage": "{{count}} / page",
+    "prev": "Précédent",
+    "next": "Suivant",
+    "page": "Page {{current}} / {{total}}"
+  },
+  "messages": {
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce compte ?",
+    "batchDeleteConfirm": "Êtes-vous sûr de vouloir supprimer les {{count}} comptes sélectionnés ?",
+    "switched": "Basculé vers {{email}}",
+    "switchFailed": "Échec du basculement : {{error}}",
+    "importSuccess": "{{count}} comptes importés avec succès",
+    "importLocalSuccess": "Compte importé avec succès : {{email}}",
+    "importFailed": "Échec de l'importation : {{error}}",
+    "exportFailed": "Échec de l'exportation : {{error}}",
+    "bindFailed": "Échec de la liaison : {{error}}",
+    "jsonRequired": "Veuillez entrer ou coller le contenu JSON",
+    "example": "Exemple",
+    "actionRunning": "{{action}}...",
+    "actionSuccess": "{{action}} réussi",
+    "actionFailed": "{{action}} a échoué : {{error}}"
+  },
+  "wakeup": {
+    "title": "Tâches de réveil",
+    "subtitle": "Gérez plusieurs tâches de réveil automatique avec des contrôles indépendants.",
+    "globalToggle": "Interrupteur global de réveil",
+    "newTask": "Nouvelle tâche",
+    "runTest": "Tester maintenant",
+    "history": "Historique des déclenchements",
+    "gotoAddAccount": "Ajouter des comptes",
+    "emptyTitle": "Aucune tâche de réveil",
+    "emptyDesc": "Les tâches se déclencheront automatiquement selon les règles.",
+    "statusEnabled": "Activé",
+    "statusDisabled": "Désactivé",
+    "statusRunning": "En cours",
+    "edit": "Modifier",
+    "defaultTaskName": "Tâche de réveil",
+    "newTaskName": "Nouvelle tâche de réveil",
+    "historyCount": "Historique des déclenchements ({{count}})",
+    "historyEmpty": "Aucun historique",
+    "historyClear": "Effacer l'historique",
+    "historyPromptLabel": "Mot de réveil : {{prompt}}",
+    "format": {
+      "noReply": "(Aucune réponse)",
+      "durationMs": "{{ms}}ms",
+      "tokens": "jetons={{prompt}}+{{completion}}={{total}}",
+      "traceId": "traceId={{traceId}}",
+      "detailJoiner": ", ",
+      "message": "[[{{model}}]] : {{reply}}{{suffix}}",
+      "none": "--",
+      "today": "Aujourd'hui {{time}}",
+      "tomorrow": "Demain {{time}}",
+      "weekdayWithTime": "{{day}} {{time}}",
+      "notSelected": "Non sélectionné",
+      "joiner": ", ",
+      "moreItems": "{{items}} ({{total}} éléments)",
+      "quotaReset": "Réveil au reset de quota",
+      "crontab": "Crontab : {{expr}}",
+      "daily": "Quotidien {{times}}{{suffix}}",
+      "weekly": "Hebdomadaire {{days}} {{times}}{{suffix}}",
+      "interval": "Toutes les {{hours}} h ({{start}}-{{end}})",
+      "invalidCrontab": "Crontab invalide"
+    },
+    "weekdays": {
+      "sun": "Dim",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Jeu",
+      "fri": "Ven",
+      "sat": "Sam"
+    },
+    "notice": {
+      "modelsFetchFailed": "Impossible de récupérer les modèles, vérifiez l'état du compte",
+      "featureDisabled": "Le réveil est désactivé",
+      "taskMissingModels": "La tâche n'a aucun modèle sélectionné",
+      "taskMissingAccounts": "La tâche n'a aucun compte sélectionné",
+      "taskFailed": "La tâche « {{name}} » a échoué pour {{count}} requête(s)",
+      "taskCompleted": "La tâche « {{name}} » est terminée",
+      "testMissingModel": "Veuillez sélectionner un modèle de test",
+      "testMissingAccount": "Veuillez sélectionner un compte de test",
+      "testFailed": "Test échoué pour {{count}} requête(s)",
+      "testCompleted": "Test terminé",
+      "nameRequired": "Veuillez saisir le nom de la tâche",
+      "accountRequired": "Sélectionnez au moins un compte",
+      "modelRequired": "Sélectionnez au moins un modèle",
+      "crontabRequired": "Veuillez saisir une expression crontab",
+      "taskSaved": "Tâche « {{name}} » enregistrée",
+      "featureOff": "Réveil désactivé",
+      "featureOn": "Réveil activé",
+      "refreshIntervalAdjusted": "Intervalle d'actualisation ajusté : {{old}} → {{new}}"
+    },
+    "refreshInterval": {
+      "disabled": "Désactivé",
+      "minutes": "minutes"
+    },
+    "triggerSource": {
+      "scheduled": "Planifié",
+      "crontab": "Crontab",
+      "quotaReset": "Réinitialisation de quota",
+      "manual": "Tester maintenant",
+      "unknown": "Inconnu"
+    },
+    "taskCard": {
+      "accountsCount": "Comptes {{count}}",
+      "modelsCount": "Modèles {{count}}",
+      "accountsLabel": "Comptes : {{preview}}",
+      "modelsLabel": "Modèles : {{preview}}",
+      "lastRun": "Dernière {{time}}",
+      "nextRun": "Prochaine {{time}}"
+    },
+    "dialogs": {
+      "enableTitle": "Activer le réveil",
+      "enableDesc": "Activer le réveil désactivera la fonction de réveil du plugin. Continuer ?",
+      "deleteConfirm": "Supprimer la tâche « {{name}} » ?",
+      "testTitle": "Tester maintenant",
+      "historyTitle": "Historique des déclenchements",
+      "taskTitleEdit": "Modifier la tâche de réveil",
+      "taskTitleNew": "Nouvelle tâche de réveil"
+    },
+    "form": {
+      "taskName": "Nom de la tâche",
+      "taskStatus": "Statut de la tâche",
+      "triggerMode": "Mode de déclenchement",
+      "triggerModeHint": "1. Planifié : déclenche à des heures définies.\\n2. Crontab : définir via une expression.\\n3. Reset quota : déclenche une fois quand le quota est plein.",
+      "modeScheduled": "📅 Planifié",
+      "modeCrontab": "🧩Crontab",
+      "modeQuotaReset": "🔄 Reset de quota",
+      "modelSelect": "Sélection de modèles",
+      "modelHint": "Dans le même groupe de quota, choisissez un modèle. Plusieurs modèles se déclenchent en séquence.",
+      "modelsEmpty": "Aucun modèle recommandé",
+      "accountSelect": "Sélection de comptes",
+      "accountHint": "Sélection multiple possible ; les comptes seront utilisés en séquence.",
+      "accountsEmpty": "Aucun compte",
+      "customPrompt": "Invite personnalisée",
+      "promptPlaceholder": "Par défaut {{word}}",
+      "promptHint": "Laisser vide pour utiliser l'invite par défaut {{word}}.",
+      "maxTokens": "Tokens max",
+      "maxTokensHint": "Par défaut 0 (illimité).",
+      "repeatMode": "Mode de répétition",
+      "repeatDaily": "Quotidien",
+      "repeatWeekly": "Hebdomadaire",
+      "repeatInterval": "Intervalle",
+      "selectTime": "Sélectionner l'heure",
+      "customTime": "Heure personnalisée",
+      "selectWeekday": "Sélectionner le jour",
+      "quickWorkdays": "Jours ouvrés",
+      "quickWeekend": "Week-end",
+      "quickAll": "Tous",
+      "intervalSetting": "Paramètres d'intervalle",
+      "intervalEvery": "Toutes les",
+      "intervalHours": "heures",
+      "intervalStart": "Début",
+      "intervalEnd": "Fin",
+      "nextRuns": "Prochaines exécutions",
+      "nextRunsEmpty": "Sélectionnez des horaires de déclenchement",
+      "crontab": "Expression Crontab",
+      "crontabPlaceholder": "ex. 0 8,12,17 * * *",
+      "crontabValidate": "Valider",
+      "crontabValidateHint": "L'expression sera validée à l'enregistrement",
+      "crontabPreviewEmpty": "Veuillez entrer une expression Crontab valide",
+      "timeWindowEnabled": "Activer la fenêtre horaire",
+      "timeWindowHint": "Quand activé, le reset de quota ne se déclenche que dans la fenêtre ; sinon heures fixes.",
+      "timeWindow": "Fenêtre active de reset de quota",
+      "timeWindowFrom": "De",
+      "timeWindowTo": "À",
+      "fallbackTimes": "Heures hors fenêtre",
+      "saveTask": "Enregistrer la tâche"
+    },
+    "test": {
+      "modelsLabel": "Modèles à déclencher",
+      "accountsLabel": "Comptes de test",
+      "accountsHint": "Sélectionnez plusieurs comptes pour tester.",
+      "start": "Lancer le test",
+      "testing": "Test en cours..."
+    }
+  },
+  "update_notification": {
+    "title": "Mise à jour disponible",
+    "message": "Version actuelle v{{current}}, une nouvelle version est disponible.",
+    "action": "Télécharger maintenant",
+    "whatsNew": "Nouveautés"
+  },
+  "closeDialog": {
+    "title": "Fermer la fenêtre",
+    "description": "Choisissez une action lors de la fermeture de la fenêtre",
+    "minimize": "Réduire dans la zone de notification",
+    "minimizeDesc": "L'application continuera à s'exécuter en arrière-plan",
+    "quit": "Quitter l'application",
+    "quitDesc": "Ferme complètement l'application",
+    "remember": "Se souvenir de mon choix, ne plus demander"
+  },
+  "group_settings": {
+    "title": "Gestion des groupes",
+    "group_list": "Liste des groupes",
+    "group_name_placeholder": "Nom du groupe",
+    "save": "Enregistrer les groupes",
+    "other_group": "Autres modèles"
+  },
+  "codex": {
+    "title": "Gestion des comptes Codex",
+    "subtitle": "Gérez vos comptes OpenAI Codex",
+    "switch": "Basculer",
+    "switched": "Basculé vers {{email}}",
+    "switchFailed": "Échec du basculement : {{error}}",
+    "current": "Actuel",
+    "empty": {
+      "description": "Cliquez sur « Ajouter un compte » pour commencer"
+    },
+    "addModal": {
+      "title": "Ajouter un compte Codex",
+      "oauth": "Connexion OAuth",
+      "token": "Import JSON",
+      "local": "Import local"
+    },
+    "oauth": {
+      "desc": "Cliquez ci-dessous et terminez l'autorisation OpenAI dans le navigateur",
+      "preparing": "Préparation du lien d'autorisation...",
+      "exchanging": "Échange du token...",
+      "portInUse": "Le port {{port}} est déjà utilisé. Fermez l'application qui l'utilise puis réessayez.",
+      "portInUseTitle": "Port utilisé",
+      "portInUseConfirm": "Le port {{port}} est utilisé. Fermer le processus qui l'utilise ?",
+      "portCloseFailed": "Échec de fermeture du port : {{error}}",
+      "portStillInUse": "Le port {{port}} est toujours utilisé.",
+      "portInUseAction": "Fermer le port et réessayer"
+    },
+    "token": {
+      "desc": "Collez le contenu auth.json ou les données JSON du compte",
+      "placeholder": "Coller le contenu JSON..."
+    },
+    "local": {
+      "desc": "Importer le compte connecté depuis ~/.codex/auth.json",
+      "import": "Récupérer le compte local"
+    },
+    "import": {
+      "importing": "Importation du compte local...",
+      "successMsg": "Importation réussie : {{email}}",
+      "localDesc": "Importer des comptes Codex depuis des sessions locales connectées."
+    },
+    "quota": {
+      "hourly": "Quota de 5 heures",
+      "weekly": "Quota hebdomadaire",
+      "reset": "Réinitialiser"
+    },
+    "plan": {
+      "free": "FREE",
+      "plus": "PLUS",
+      "pro": "PRO",
+      "team": "TEAM",
+      "enterprise": "ENTERPRISE"
+    },
+    "time": {
+      "today": "Aujourd'hui {{time}}",
+      "tomorrow": "Demain {{time}}",
+      "dateTime": "{{date}} {{time}}"
+    },
+    "view": {
+      "compact": "Vue compacte"
+    },
+    "filter": {
+      "plus": "PLUS ({{count}})",
+      "team": "ÉQUIPE ({{count}})"
+    },
+    "sort": {
+      "weekly": "Quota hebdomadaire",
+      "hourly": "Quota de 5 heures",
+      "weeklyReset": "Heure de réinitialisation hebdomadaire",
+      "hourlyReset": "Heure de réinitialisation sur 5 heures"
+    },
+    "columns": {
+      "hourly": "Quota 5h",
+      "weekly": "Quota hebdo"
+    },
+    "opencodeSwitch": "Interrupteur OpenCode",
+    "opencodeSwitchDesc": "Synchroniser le changement de compte Codex dans OpenCode",
+    "opencodeSwitchFailed": "Échec de la mise à jour de l'interrupteur OpenCode : {{error}}",
+    "filterTags": "Filtrer les tags",
+    "filterTagsCount": "Balises",
+    "noAvailableTags": "Aucun tag disponible",
+    "clearFilter": "Effacer le filtre",
+    "editTags": "Modifier les tags",
+    "instances": {
+      "subtitle": "Configuration indépendante par instance, fonctionnement parallèle avec plusieurs comptes.",
+      "comingSoon": "Multi-Instance Bientôt Disponible",
+      "comingSoonDesc": "Exécutez plusieurs instances Codex.app avec différents comptes simultanément.",
+      "unsupported": {
+        "desc": "Le multi-instance Codex n'est actuellement disponible que sur macOS."
+      },
+      "quota": {
+        "hourly": "5h",
+        "weekly": "Hebdomadaire"
+      },
+      "restartStrategy": {
+        "safe": {
+          "principle": "Envoie un signal SIGTERM à tous les processus Codex, demandant à l'application de sauvegarder et de s'arrêter, puis lance l'instance cible (arrêt forcé si nécessaire).",
+          "commandMac": "macOS : kill -15 <pid> (tous les processus Codex)",
+          "commandWin": "Windows : taskkill /F /PID <pid> (tous les processus Codex)"
+        },
+        "force": {
+          "principle": "Identifie les processus par CODEX_HOME et les arrête de force (SIGKILL / taskkill /F), puis lance l'instance cible.",
+          "commandMac": "macOS : pkill -9 -f \"CODEX_HOME=<dir>\"",
+          "commandWin": "Windows : taskkill /F /PID <pid> (correspondance CODEX_HOME)"
+        }
+      }
+    },
+    "refreshSuccess": "Quota actualisé",
+    "refreshFailed": "Échec de l’actualisation du quota : {{error}}",
+    "refreshAllSuccess": "Actualisation terminée, {{count}} compte(s) réussi(s)",
+    "refreshAllPartialFailed": "Actualisation terminée, {{success}} / {{total}} compte(s) réussi(s), certains ont échoué",
+    "quotaError": {
+      "badge": "Erreur de quota",
+      "generic": "Échec de l’actualisation du quota, veuillez réessayer plus tard",
+      "deactivatedWorkspace": "L’espace de travail est désactivé, changez de compte ou réautorisez"
+    }
+  },
+  "dashboard": {
+    "title": "Tableau de bord des comptes",
+    "summary": {
+      "label": "Aperçu",
+      "title": "Instantané des comptes",
+      "desc": "Voir Antigravity et Codex en un coup d'œil"
+    },
+    "stats": {
+      "antigravity": "Comptes Antigravity",
+      "codex": "Comptes Codex",
+      "currentAntigravity": "Antigravity actuel",
+      "currentCodex": "Codex actuel",
+      "providers": "Fournisseurs",
+      "totalAccounts": "Total des comptes"
+    },
+    "panels": {
+      "antigravity": "Antigravity",
+      "codex": "Codex",
+      "githubCopilot": "GitHub Copilot",
+      "planDistribution": "Répartition des plans",
+      "current": "Compte actuel",
+      "recommended": "Compte recommandé",
+      "empty": "Aucun compte",
+      "emptyDesc": "Ajoutez un compte pour voir les détails"
+    },
+    "quota": {
+      "remaining": "Quota restant {{value}}%",
+      "codex": "5 heures {{hourly}}% · Hebdo {{weekly}}%"
+    },
+    "emptyAccount": "Aucun compte",
+    "sections": {
+      "antigravity": "Comptes Antigravity",
+      "codex": "Comptes Codex"
+    },
+    "actions": {
+      "refresh": "Rafraîchir les cartes",
+      "viewAll": "Tous les comptes"
+    },
+    "badges": {
+      "recommended": "Recommandé"
+    },
+    "totalAccounts": "Total des comptes",
+    "current": "Compte actuel",
+    "recommended": "Compte recommandé",
+    "noAccount": "Aucun compte",
+    "switch": "Basculer",
+    "switchTo": "Basculer vers ce compte",
+    "noRecommendation": "Aucune meilleure recommandation",
+    "noData": "Aucune donnée",
+    "viewAllAccounts": "Voir tous les comptes"
+  },
+  "error": {
+    "fileCorrupted": {
+      "title": "Échec de la lecture du fichier",
+      "description": "Le fichier {{fileName}} est corrompu et ne peut pas être analysé.",
+      "errorInfo": "Détails de l'erreur",
+      "filePath": "Emplacement du fichier",
+      "helpText": "Veuillez ouvrir le dossier pour réparer manuellement ou supprimer le fichier, puis redémarrez l'application.",
+      "openFolder": "Ouvrir le dossier"
+    }
+  },
+  "instances": {
+    "title": "Instances Multiples",
+    "subtitle": "Profils isolés pour l'exécution parallèle de plusieurs comptes.",
+    "defaultName": "Instance par défaut",
+    "search": "Rechercher des instances",
+    "actions": {
+      "create": "Nouvelle instance",
+      "refresh": "Actualiser",
+      "startAll": "Tout démarrer",
+      "restartAll": "Tout redémarrer",
+      "stopAll": "Tout arrêter",
+      "start": "Démarrer",
+      "stop": "Arrêter",
+      "openFolder": "Ouvrir le dossier",
+      "edit": "Modifier",
+      "openRootDir": "Ouvrir le dossier",
+      "selectPath": "Choisir le chemin",
+      "openWindow": "Ouvrir la fenêtre"
+    },
+    "bulkConfirm": {
+      "startAll": "Démarrer toutes les instances arrêtées ?",
+      "restartAll": "Redémarrer toutes les instances en cours ?",
+      "stopAll": "Fermer toutes les instances ?"
+    },
+    "status": {
+      "running": "En cours",
+      "stopped": "Arrêté",
+      "restarting": "Redémarrage",
+      "starting": "Départ"
+    },
+    "labels": {
+      "path": "Répertoire",
+      "args": "Arguments de lancement",
+      "argsEmpty": "Aucun",
+      "bindAccount": "Compte lié",
+      "unbound": "Non lié",
+      "quota": "Quota",
+      "lastLaunched": "Dernier lancement",
+      "pendingInit": "En attente d'initialisation (démarrez une fois d'abord)"
+    },
+    "columns": {
+      "instance": "Exemple",
+      "email": "Compte",
+      "quota": "État du quota",
+      "actions": "Actions"
+    },
+    "empty": {
+      "title": "Aucune instance",
+      "desc": "Créez un répertoire de configuration isolé pour lancer plusieurs instances rapidement."
+    },
+    "form": {
+      "name": "Nom de l'instance",
+      "namePlaceholder": "ex : Compte professionnel",
+      "path": "Répertoire de l'instance",
+      "pathPlaceholder": "Choisir le répertoire",
+      "pathReadOnly": "Le chemin ne peut pas être modifié lors de l'édition",
+      "pathAutoHint": "Le chemin est mis à jour automatiquement lors du changement de nom (ou choisir manuellement)",
+      "copyLogin": "Copier l'état de connexion actuel",
+      "copyLoginDesc": "Copier la configuration et les données de connexion du répertoire par défaut",
+      "copySource": "Copier une instance source",
+      "copySourceDesc": "Copier la configuration et les données de connexion de l'instance sélectionnée",
+      "copySourcePlaceholder": "Choisir l'instance source",
+      "copySourceRequired": "Veuillez choisir une instance source",
+      "copySourceRunningHint": "L'instance source est en cours d'exécution. Il est recommandé de la fermer d'abord pour éviter toute incohérence de données.",
+      "bindInject": "Lier le compte",
+      "followCurrent": "Suivre le compte actuel",
+      "selectAccount": "Choisir le compte",
+      "bindAccount": "Lier le compte",
+      "unbound": "Non lié",
+      "extraArgs": "Arguments de lancement personnalisés",
+      "extraArgsPlaceholder": "ex : --disable-gpu --log-level=2",
+      "extraArgsDesc": "Séparer les arguments par des espaces, les guillemets sont pris en charge",
+      "nameRequired": "Veuillez saisir un nom d'instance",
+      "pathRequired": "Veuillez choisir un répertoire d'instance",
+      "bindRequired": "Veuillez choisir un compte à lier",
+      "initMode": "Mode d'initialisation",
+      "initModeCopy": "Copier depuis l'instance source (par défaut)",
+      "initModeEmpty": "Instance vide (sans copie)",
+      "emptyInitHint": "Si vous choisissez sans copie, seul un dossier vide sera créé. Démarrez une fois avant de lier un compte.",
+      "bindAfterInit": "Liaison possible après initialisation",
+      "bindDisabledHint": "Pour une instance vide, démarrez-la une fois pour générer les données, puis liez le compte."
+    },
+    "quota": {
+      "unbound": "Compte non lié",
+      "accountMissing": "Compte introuvable",
+      "empty": "Aucun quota en cache"
+    },
+    "messages": {
+      "created": "Instance créée",
+      "updated": "Instance mise à jour",
+      "deleted": "Instance supprimée",
+      "started": "Instance démarrée",
+      "stopped": "Instance arrêtée",
+      "startedAll": "Toutes les instances arrêtées ont été démarrées",
+      "restartedAll": "Instances en cours redémarrées",
+      "closedAll": "Toutes les instances ont été arrêtées",
+      "allAlreadyRunning": "Toutes les instances sont déjà en cours d'exécution",
+      "noneRunning": "Aucune instance en cours d'exécution trouvée",
+      "emptyCreated": "Instance vide créée. Démarrez-la une fois avant de lier un compte."
+    },
+    "runningDialog": {
+      "title": "L'instance est déjà en cours d'exécution",
+      "desc": "Cette instance est déjà lancée. Vous pouvez basculer vers la fenêtre ou la redémarrer selon la stratégie actuelle.",
+      "current": "Stratégie actuelle : {{name}}",
+      "pathLabel": "Répertoire de l'instance",
+      "go": "Basculer maintenant",
+      "restart": "Fermer et redémarrer"
+    },
+    "restartStrategy": {
+      "button": "Stratégie de redémarrage",
+      "title": "Stratégie de redémarrage",
+      "desc": "Choisissez la méthode de redémarrage de l'instance. Chaque option affecte la portée et la stabilité.",
+      "recommended": "Recommandé",
+      "labels": {
+        "principle": "Principe technique",
+        "command": "Commande",
+        "pros": "Avantages",
+        "cons": "Inconvénients"
+      },
+      "safe": {
+        "title": "Redémarrage sécurisé (Recommandé)",
+        "principle": "Envoie un signal SIGTERM à tous les processus Antigravity, demandant à l'application de sauvegarder et de s'arrêter, puis lance l'instance cible (arrêt forcé si nécessaire).",
+        "commandMac": "macOS/Linux : kill -15 <pid> (tous les processus Antigravity)",
+        "commandWin": "Windows : taskkill /F /PID <pid> (tous les processus Antigravity)",
+        "pros": "Plus proche d'un arrêt normal, moins de risques d'avertissements de plantage, données plus sûres.",
+        "cons": "Ne prend en charge que le redémarrage global de toutes les instances."
+      },
+      "force": {
+        "title": "Redémarrage forcé",
+        "principle": "Identifie les processus par --user-data-dir et les arrête de force (SIGKILL / taskkill /F), puis lance l'instance cible.",
+        "commandMac": "macOS/Linux : pkill -9 -f \"--user-data-dir <dir>\"",
+        "commandWin": "Windows : taskkill /F /PID <pid> (correspondance --user-data-dir)",
+        "pros": "Peut redémarrer précisément une seule instance.",
+        "cons": "Peut provoquer un avertissement de \"fermeture inattendue\", risque de perte de données non sauvegardées."
+      }
+    },
+    "stop": {
+      "title": "Arrêt forcé de l'instance",
+      "message": "Envoie un signal d'arrêt (SIGTERM) au processus de l'instance. Des données non sauvegardées peuvent être perdues. Continuer ?"
+    },
+    "delete": {
+      "title": "Supprimer l'instance",
+      "message": "Supprimer l'instance {{name}} ? Cela supprimera la configuration et le dossier de l'instance."
+    },
+    "modal": {
+      "createTitle": "Nouvelle instance",
+      "editTitle": "Modifier l’instance"
+    },
+    "sort": {
+      "label": "Tri",
+      "createdAt": "Par date de création",
+      "lastLaunchedAt": "Par date de lancement",
+      "ascTooltip": "Actuel : croissant, cliquez pour passer en décroissant",
+      "descTooltip": "Actuel : décroissant, cliquez pour passer en croissant",
+      "toggleDirection": "Changer le sens du tri"
+    },
+    "initGuide": {
+      "title": "Instance non initialisée",
+      "desc": "Cette instance est une « instance vide ». Seul le dossier a été créé, les données d'instance ne sont pas encore générées.",
+      "tip": "Veuillez démarrer l'instance une fois. Une fois l'initialisation terminée, vous pourrez lier un compte.",
+      "startNow": "Démarrer maintenant"
+    }
+  },
+  "appPath": {
+    "missing": {
+      "title": "Chemin de l’application introuvable",
+      "desc": "Impossible de trouver le chemin de l’application {{app}}. Veuillez le définir maintenant pour continuer.",
+      "action": "Définir maintenant"
+    }
+  },
+  "githubCopilot": {
+    "title": "Gestion des comptes GitHub Copilot",
+    "instances": {
+      "unsupported": {
+        "desc": "Le multi-instance GitHub Copilot n'est actuellement disponible que sur macOS."
+      }
+    },
+    "empty": {
+      "description": "Cliquez sur « Ajouter un compte » pour commencer"
+    },
+    "addModal": {
+      "title": "Ajouter un compte GitHub Copilot"
+    },
+    "oauth": {
+      "desc": "Cliquez ci-dessous et terminez l'autorisation GitHub Copilot dans le navigateur."
+    },
+    "token": {
+      "desc": "Collez votre jeton d'accès GitHub Copilot ou des données JSON exportées."
+    },
+    "import": {
+      "localDesc": "Importer des comptes GitHub Copilot depuis des sessions locales connectées."
+    },
+    "sort": {
+      "weekly": "Quota hebdomadaire",
+      "hourly": "Quota de 5 heures",
+      "weeklyReset": "Heure de réinitialisation hebdomadaire",
+      "hourlyReset": "Heure de réinitialisation sur 5 heures"
+    },
+    "columns": {
+      "hourly": "Quota 5h",
+      "weekly": "Quota hebdo"
+    },
+    "flowNotice": {
+      "title": "Guide des comptes GitHub Copilot (cliquer pour déplier/replier)",
+      "desc": "Le changement de compte nécessite la lecture du stockage d’authentification local de VS Code et l’utilisation du service d’identifiants du système pour déchiffrer et réécrire ; les données restent traitées uniquement en local.",
+      "reason": "Portée des autorisations : lire la base d’authentification VS Code (state.vscdb) et appeler le chiffrement système (Windows DPAPI / macOS Keychain / Linux Secret Service) pour déchiffrer et réécrire.",
+      "storage": "Portée de lecture : seules les données liées aux sessions de connexion GitHub sont traitées ; tous les processus sont exécutés localement.",
+      "inject": "Changement en un clic : cet outil lit le matériel de chiffrement local de VS Code (DPAPI/Keychain/Secret Service), déchiffre la session d’authentification dans state.vscdb, remplace le jeton GitHub Copilot puis rechiffre le tout — entièrement en local sur votre machine."
+    },
+    "injectToVSCode": "Basculer vers VS Code",
+    "injectSuccess": "Le jeton a été injecté dans VS Code avec succès. VS Code est en cours de lancement.",
+    "injectRequireClose": "Veuillez fermer VS Code avant l’injection."
+  },
+  "quickSettings": {
+    "antigravity": {
+      "title": "Paramètres Antigravity",
+      "appPath": "Chemin de l'application"
+    },
+    "codex": {
+      "title": "Paramètres Codex",
+      "appPath": "Chemin de l'application"
+    },
+    "githubCopilot": {
+      "title": "Paramètres GitHub Copilot",
+      "appPath": "Chemin VS Code"
+    },
+    "refreshInterval": "Actualisation automatique du quota",
+    "codexRefreshInterval": "Actualisation automatique du quota",
+    "ghcpRefreshInterval": "Actualisation automatique du quota",
+    "autoSwitch": {
+      "title": "Changement automatique",
+      "enable": "Changement automatique",
+      "threshold": "Seuil de changement",
+      "thresholdDesc": "Le changement automatique se déclenche lorsque le quota d'un modèle tombe en dessous de ce pourcentage",
+      "hint": "Bascule automatiquement vers le compte avec le quota le plus élevé lorsque le quota d'un modèle descend en dessous du seuil."
+    },
+    "quotaAlert": {
+      "title": "Alerte de quota",
+      "enable": "Activer l'alerte de quota",
+      "threshold": "Seuil d'alerte",
+      "thresholdDesc": "Déclencher une alerte quand le quota d'un modèle passe sous ce pourcentage",
+      "hint": "Lorsque le quota de n'importe quel modèle du compte actuel passe sous le seuil, envoyer une notification native et afficher une action de changement rapide dans l'application."
+    },
+    "customInput": "Personnalisé",
+    "apply": "Appliquer",
+    "inputMinutes": "Entrer les minutes",
+    "inputPercent": "Entrer le pourcentage",
+    "windsurf": {
+      "title": "Paramètres Windsurf",
+      "appPath": "Chemin Windsurf"
+    },
+    "windsurfRefreshInterval": "Actualisation automatique du quota",
+    "kiro": {
+      "title": "Paramètres Kiro",
+      "appPath": "Chemin Kiro"
+    },
+    "kiroRefreshInterval": "Quota de rafraîchissement automatique"
+  },
+  "quotaAlert": {
+    "bannerText": "Alerte de quota pour {{email}} (seuil {{threshold}} %, minimum {{lowest}} %, modèles : {{models}})",
+    "switchAction": "Changement rapide : {{email}}",
+    "switching": "Changement en cours...",
+    "switchFailed": "Échec du changement rapide : {{error}}",
+    "modal": {
+      "title": "Alerte de quota",
+      "desc": "Le quota du compte actuel a atteint le seuil d'alerte. Merci de traiter cela rapidement.",
+      "unknownModel": "Modèle inconnu",
+      "platform": "Plateforme",
+      "account": "Compte actuel",
+      "threshold": "Seuil d'alerte",
+      "lowest": "Minimum actuel",
+      "models": "Modèles déclencheurs",
+      "recommended": "Changement recommandé",
+      "noRecommendation": "Aucun compte de remplacement disponible",
+      "later": "Plus tard",
+      "openSettings": "Ajuster les paramètres d'alerte",
+      "switchNow": "Changer rapidement vers {{email}}",
+      "switchFailedTitle": "Échec du changement",
+      "switchFailedBody": "Échec du changement rapide : {{error}}"
+    }
+  },
+  "privacy": {
+    "hideSensitive": "Masquer les e-mails",
+    "showSensitive": "Afficher les e-mails"
+  },
+  "windsurf": {
+    "title": "Gestion des comptes Windsurf",
+    "instances": {
+      "unsupported": {
+        "desc": "Le multi-instance Windsurf n'est actuellement disponible que sur macOS."
+      }
+    },
+    "empty": {
+      "description": "Cliquez sur « Ajouter un compte » pour commencer"
+    },
+    "addModal": {
+      "title": "Ajouter un compte Windsurf",
+      "password": "E-mail et mot de passe"
+    },
+    "oauth": {
+      "desc": "Cliquez ci-dessous et terminez l'autorisation Windsurf dans le navigateur."
+    },
+    "token": {
+      "desc": "Collez votre jeton d'accès Windsurf ou des données JSON exportées."
+    },
+    "import": {
+      "localDesc": "Importer des comptes Windsurf depuis des sessions locales connectées.",
+      "localClient": "Importer depuis Windsurf local"
+    },
+    "credits": {
+      "title": "Forfait",
+      "renewMonthly": "Les crédits sont renouvelés chaque mois",
+      "left": "{{count}} crédits restants",
+      "leftUnknown": "Crédits restants -",
+      "promptLeft": "{{remaining}}/{{total}} crédits de prompts restants",
+      "promptLeftNoTotal": "{{remaining}} crédits de prompts restants",
+      "promptLeftUnknown": "Crédits de prompts restants -",
+      "addOnAvailable": "{{count}} crédits additionnels disponibles"
+    },
+    "columns": {
+      "plan": "Étiquette"
+    },
+    "injectToVSCode": "Basculer vers Windsurf",
+    "injectSuccess": "Basculement terminé. Windsurf se lance.",
+    "injectRequireClose": "Veuillez fermer Windsurf avant de basculer.",
+    "flowNotice": {
+      "title": "Guide des comptes Windsurf (cliquer pour déplier/replier)",
+      "desc": "Le changement de compte nécessite la lecture du stockage d’authentification local de Windsurf et l’utilisation du service d’identifiants du système pour déchiffrer et réécrire ; les données restent traitées uniquement en local.",
+      "inject": "Changement en un clic : cet outil lit le matériel de chiffrement local de Windsurf (DPAPI/Keychain/Secret Service), déchiffre la session d’authentification dans state.vscdb, remplace le jeton Windsurf puis rechiffre le tout — entièrement en local sur votre machine.",
+      "reason": "Portée des autorisations : lire la base d’authentification Windsurf (state.vscdb) et appeler le chiffrement système (Windows DPAPI / macOS Keychain / Linux Secret Service) pour déchiffrer et réécrire.",
+      "storage": "Portée de lecture : seules les données liées aux sessions de connexion Windsurf sont traitées ; tous les processus sont exécutés localement."
+    },
+    "password": {
+      "desc": "Connectez-vous avec l’e-mail et le mot de passe de votre compte Windsurf pour récupérer automatiquement la clé API et les infos du compte.",
+      "emailPlaceholder": "Adresse e-mail",
+      "passwordPlaceholder": "Mot de passe",
+      "login": "Se connecter",
+      "logging": "Connexion en cours...",
+      "empty": "Veuillez saisir l’e-mail et le mot de passe",
+      "success": "Connexion réussie : {{login}}",
+      "failed": "Échec de la connexion : {{error}}"
+    }
+  },
+  "platformLayout": {
+    "title": "Disposition des plateformes",
+    "sidebarSelected": "Sélectionnées dans la barre latérale {{count}}/{{max}}",
+    "reset": "Réinitialiser par défaut",
+    "tip": "Faites glisser pour réorganiser. Jusqu'à deux plateformes peuvent être affichées dans la barre latérale. Si une seule est sélectionnée, une seule est affichée.",
+    "sidebarToggle": "Afficher dans la barre latérale",
+    "dashboardToggle": "Afficher dans le tableau de bord",
+    "trayToggle": "Afficher dans la zone de notification",
+    "hiddenBadge": "Masqué",
+    "openFromMore": "Gérer la disposition des plateformes",
+    "dragHandleLabel": "Glisser pour réorganiser"
+  },
+  "breakout": {
+    "gameOver": "Partie terminée",
+    "gameOverRank": "Classement local actuel #{{rank}}",
+    "startGame": "Démarrer",
+    "startHint": "Cliquez sur démarrer ou appuyez sur Espace",
+    "rankTitle": "Classement historique local",
+    "rankCurrent": "Actuel",
+    "rankNoData": "--",
+    "restart": "Recommencer",
+    "pause": "Pause",
+    "resume": "Reprendre",
+    "paused": "En pause",
+    "level": "Niveau {{level}}",
+    "levelScore": "Score du niveau {{score}}",
+    "levelCleared": "Niveau terminé",
+    "nextLevel": "Niveau suivant",
+    "history": "Historique",
+    "historyShort": "Historique",
+    "historyEmpty": "Aucun enregistrement",
+    "historyClear": "Effacer",
+    "historyScoreShort": "Score {{score}}",
+    "historyLevelShort": "Niv {{level}}",
+    "historyDurationShort": "Durée {{duration}}",
+    "historyReasonGameOver": "Partie terminée",
+    "historyReasonManualExit": "Sortie manuelle",
+    "serveHint": "Appuyez sur Espace pour lancer la balle",
+    "ranking": "Historique local",
+    "rankingShort": "Locale",
+    "rankingEmpty": "Aucun enregistrement local",
+    "rankingClear": "Effacer l'historique local",
+    "rankingRankShort": "#{{rank}}"
+  },
+  "kiro": {
+    "account": {
+      "signedInWith": "Connecté avec {{provider}}",
+      "providerUnknown": "Inconnu",
+      "userId": "ID de l'utilisateur"
+    },
+    "credits": {
+      "estimatedResetOn": "L'utilisation estimée est réinitialisée le {{date}}",
+      "bonusUsageLine": "{{used}} utilisé / {{total}} total",
+      "planUsageCoveredLine": "{{used}} utilisé / {{total}} couvert par le plan",
+      "expiryDays": "{{days}} jours",
+      "expiryUnknown": "—",
+      "resetNow": "Réinitialiser bientôt",
+      "resetInHours": "Réinitialisé dans {{hours}}h",
+      "resetInMinutes": "Réinitialisé dans {{minutes}}m"
+    },
+    "columns": {
+      "bonusCredits": "Crédits bonus",
+      "estimatedUsage": "Utilisation estimée",
+      "expiry": "Expiration",
+      "estUsage": "HNE. Usage"
+    },
+    "plan": {
+      "free": "Kiro Free",
+      "individual": "Kiro Individual",
+      "pro": "Kiro Pro",
+      "business": "Kiro Business",
+      "enterprise": "Kiro Enterprise",
+      "unknown": "Inconnu"
+    },
+    "flowNotice": {
+      "title": "Guide du compte Kiro (cliquer pour développer/réduire)",
+      "desc": "Le changement de compte lit et écrit les fichiers d’authentification locaux de Kiro et les paramètres d’instance sur cet appareil ; la connexion OAuth et l’actualisation des quotas appellent les API officielles de Kiro.",
+      "reason": "Les chemins traités incluent ~/.aws/sso/cache/kiro-auth-token.json, le profile.json de l’instance et l’entrée kiro.kiroAgent dans state.vscdb.",
+      "storage": "Les données traitées incluent les informations de session et de quota Kiro ; les requêtes vers les API officielles de Kiro envoient les champs d’authentification requis (comme code, refreshToken, accessToken et profileArn)."
+    },
+    "title": "Gestion de compte Kiro",
+    "instances": {
+      "unsupported": {
+        "descPlatform": "Kiro multi-instance est disponible uniquement sur macOS, Windows et Linux."
+      }
+    },
+    "empty": {
+      "description": "Cliquez sur \"Ajouter un compte\" pour commencer à gérer vos comptes Kiro"
+    },
+    "addModal": {
+      "title": "Ajouter un compte Kiro"
+    },
+    "oauth": {
+      "desc": "Cliquez sur le bouton ci-dessous et complétez l'autorisation Kiro dans votre navigateur."
+    },
+    "token": {
+      "desc": "Collez votre jeton d'accès Kiro ou les données JSON exportées."
+    },
+    "import": {
+      "localDesc": "Importez les données du compte Kiro à partir du client Kiro local ou d'un fichier JSON.",
+      "localClient": "Importer depuis Kiro local"
+    },
+    "injectToVSCode": "Passer à Kiro"
+  }
+}

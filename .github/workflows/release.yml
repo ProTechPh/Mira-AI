@@ -1,0 +1,249 @@
+name: Release
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  release:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macOS Apple Silicon
+          - platform: "macos-latest"
+            args: "--target aarch64-apple-darwin"
+          # macOS Intel
+          - platform: "macos-latest"
+            args: "--target x86_64-apple-darwin"
+          # macOS Universal (同时支持 Intel 和 Apple Silicon)
+          - platform: "macos-latest"
+            args: "--target universal-apple-darwin"
+          # Linux x86_64
+          - platform: "ubuntu-22.04"
+            args: ""
+          # Linux ARM64
+          - platform: "ubuntu-24.04-arm"
+            args: ""
+          # Windows x86_64
+          - platform: "windows-latest"
+            args: ""
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (Linux)
+        if: startsWith(matrix.platform, 'ubuntu')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev patchelf pkg-config libsoup-3.0-dev javascriptcoregtk-4.1 libjavascriptcoregtk-4.1-dev
+          sudo apt-get install -y libnm-dev xdg-utils
+
+      - name: Rust setup
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || (contains(matrix.args, 'aarch64') && 'aarch64-unknown-linux-gnu' || '') }}
+
+      - name: Node.js setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Sync versions
+        run: npm run sync-version
+
+      - name: Read app version
+        id: app_version
+        shell: bash
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          VERSION="$(node -e "console.log(require(require('path').join(process.env.GITHUB_WORKSPACE, 'package.json')).version)")"
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Validate tag matches version
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          EXPECTED_TAG="v${{ steps.app_version.outputs.VERSION }}"
+          if [ "${GITHUB_REF_NAME}" != "${EXPECTED_TAG}" ]; then
+            echo "Tag (${GITHUB_REF_NAME}) does not match package.json version (${EXPECTED_TAG})."
+            exit 1
+          fi
+
+      - name: Build the app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: "v${{ steps.app_version.outputs.VERSION }}"
+          releaseName: "Cockpit Tools v${{ steps.app_version.outputs.VERSION }}"
+          releaseBody: "See the assets to download this version and install."
+          releaseDraft: false
+          prerelease: false
+          args: ${{ matrix.args }}
+
+  upload-checksums:
+    name: Upload SHA256SUMS
+    needs: release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    env:
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Determine version
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Download release assets (retry)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release-assets
+          TAG="v${VERSION}"
+          downloaded="false"
+          for i in $(seq 1 30); do
+            if gh release download "$TAG" --dir release-assets --pattern "*" --clobber; then
+              downloaded="true"
+              echo "Downloaded release assets from $TAG"
+              break
+            fi
+            echo "Release assets not ready yet (attempt $i/30). Sleeping 10s..."
+            sleep 10
+          done
+          if [ "$downloaded" != "true" ]; then
+            echo "Failed to download release assets from $TAG after retries."
+            exit 1
+          fi
+
+      - name: Generate SHA256SUMS.txt from release assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd release-assets
+          rm -f SHA256SUMS.txt
+          find . -type f -print0 \
+            | sort -z \
+            | while IFS= read -r -d '' file; do
+                shasum -a 256 "$file"
+              done \
+            | sed 's#  \./#  #' \
+            > ../SHA256SUMS.txt
+          cd ..
+          test -s SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Upload SHA256SUMS.txt to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release upload "v${VERSION}" SHA256SUMS.txt --clobber
+
+  update-homebrew-cask:
+    name: Update Homebrew Cask
+    needs:
+      - release
+      - upload-checksums
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      # Update the cask on main, not on the tag ref.
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Determine version
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Download universal DMG from GitHub Releases (retry)
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/v${VERSION}/Cockpit.Tools_${VERSION}_universal.dmg"
+          echo "Downloading: $URL"
+          for i in $(seq 1 30); do
+            if curl -fL --retry 3 --retry-delay 1 -o cockpit-tools.dmg "$URL"; then
+              exit 0
+            fi
+            echo "Asset not ready yet (attempt $i/30). Sleeping 10s..."
+            sleep 10
+          done
+          echo "Failed to download release asset after retries."
+          exit 1
+
+      - name: Compute sha256
+        shell: bash
+        run: |
+          set -euo pipefail
+          SHA256="$(sha256sum cockpit-tools.dmg | awk '{print $1}')"
+          echo "SHA256=$SHA256" >> "$GITHUB_ENV"
+
+      - name: Update Cask file
+        shell: bash
+        run: |
+          set -euo pipefail
+          FILE="Casks/cockpit-tools.rb"
+          if [ ! -f "$FILE" ]; then
+            echo "Missing $FILE. Create it first."
+            exit 1
+          fi
+
+          perl -0777 -i -pe \
+            's/version \"[^\"]+\"/version \"'"$VERSION"'\"/; s/sha256 \"[0-9a-f]{64}\"/sha256 \"'"$SHA256"'\"/' \
+            "$FILE"
+
+          git diff -- "$FILE"
+
+      - name: Create pull request
+        id: create_cask_pr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore(homebrew): update cask for v${{ env.VERSION }}"
+          title: "chore(homebrew): update cask for v${{ env.VERSION }}"
+          body: |
+            Auto-generated by the release workflow.
+
+            - version: ${{ env.VERSION }}
+            - sha256 (universal.dmg): ${{ env.SHA256 }}
+          branch: "automation/update-cask-v${{ env.VERSION }}"
+          base: main
+          delete-branch: true
+
+      - name: Enable auto-merge for cask PR
+        if: ${{ steps.create_cask_pr.outputs.pull-request-number != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          PR_NUMBER="${{ steps.create_cask_pr.outputs.pull-request-number }}"
+          PR_BRANCH="$(gh pr view "$PR_NUMBER" --json headRefName --jq .headRefName)"
+          if [[ "$PR_BRANCH" != automation/update-cask-v* ]]; then
+            echo "Unexpected PR branch: $PR_BRANCH"
+            exit 1
+          fi
+          gh pr merge "$PR_NUMBER" --auto --squash --delete-branch

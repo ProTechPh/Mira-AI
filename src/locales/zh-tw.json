@@ -1,0 +1,1391 @@
+{
+  "common": {
+    "confirm": "確認",
+    "cancel": "取消",
+    "save": "儲存",
+    "saving": "儲存中...",
+    "delete": "刪除",
+    "refresh": "重新整理",
+    "loading": "載入中...",
+    "success": "成功",
+    "failed": "失敗",
+    "enabled": "已啟用",
+    "disabled": "已停用",
+    "close": "關閉",
+    "open": "打開",
+    "copy": "複製",
+    "add": "新增",
+    "enable": "啟用",
+    "disable": "停用",
+    "none": "暫無",
+    "detail": "詳情",
+    "editable": "可編輯",
+    "preview": "預覽",
+    "shared": {
+      "addAccount": "新增帳號",
+      "columns": {
+        "actions": "操作",
+        "plan": "訂閱",
+        "addOnPromptCredits": "Add-on Prompt 點數",
+        "credits": "點數",
+        "email": "電子郵件",
+        "promptCredits": "User Prompt 點數"
+      },
+      "empty": {
+        "title": "暫無帳號"
+      },
+      "export": "匯出",
+      "filter": {
+        "all": "全部 ({{count}})",
+        "enterprise": "企業 ({{count}})",
+        "free": "免費（{{count}}）",
+        "pro": "專業版 ({{count}})",
+        "business": "商業 ({{count}})",
+        "individual": "個人 ({{count}})"
+      },
+      "filterLabel": "篩選",
+      "import": {
+        "failedMsg": "匯入失敗: {{error}}",
+        "label": "匯入",
+        "importing": "正在匯入本地帳號...",
+        "pickFile": "選擇要匯入的 JSON 檔案",
+        "orJson": "或從 JSON 檔案匯入"
+      },
+      "instances": {
+        "unsupported": {
+          "title": "暫不支援目前系統"
+        },
+        "quota": {
+          "chat": "聊天訊息",
+          "inline": "內嵌建議"
+        },
+        "subtitle": "多實例獨立配置，多帳號並行運行。",
+        "title": "多開實例"
+      },
+      "noMatch": {
+        "desc": "請嘗試調整搜尋或篩選條件",
+        "title": "沒有匹配的帳號"
+      },
+      "oauth": {
+        "failed": "授權失敗",
+        "hint": "完成授權後，此視窗將自動更新",
+        "openBrowser": "在瀏覽器中開啟",
+        "success": "授權成功",
+        "meta": "有效期限：{{expires}}s；輪詢間隔：{{interval}}s",
+        "preparing": "正在準備授權連結...",
+        "retry": "重新產生授權資訊",
+        "timeoutRetry": "更新授權連結",
+        "waiting": "等待授權中..."
+      },
+      "refreshAll": "全部刷新",
+      "refreshQuota": "刷新配額",
+      "search": "搜尋帳號...",
+      "sort": {
+        "ascTooltip": "目前：升序，點擊切換為降序",
+        "createdAt": "按建立時間",
+        "descTooltip": "目前：降序，點擊切換為升序",
+        "toggleDirection": "切換排序方向",
+        "credits": "按剩餘學分",
+        "planEnd": "按週期結束時間"
+      },
+      "sortLabel": "排序",
+      "token": {
+        "empty": "請輸入 Token 或 JSON",
+        "import": "匯入",
+        "importFailedMsg": "匯入失敗: {{error}}",
+        "importing": "匯入中...",
+        "importSuccessMsg": "成功匯入 {{count}} 個帳號",
+        "placeholder": "貼上 JSON 內容..."
+      },
+      "view": {
+        "grid": "卡片檢視",
+        "list": "列表檢視"
+      },
+      "addModal": {
+        "import": "本機匯入",
+        "oauth": "OAuth 登入",
+        "token": "JSON 匯入"
+      },
+      "overview": {
+        "title": "帳號總覽"
+      },
+      "quota": {
+        "noData": "暫無配額資料",
+        "resetDone": "已重置",
+        "hourly": "5 小時配額",
+        "weekly": "週配額"
+      },
+      "subtitle": "管理您的 GitHub Copilot 帳號",
+      "time": {
+        "lessThanMinute": "<1分鐘",
+        "relativeDays": "{{days}}天",
+        "relativeDaysHours": "{{days}}天{{hours}}小時",
+        "relativeHours": "{{hours}}小時",
+        "relativeHoursMinutes": "{{hours}}小時{{minutes}}分鐘",
+        "relativeMinutes": "{{minutes}}分鐘",
+        "relativeWithAbsolute": "{{relative}} ({{absolute}})"
+      },
+      "credits": {
+        "leftInline": "剩餘 {{left}}",
+        "periodEndOnly": "週期結束：{{end}}",
+        "periodRange": "週期：{{start}} - {{end}}",
+        "planEndsIn": "配額週期剩餘 {{days}} 天",
+        "planEndsUnknown": "配額週期時間未知",
+        "usedLine": "已使用 {{used}} / {{total}}"
+      },
+      "flowNotice": {
+        "alternative": "替代方案：使用多開隔離（不同 --user-data-dir）。每個實例登入一次，之後按實例啟動即可快速切換到目標帳號環境。"
+      },
+      "injecting": "注入中...",
+      "usage": {
+        "resetLine": "額度將於 {{dateText}} 重置。",
+        "resetUnknown": "額度重置倒數 -"
+      }
+    }
+  },
+  "nav": {
+    "overview": "Antigravity 帳號",
+    "accounts": "帳號管理",
+    "wakeup": "喚醒任務",
+    "fingerprints": "裝置指纹",
+    "settings": "設定",
+    "codex": "Codex 帳號",
+    "dashboard": "儀表板",
+    "instances": "多開實例",
+    "githubCopilot": "GitHub Copilot",
+    "windsurf": "Windsurf",
+    "morePlatforms": "更多平台"
+  },
+  "settings": {
+    "title": "應用程式設定",
+    "subtitle": "個性化您的 Mira Tools 體驗。",
+    "tabs": {
+      "general": "通用",
+      "network": "網路服務",
+      "about": "關於"
+    },
+    "general": {
+      "appearance": "介面外觀",
+      "language": "顯示語言",
+      "languageDesc": "選擇介面的顯示語言",
+      "theme": "應用程式主題",
+      "themeDesc": "切換深色或淺色模式",
+      "themeLight": "淺色 (Light)",
+      "themeDark": "深色 (Dark)",
+      "themeSystem": "跟隨系統",
+      "accountManagement": "帳號管理",
+      "autoRefresh": "Antigravity 自動刷新配額",
+      "codexAutoRefresh": "Codex 自動刷新配額",
+      "autoRefreshDesc": "背景自動更新頻率",
+      "codexAutoRefreshDesc": "背景自動更新頻率",
+      "autoRefreshDisabled": "停用",
+      "autoRefreshCustom": "自訂...",
+      "every15min": "每 15 分鐘",
+      "every30min": "每 30 分鐘",
+      "every1hour": "每 1 小時",
+      "minutes": "分",
+      "refreshIntervalLimited": "配額重置喚醒已啟用，刷新間隔最小值為 2 分鐘",
+      "storageTitle": "目錄和存儲",
+      "dataDir": "資料目錄",
+      "dataDirDesc": "帳號與設定檔的儲存位置。",
+      "fpDir": "Antigravity 儲存目錄",
+      "fpDirDesc": "Antigravity 資料檔案的儲存位置。",
+      "closeBehavior": "視窗關閉行為",
+      "closeBehaviorDesc": "選擇關閉視窗時的預設行為",
+      "closeBehaviorAsk": "每次詢問",
+      "closeBehaviorMinimize": "最小化到系統列",
+      "closeBehaviorQuit": "退出應用程式",
+      "opencodeAppPathDesc": "留空則使用預設路徑",
+      "opencodeTitle": "OpenCode 連動",
+      "opencodeRestart": "切換 Codex 時自動重新啟動 OpenCode",
+      "opencodeRestartDesc": "同步切換 OpenCode 裡的 Codex 帳號資訊",
+      "opencodeAppPath": "OpenCode 啟動路徑",
+      "opencodeAppPathPlaceholder": "預設路徑",
+      "opencodePathReset": "重設預設值",
+      "opencodePathSelect": "選擇",
+      "codexTitle": "Codex 啟動",
+      "codexAppPath": "Codex 啟動路徑",
+      "codexAppPathDesc": "留空則使用預設路徑",
+      "codexAppPathPlaceholder": "預設路徑",
+      "codexPathSelect": "選擇",
+      "codexPathReset": "重設預設值",
+      "vscodeTitle": "VS Code 啟動",
+      "vscodeAppPath": "VS Code 啟動路徑",
+      "vscodeAppPathDesc": "留空則使用預設路徑",
+      "vscodeAppPathPlaceholder": "預設路徑",
+      "vscodePathSelect": "選擇",
+      "vscodePathReset": "重設預設值",
+      "antigravityAppPath": "Antigravity 啟動路徑",
+      "antigravityTitle": "Antigravity 啟動",
+      "commonTitle": "通用",
+      "antigravitySettingsTitle": "Antigravity 設定",
+      "codexSettingsTitle": "Codex 設定",
+      "githubCopilotSettingsTitle": "GitHub Copilot 設定",
+      "ghcpAutoRefresh": "GitHub Copilot 自動重新整理配額",
+      "ghcpAutoRefreshDesc": "背景更新頻率",
+      "windsurfSettingsTitle": "Windsurf 設定",
+      "windsurfAutoRefresh": "Windsurf 自動刷新配額",
+      "windsurfAutoRefreshDesc": "背景自動更新頻率",
+      "windsurfAppPath": "Windsurf 啟動路徑",
+      "windsurfAppPathDesc": "留空則使用預設路徑",
+      "windsurfAppPathPlaceholder": "預設路徑",
+      "windsurfPathSelect": "選擇",
+      "windsurfPathReset": "重設預設值",
+      "kiroSettingsTitle": "基羅設定",
+      "kiroAutoRefresh": "Kiro 自動刷新配額",
+      "kiroAutoRefreshDesc": "後台更新頻率",
+      "kiroAppPath": "Kiro 應用程式路徑",
+      "kiroAppPathDesc": "留空以使用預設路徑",
+      "kiroAppPathPlaceholder": "預設路徑",
+      "kiroPathSelect": "選擇",
+      "kiroPathReset": "重設為預設值",
+      "codexLaunchOnSwitch": "切換 Codex 時自動啟動 Codex App",
+      "codexLaunchOnSwitchDesc": "切換帳號後自動啟動或重新啟動 Codex App"
+    },
+    "network": {
+      "apiTitle": "反重力駕駛艙 API",
+      "wsService": "WebSocket 服務",
+      "wsServiceDesc": "允許外部程式 (如 VS Code 擴充功能) 連接控制",
+      "preferredPort": "偏好連接埠",
+      "preferredPortDesc": "預設為 {{port}}，修改後需重啟應用程式",
+      "currentPort": "目前執行連接埠",
+      "portNormal": "服務執行正常",
+      "portFallback": "配置連接埠 {{configured}} 被佔用，已自動使用 {{actual}}",
+      "restartRequired": "設定已變更，請重啟應用程式以使新連接埠生效",
+      "saveSuccess": "設定已儲存！",
+      "saveSuccessRestart": "設定已儲存！由於連接埠設定已變更，請重啟應用程式以生效。",
+      "saveFailed": "儲存失敗: {{error}}"
+    },
+    "about": {
+      "appName": "Mira Tools",
+      "slogan": "專業帳號管理解決方案",
+      "author": "主作者",
+      "wechat": "微信公眾號",
+      "github": "開源倉庫",
+      "alipay": "支付寶",
+      "wechatpay": "微信支付",
+      "sponsor": "贊助支持",
+      "sponsorDesc": "支持項目持續開發",
+      "feedback": "意見反饋",
+      "feedbackDesc": "回報問題或提交建議",
+      "supportDev": "支持開發",
+      "checkUpdate": "檢查更新",
+      "checking": "檢查中...",
+      "upToDate": "已是最新版本",
+      "newVersion": "發現 v{{version}}",
+      "download": "下載",
+      "checkFailed": "檢查更新失敗，請稍後重試"
+    },
+    "saveSettings": "儲存設定"
+  },
+  "accounts": {
+    "title": "帳號管理",
+    "subtitle": "管理您的 Antigravity 帳號清單。",
+    "total": "共 {{count}} 個帳號",
+    "search": "搜尋帳號...",
+    "addAccount": "新增帳號",
+    "refreshAll": "全部重新整理",
+    "export": "匯出",
+    "import": "匯入",
+    "switchLogin": "切換登入",
+    "refreshQuota": "重新整理配額",
+    "copyToken": "複製 Token",
+    "deleteAccount": "刪除帳號",
+    "confirmDelete": "確定要刪除帳號 {{email}} 嗎？",
+    "columns": {
+      "email": "電子郵件",
+      "subscription": "訂閱類型",
+      "quota": "配額狀態",
+      "fingerprint": "指紋",
+      "lastUsed": "最後使用",
+      "actions": "操作"
+    },
+    "status": {
+      "current": "目前",
+      "disabled": "已停用",
+      "authInvalid": "憑證失效",
+      "refreshFailed": "刷新失敗",
+      "normal": "正常",
+      "forbidden": "403",
+      "forbidden_tooltip": "API 返回 403 Forbidden，帳號無權使用 Gemini Code Assist",
+      "forbidden_msg": "帳號無權限，已跳過自動刷新"
+    },
+    "tier": {
+      "pro": "PRO",
+      "ultra": "ULTRA",
+      "free": "FREE"
+    },
+    "empty": {
+      "title": "暫無帳號",
+      "desc": "點擊 \"新增\" 開始使用",
+      "btn": "新增帳號"
+    },
+    "noMatch": {
+      "title": "無符合帳號",
+      "desc": "沒有找到符合篩選條件的帳號"
+    },
+    "view": {
+      "compact": "緊湊檢視",
+      "list": "列表檢視",
+      "grid": "卡片檢視"
+    },
+    "filterLabel": "篩選帳號",
+    "filter": {
+      "all": "全部 ({{count}})",
+      "pro": "專業版 ({{count}})",
+      "ultra": "超 ({{count}})",
+      "free": "免費（{{count}}）"
+    },
+    "sortLabel": "排序",
+    "sort": {
+      "default": "默認排序",
+      "overall": "按綜合配額",
+      "byGroup": "按 {{group}} 配額",
+      "byGroupReset": "按 {{group}} 重置時間",
+      "createdAt": "按創建時間",
+      "descTooltip": "當前：降序，點擊切換為昇序",
+      "ascTooltip": "當前：昇序，點擊切換為降序",
+      "toggleDirection": "切換排序方向"
+    },
+    "actions": {
+      "viewDetails": "查看詳情",
+      "viewError": "查看錯誤",
+      "fingerprint": "指紋",
+      "switch": "切換帳號",
+      "switchTo": "切換到此帳號",
+      "selectFingerprint": "點擊選擇指紋"
+    },
+    "tabs": {
+      "oauth": "OAuth 授權",
+      "token": "刷新令牌",
+      "import": "匯入"
+    },
+    "oauth": {
+      "authorizing": "OAuth 授權中...",
+      "success": "OAuth 授權成功",
+      "failed": "OAuth 授權失敗: {{error}}",
+      "hint": "建議使用瀏覽器完成 Google 授權",
+      "start": "開始 OAuth 授權",
+      "continue": "我已授權，繼續",
+      "linkLabel": "授權連結",
+      "generatingLink": "正在生成授權連結..."
+    },
+    "token": {
+      "desc": "貼上 refresh_token 或帳號 JSON，支援批量匯入。",
+      "placeholder": "支援格式：[{\"email\":\"xxx\",\"refresh_token\":\"1//...\"}] 或直接貼上 refresh_token",
+      "importStart": "開始匯入",
+      "invalid": "未找到有效 refresh_token",
+      "importProgress": "匯入中 {{current}}/{{total}}...",
+      "importSuccess": "匯入成功 {{count}} 個帳號",
+      "importPartial": "匯入成功 {{success}} 個，失敗 {{fail}} 個",
+      "importFailed": "匯入失敗，請檢查 refresh_token"
+    },
+    "confirmDeleteTag": "確認刪除標籤 \"{{tag}}\" 嗎？該標籤將從 {{count}} 個帳號中移除。",
+    "defaultGroup": "預設分組",
+    "filterTags": "標籤篩選",
+    "filterTagsCount": "標籤",
+    "noAvailableTags": "目前沒有可用標籤",
+    "clearFilter": "清除篩選",
+    "editTags": "編輯標籤",
+    "groupByTag": "依標籤分組",
+    "untagged": "未標記",
+    "deleteTagAria": "刪除標籤 {{tag}}",
+    "tagModal": {
+      "title": "編輯標籤",
+      "hint": "最多 {{max}} 個標籤，每個標籤長度不可超過 {{maxLength}} 個字元。",
+      "empty": "目前沒有可用標籤",
+      "suggestionsTitle": "標籤篩選",
+      "suggestionsEmpty": "目前沒有可用標籤",
+      "inputPlaceholder": "輸入標籤（還可新增 {{remaining}} 個）",
+      "inputDisabledPlaceholder": "已達標籤上限",
+      "add": "新增",
+      "save": "儲存標籤",
+      "error": {
+        "empty": "標籤不可為空",
+        "tooLong": "標籤長度不可超過 {{max}} 個字元",
+        "duplicate": "標籤已存在",
+        "tooMany": "最多只能新增 {{max}} 個標籤"
+      }
+    }
+  },
+  "overview": {
+    "title": "帳號總覽",
+    "subtitle": "即時監控所有帳號的模型配額狀態。",
+    "total": "共 {{count}} 個帳號",
+    "accountDisabled": "帳號已停用",
+    "noQuotaData": "暫無配額數據",
+    "currentAccount": "目前使用中",
+    "switchTo": "切換至該帳號",
+    "switching": "切換中...",
+    "fingerprint": "指紋",
+    "bound": "已綁定",
+    "brandTitle": "Antigravity 帳號管理"
+  },
+  "fingerprints": {
+    "title": "裝置指紋",
+    "subtitle": "管理綁定到帳號的裝置指紋。",
+    "toolbar": {
+      "generate": "產生新指紋",
+      "capture": "擷取目前",
+      "import": "匯入",
+      "folder": "目錄",
+      "delete": "刪除"
+    },
+    "table": {
+      "name": "指紋名稱",
+      "machineId": "裝置 ID",
+      "accounts": "綁定帳號",
+      "actions": "操作",
+      "accountCount": "{{count}} 個帳號",
+      "apply": "套用",
+      "noData": "暫無指紋資料",
+      "preview": "預覽",
+      "rename": "重新命名"
+    },
+    "modals": {
+      "generate": {
+        "title": "產生新指紋",
+        "btn": "產生"
+      },
+      "capture": {
+        "title": "擷取目前指紋",
+        "btn": "擷取"
+      },
+      "rename": {
+        "title": "重新命名指紋",
+        "label": "指紋名稱"
+      },
+      "import": {
+        "title": "匯入指紋",
+        "fromTools": "匯入 Antigravity Tools 指紋",
+        "desc": "從 ~/.antigravity_tools/ 目錄匯入",
+        "fromJsonBtn": "從 JSON 匯入",
+        "jsonExample": "格式範例：",
+        "jsonPlaceholder": "工作指紋",
+        "orPasteJson": "或貼上 JSON"
+      },
+      "bound": {
+        "title": "綁定帳號管理",
+        "add": "新增帳號",
+        "empty": "暫無帳號綁定此指紋",
+        "emptyAll": "所有帳號都已綁定此指紋",
+        "select": "選擇要新增的帳號",
+        "from": "來自: {{name}}",
+        "back": "返回"
+      },
+      "detail": {
+        "title": "指紋詳細資訊",
+        "created": "建立於 {{time}}"
+      }
+    },
+    "messages": {
+      "deleteConfirm": "確定要刪除這個指紋嗎？綁定此指紋的帳號將自動改為原始指紋。",
+      "batchDeleteConfirm": "確定要刪除選中的 {{count}} 個指紋嗎？綁定此指紋的帳號將自動改為原始指紋。",
+      "generated": "已產生新指紋",
+      "captured": "已擷取目前指紋",
+      "renamed": "已重新命名",
+      "deleted": "已刪除指紋",
+      "imported": "已匯入 {{count}} 個指紋",
+      "addedAccounts": "已新增 {{count}} 個帳號",
+      "enterName": "請輸入指紋名稱",
+      "previewNotReady": "預覽未就緒，請稍後重試",
+      "duplicate": "已存在相同指紋：{{name}}，無需重複新增。",
+      "readOnly": "唯讀",
+      "current": "目前",
+      "addCount": "新增 {{count}} 個帳號",
+      "addFailed": "新增失敗",
+      "adding": "新增中...",
+      "applyFailed": "套用失敗",
+      "boundCount": "已綁定 {{count}} 個帳號",
+      "captureFailed": "擷取失敗",
+      "count": "{{count}} 個",
+      "deleteFailed": "刪除失敗",
+      "fpLabel": "指紋：",
+      "generateFailed": "產生失敗",
+      "importFailed": "匯入失敗",
+      "importing": "匯入中...",
+      "loadFailed": "載入指紋列表失敗",
+      "processing": "處理中...",
+      "renameFailed": "重新命名失敗",
+      "serviceMachineIdEmpty": "空"
+    }
+  },
+  "modals": {
+    "addAccount": {
+      "title": "新增帳號",
+      "desc": "透過 Google OAuth 授權新增您的 Antigravity 帳號",
+      "loginBtn": "Google OAuth 登入",
+      "waiting": "等待授權..."
+    },
+    "import": {
+      "title": "匯入帳號",
+      "desc": "請選擇匯入方式",
+      "local": "匯入本地帳戶",
+      "localDesc": "從 Antigravity 用戶端匯入目前登入帳戶",
+      "tools": "匯入 Antigravity Tools",
+      "toolsDesc": "從 ~/.antigravity_tools/ 目錄匯入",
+      "jsonDivider": "或貼上 JSON",
+      "orJson": "或貼上 JSON",
+      "jsonPlaceholder": "貼上帳號 JSON 内容",
+      "jsonBtn": "從 JSON 匯入",
+      "importing": "匯入中...",
+      "importBtn": "匯入",
+      "oauthAction": "OAuth 授權",
+      "fromExtension": "從插件匯入",
+      "syncBadge": "同步 Antigravity Cockpit 插件帳號",
+      "fromLocalDB": "從本地資料庫匯入",
+      "localDBDesc": "從此機器的 Antigravity 客戶端讀取登入帳號",
+      "toolsDescMigrate": "從 ~/.antigravity_tools/ 遷移帳號",
+      "importingTools": "正從 Antigravity Tools 匯入...",
+      "importingLocal": "正在匯入本地帳號...",
+      "importingExtension": "正在匯入插件帳號...",
+      "noAccountsFound": "未找到可匯入的帳號"
+    },
+    "fingerprint": {
+      "title": "選擇指紋",
+      "desc": "為帳號 <1>{{email}}</1> 選擇指纹",
+      "original": "原始指紋",
+      "new": "新增新指紋",
+      "bind": "確認綁定",
+      "selectLabel": "選擇指紋",
+      "boundCount": "個帳號"
+    },
+    "quota": {
+      "title": "配額詳細資訊",
+      "noData": "無配額數據",
+      "close": "關閉",
+      "resetTime": "重置時間"
+    },
+    "errors": {
+      "title": "錯誤詳情",
+      "empty": "暫無錯誤資訊",
+      "account": "帳號",
+      "code": "錯誤碼",
+      "time": "發生時間"
+    }
+  },
+  "pagination": {
+    "info": "顯示 {{start}} - {{end}} 條，共 {{total}} 條",
+    "perPage": "{{count}} 條/頁",
+    "prev": "上一頁",
+    "next": "下一页",
+    "page": "第 {{current}} / {{total}} 頁"
+  },
+  "messages": {
+    "deleteConfirm": "確定要刪除這個帳號嗎？",
+    "batchDeleteConfirm": "確定要刪除選中的 {{count}} 個帳號嗎？",
+    "switched": "已切換至 {{email}}",
+    "switchFailed": "切換失敗：{{error}}",
+    "importSuccess": "成功匯入 {{count}} 個帳號",
+    "importLocalSuccess": "成功匯入帳號: {{email}}",
+    "importFailed": "匯入失敗: {{error}}",
+    "exportFailed": "匯出失敗: {{error}}",
+    "bindFailed": "綁定失敗: {{error}}",
+    "jsonRequired": "請輸入或貼上 JSON 内容",
+    "example": "範例",
+    "actionRunning": "{{action}}中...",
+    "actionSuccess": "{{action}}成功",
+    "actionFailed": "{{action}}失敗: {{error}}"
+  },
+  "wakeup": {
+    "title": "喚醒任務",
+    "subtitle": "管理多個自動喚醒任務，支援獨立啟停與統一開關。",
+    "globalToggle": "喚醒總開關",
+    "newTask": "新建任務",
+    "runTest": "立即測試",
+    "history": "觸發歷史",
+    "gotoAddAccount": "去新增帳號",
+    "emptyTitle": "還沒有喚醒任務",
+    "emptyDesc": "建立任務後將按規則自動觸發喚醒。",
+    "statusEnabled": "啟用",
+    "statusDisabled": "停用",
+    "statusRunning": "執行中",
+    "edit": "編輯",
+    "defaultTaskName": "喚醒任務",
+    "newTaskName": "新喚醒任務",
+    "historyCount": "觸發歷史 ({{count}})",
+    "historyEmpty": "暫無紀錄",
+    "historyClear": "清空歷史",
+    "historyPromptLabel": "喚醒詞：{{prompt}}",
+    "format": {
+      "noReply": "(無回覆)",
+      "durationMs": "{{ms}}ms",
+      "tokens": "令牌={{prompt}}+{{completion}}={{total}}",
+      "traceId": "追蹤ID={{traceId}}",
+      "detailJoiner": "，",
+      "message": "[[{{model}}]]：{{reply}}{{suffix}}",
+      "none": "--",
+      "today": "今天 {{time}}",
+      "tomorrow": "明天 {{time}}",
+      "weekdayWithTime": "{{day}} {{time}}",
+      "notSelected": "未選擇",
+      "joiner": "、",
+      "moreItems": "{{items}} 等{{total}}項",
+      "quotaReset": "配額重置自動喚醒",
+      "crontab": "定時任務：{{expr}}",
+      "daily": "每日 {{times}}{{suffix}}",
+      "weekly": "每週 {{days}} {{times}}{{suffix}}",
+      "interval": "間隔 {{hours}} 小時 ({{start}}-{{end}})",
+      "invalidCrontab": "無效 Crontab"
+    },
+    "weekdays": {
+      "sun": "週日",
+      "mon": "週一",
+      "tue": "週二",
+      "wed": "週三",
+      "thu": "週四",
+      "fri": "週五",
+      "sat": "週六"
+    },
+    "notice": {
+      "modelsFetchFailed": "取得模型列表失敗，請檢查帳號狀態",
+      "featureDisabled": "喚醒功能未開啟",
+      "taskMissingModels": "任務未選擇模型",
+      "taskMissingAccounts": "任務未選擇帳號",
+      "taskFailed": "任務「{{name}}」執行失敗 {{count}} 個請求",
+      "taskCompleted": "任務「{{name}}」已完成",
+      "testMissingModel": "請先選擇測試模型",
+      "testMissingAccount": "請先選擇測試帳號",
+      "testFailed": "測試失敗 {{count}} 個請求",
+      "testCompleted": "測試已完成",
+      "nameRequired": "請輸入任務名稱",
+      "accountRequired": "請至少選擇一個帳號",
+      "modelRequired": "請至少選擇一個模型",
+      "crontabRequired": "請輸入 crontab 表達式",
+      "taskSaved": "任務「{{name}}」已儲存",
+      "featureOff": "喚醒功能已關閉",
+      "featureOn": "喚醒功能已開啟",
+      "refreshIntervalAdjusted": "配額刷新間隔已調整：{{old}} → {{new}}"
+    },
+    "refreshInterval": {
+      "disabled": "停用",
+      "minutes": "分鐘"
+    },
+    "triggerSource": {
+      "scheduled": "定時",
+      "crontab": "定時任務",
+      "quotaReset": "配額重置",
+      "manual": "立即測試",
+      "unknown": "未知"
+    },
+    "taskCard": {
+      "accountsCount": "帳號 {{count}}",
+      "modelsCount": "模型 {{count}}",
+      "accountsLabel": "帳號：{{preview}}",
+      "modelsLabel": "模型：{{preview}}",
+      "lastRun": "上次 {{time}}",
+      "nextRun": "下次 {{time}}"
+    },
+    "dialogs": {
+      "enableTitle": "開啟喚醒功能",
+      "enableDesc": "開啟喚醒功能會自動關閉外掛內的喚醒功能，是否繼續？",
+      "deleteConfirm": "確定要刪除任務「{{name}}」嗎？",
+      "testTitle": "立即測試",
+      "historyTitle": "觸發歷史",
+      "taskTitleEdit": "編輯喚醒任務",
+      "taskTitleNew": "新建喚醒任務"
+    },
+    "form": {
+      "taskName": "任務名稱",
+      "taskStatus": "任務狀態",
+      "triggerMode": "喚醒方式",
+      "triggerModeHint": "1. 定時：依照設定時間觸發。\\n2. Crontab：使用表達式定義。\\n3. 配額重置：額度滿後觸發一次。",
+      "modeScheduled": "📅 定時觸發",
+      "modeCrontab": "🧩 定時任務",
+      "modeQuotaReset": "🔄 配額重置",
+      "modelSelect": "模型選擇",
+      "modelHint": "同一配額組建議只選一個模型，多模型會依序觸發。",
+      "modelsEmpty": "暫無推薦模型",
+      "accountSelect": "帳號選擇",
+      "accountHint": "可多選，自動喚醒會依序使用這些帳號。",
+      "accountsEmpty": "暫無帳號",
+      "customPrompt": "自訂喚醒詞",
+      "promptPlaceholder": "預設 {{word}}",
+      "promptHint": "留空將使用預設喚醒詞 {{word}}。",
+      "maxTokens": "最大輸出 Token",
+      "maxTokensHint": "預設 0（不限）。",
+      "repeatMode": "重複方式",
+      "repeatDaily": "每日",
+      "repeatWeekly": "每週",
+      "repeatInterval": "間隔",
+      "selectTime": "選擇時間",
+      "customTime": "自訂時間",
+      "selectWeekday": "選擇星期",
+      "quickWorkdays": "工作日",
+      "quickWeekend": "週末",
+      "quickAll": "全部",
+      "intervalSetting": "間隔設定",
+      "intervalEvery": "每隔",
+      "intervalHours": "小時",
+      "intervalStart": "開始",
+      "intervalEnd": "結束",
+      "nextRuns": "下次觸發預覽",
+      "nextRunsEmpty": "請選擇觸發時間",
+      "crontab": "Crontab 表達式",
+      "crontabPlaceholder": "例如：0 8,12,17 * * *",
+      "crontabValidate": "驗證",
+      "crontabValidateHint": "儲存時將驗證表達式",
+      "crontabPreviewEmpty": "請輸入有效的 Crontab 表達式",
+      "timeWindowEnabled": "啟用時段策略",
+      "timeWindowHint": "啟用後，配額重置觸發僅在指定時段內執行；時段外使用固定時間觸發。",
+      "timeWindow": "配額重置活躍視窗",
+      "timeWindowFrom": "從",
+      "timeWindowTo": "到",
+      "fallbackTimes": "時段外觸發時間",
+      "saveTask": "儲存任務"
+    },
+    "test": {
+      "modelsLabel": "選擇要觸發的模型",
+      "accountsLabel": "測試帳號",
+      "accountsHint": "可多選，用這些帳號進行測試。",
+      "start": "開始測試",
+      "testing": "測試中..."
+    }
+  },
+  "update_notification": {
+    "title": "發現新版本",
+    "message": "目前版本 v{{current}}，新版本已可用。",
+    "action": "前往下載",
+    "whatsNew": "更新內容"
+  },
+  "closeDialog": {
+    "title": "關閉視窗",
+    "description": "選擇關閉視窗時的操作",
+    "minimize": "最小化到托盤",
+    "minimizeDesc": "應用程式將在背景繼續執行",
+    "quit": "結束應用程式",
+    "quitDesc": "完全關閉應用程式",
+    "remember": "記住我的選擇，不再詢問"
+  },
+  "group_settings": {
+    "title": "分組管理",
+    "group_list": "分組列表",
+    "group_name_placeholder": "分組名稱",
+    "save": "保存分組",
+    "other_group": "其他模型"
+  },
+  "codex": {
+    "title": "Codex 帳號管理",
+    "subtitle": "管理您的 OpenAI Codex 帳號",
+    "switch": "切換",
+    "switched": "已切換至 {{email}}",
+    "switchFailed": "切換失敗: {{error}}",
+    "current": "目前",
+    "empty": {
+      "description": "點擊「新增帳號」開始管理您的 Codex 帳號"
+    },
+    "addModal": {
+      "title": "新增 Codex 帳號",
+      "oauth": "OAuth 登入",
+      "token": "JSON 匯入",
+      "local": "本機匯入"
+    },
+    "oauth": {
+      "desc": "點擊下方按鈕，在瀏覽器中完成 OpenAI 帳號授權",
+      "preparing": "正在準備授權連結...",
+      "exchanging": "正在交換權杖...",
+      "portInUse": "連接埠 {{port}} 已被佔用，請關閉佔用該連接埠的程式後重試。",
+      "portInUseTitle": "連接埠被佔用",
+      "portInUseConfirm": "連接埠 {{port}} 已被佔用，是否關閉佔用該連接埠的程式？",
+      "portCloseFailed": "關閉連接埠失敗: {{error}}",
+      "portStillInUse": "連接埠 {{port}} 仍被佔用。",
+      "portInUseAction": "關閉佔用連接埠並重試"
+    },
+    "token": {
+      "desc": "貼上 auth.json 內容或帳號 JSON 資料",
+      "placeholder": "貼上 JSON 內容..."
+    },
+    "local": {
+      "desc": "從 ~/.codex/auth.json 匯入目前已登入的帳號",
+      "import": "取得本機帳號"
+    },
+    "import": {
+      "importing": "正在匯入本地帳號...",
+      "successMsg": "匯入成功: {{email}}",
+      "localDesc": "從本機已登入的會話匯入 Codex 帳號。"
+    },
+    "quota": {
+      "hourly": "5 小時配額",
+      "weekly": "週配額",
+      "reset": "重置"
+    },
+    "plan": {
+      "free": "FREE",
+      "plus": "PLUS",
+      "pro": "PRO",
+      "team": "TEAM",
+      "enterprise": "ENTERPRISE"
+    },
+    "time": {
+      "today": "今天 {{time}}",
+      "tomorrow": "明天 {{time}}",
+      "dateTime": "{{date}} {{time}}"
+    },
+    "view": {
+      "compact": "緊湊檢視"
+    },
+    "filter": {
+      "plus": "加上（{{count}}）",
+      "team": "團隊 ({{count}})"
+    },
+    "sort": {
+      "weekly": "按週配額",
+      "hourly": "按5小時配額",
+      "weeklyReset": "按週配額重置時間",
+      "hourlyReset": "按5小時配額重置時間"
+    },
+    "columns": {
+      "hourly": "5小時配額",
+      "weekly": "週配額"
+    },
+    "opencodeSwitch": "OpenCode 切換開關",
+    "opencodeSwitchDesc": "同步切換 OpenCode 裡的 Codex 帳號資訊",
+    "opencodeSwitchFailed": "更新 OpenCode 開關失敗：{{error}}",
+    "filterTags": "標籤篩選",
+    "filterTagsCount": "標籤",
+    "noAvailableTags": "目前沒有可用標籤",
+    "clearFilter": "清除篩選",
+    "editTags": "編輯標籤",
+    "instances": {
+      "subtitle": "多實例獨立配置，多帳號並行運行。",
+      "comingSoon": "多開實例功能即將上線",
+      "comingSoonDesc": "支援以不同帳號同時運行多個 Codex.app 實例，敬請期待。",
+      "unsupported": {
+        "desc": "Codex 多開實例僅支援 macOS，請在 macOS 上使用。"
+      },
+      "quota": {
+        "hourly": "5小時",
+        "weekly": "週"
+      },
+      "restartStrategy": {
+        "safe": {
+          "principle": "向所有 Codex 進程發送 SIGTERM 信號，請求程序保存數據並退出，隨後啟動目標實例（必要時強制結束）。",
+          "commandMac": "macOS: kill -15 <pid>（全體 Codex）",
+          "commandWin": "Windows: taskkill /F /PID <pid>（全體 Codex）"
+        },
+        "force": {
+          "principle": "通過 CODEX_HOME 識別進程並強制關閉（SIGKILL / taskkill /F），隨後啟動目標實例。",
+          "commandMac": "macOS：pkill -9 -f“CODEX_HOME=<dir>”",
+          "commandWin": "Windows: taskkill /F /PID <pid>（匹配 CODEX_HOME）"
+        }
+      }
+    },
+    "refreshSuccess": "配額已重新整理",
+    "refreshFailed": "配額重新整理失敗：{{error}}",
+    "refreshAllSuccess": "重新整理完成，成功 {{count}} 個帳號",
+    "refreshAllPartialFailed": "重新整理完成，成功 {{success}} / {{total}} 個帳號，部分失敗",
+    "quotaError": {
+      "badge": "配額異常",
+      "generic": "配額重新整理失敗，請稍後再試",
+      "deactivatedWorkspace": "工作區已停用，請切換帳號或重新授權"
+    }
+  },
+  "dashboard": {
+    "title": "帳號儀表板",
+    "summary": {
+      "label": "總覽",
+      "title": "帳號快照",
+      "desc": "同時查看 Antigravity 與 Codex 帳號狀態"
+    },
+    "stats": {
+      "antigravity": "Antigravity 帳號",
+      "codex": "Codex 帳號",
+      "currentAntigravity": "目前 Antigravity",
+      "currentCodex": "目前 Codex",
+      "providers": "服務商",
+      "totalAccounts": "總帳戶數"
+    },
+    "panels": {
+      "antigravity": "Antigravity",
+      "codex": "Codex",
+      "githubCopilot": "GitHub Copilot",
+      "planDistribution": "方案分佈",
+      "current": "目前帳號",
+      "recommended": "推薦帳號",
+      "empty": "暫無帳號",
+      "emptyDesc": "新增帳號後查看詳情"
+    },
+    "quota": {
+      "remaining": "剩餘配額 {{value}}%",
+      "codex": "5小時 {{hourly}}% · 週 {{weekly}}%"
+    },
+    "emptyAccount": "暫無帳號",
+    "sections": {
+      "antigravity": "Antigravity 帳號",
+      "codex": "Codex 帳號"
+    },
+    "actions": {
+      "refresh": "重新整理卡片",
+      "viewAll": "全部帳號"
+    },
+    "badges": {
+      "recommended": "推薦"
+    },
+    "totalAccounts": "帳號總數",
+    "current": "目前帳號",
+    "recommended": "推薦帳號",
+    "noAccount": "無帳號",
+    "switch": "切換",
+    "switchTo": "切換至此帳號",
+    "noRecommendation": "暫無更佳推薦",
+    "noData": "暫無資料",
+    "viewAllAccounts": "查看所有帳號"
+  },
+  "error": {
+    "fileCorrupted": {
+      "title": "檔案讀取失敗",
+      "description": "檔案 {{fileName}} 已損壞，無法解析。",
+      "errorInfo": "錯誤資訊",
+      "filePath": "檔案位置",
+      "helpText": "請開啟資料夾手動修復或刪除該檔案，然後重新啟動應用程式。",
+      "openFolder": "開啟資料夾"
+    }
+  },
+  "instances": {
+    "title": "多實例管理",
+    "subtitle": "為多個帳號分配獨立的環境配置，實現多開並行。",
+    "defaultName": "默認實例",
+    "search": "搜尋實例",
+    "actions": {
+      "create": "新建實例",
+      "refresh": "刷新",
+      "startAll": "啟動全部",
+      "restartAll": "重啟全部",
+      "stopAll": "停止全部",
+      "start": "啟動",
+      "stop": "停止",
+      "openFolder": "打開目錄",
+      "edit": "編輯",
+      "openRootDir": "打開目錄",
+      "selectPath": "選擇路徑",
+      "openWindow": "定位視窗"
+    },
+    "bulkConfirm": {
+      "startAll": "是否啟動所有已停止的實例？",
+      "restartAll": "是否重啟所有正在運行的實例？",
+      "stopAll": "是否關閉所有實例？"
+    },
+    "status": {
+      "running": "運行中",
+      "stopped": "已停止",
+      "restarting": "正在重啟",
+      "starting": "啟動中"
+    },
+    "labels": {
+      "path": "數據目錄",
+      "args": "啟動參數",
+      "argsEmpty": "無",
+      "bindAccount": "綁定帳號",
+      "unbound": "未綁定",
+      "quota": "額度狀態",
+      "lastLaunched": "最近啟動",
+      "pendingInit": "待初始化（請先啟動一次）"
+    },
+    "columns": {
+      "instance": "實例",
+      "email": "帳號",
+      "quota": "額度狀態",
+      "actions": "操作"
+    },
+    "empty": {
+      "title": "暫無實例",
+      "desc": "通過創建獨立的配置目錄，快速啟動多個實例環境。"
+    },
+    "form": {
+      "name": "實例名稱",
+      "namePlaceholder": "例如：工作帳號",
+      "path": "實例目錄",
+      "pathPlaceholder": "請選擇目錄",
+      "pathReadOnly": "編輯時不可修改路徑",
+      "pathAutoHint": "修改名稱會自動更新路徑（或手動選擇）",
+      "copyLogin": "複製當前登錄狀態",
+      "copyLoginDesc": "從默認目錄複製配置和登錄數據",
+      "copySource": "複製來源實例",
+      "copySourceDesc": "從選中實例複製配置和登錄數據",
+      "copySourcePlaceholder": "請選擇來源實例",
+      "copySourceRequired": "請選擇一個來源實例",
+      "copySourceRunningHint": "來源實例正在運行，建議先關閉以避免數據不一致。",
+      "bindInject": "注入帳號綁定",
+      "followCurrent": "跟隨當前主帳號",
+      "selectAccount": "選擇帳號",
+      "bindAccount": "綁定帳號",
+      "unbound": "未綁定",
+      "extraArgs": "自定義啟動參數",
+      "extraArgsPlaceholder": "例如：--disable-gpu --log-level=2",
+      "extraArgsDesc": "多個參數請用空格分隔，支持引號",
+      "nameRequired": "請輸入實例名稱",
+      "pathRequired": "請選擇實例目錄",
+      "bindRequired": "請選擇要綁定的帳號",
+      "initMode": "初始化方式",
+      "initModeCopy": "複製來源實例（預設）",
+      "initModeEmpty": "空白實例（不複製）",
+      "emptyInitHint": "選擇不複製實例時，只會建立空白目錄。需先啟動一次後，才可綁定帳號。",
+      "bindAfterInit": "初始化後可綁定",
+      "bindDisabledHint": "空白實例需先啟動一次產生資料後，才可綁定帳號。"
+    },
+    "quota": {
+      "unbound": "未綁定帳號",
+      "accountMissing": "未找到帳號",
+      "empty": "暫無緩存額度"
+    },
+    "messages": {
+      "created": "實例已創建",
+      "updated": "實例已更新",
+      "deleted": "實例已刪除",
+      "started": "實例已啟動",
+      "stopped": "實例已停止",
+      "startedAll": "已啟動所有停止的實例",
+      "restartedAll": "已重啟運行中的實例",
+      "closedAll": "已停止所有實例",
+      "allAlreadyRunning": "所有實例均已在運行中",
+      "noneRunning": "未找到正在運行的實例",
+      "emptyCreated": "空白實例已建立，請先啟動一次後再綁定帳號"
+    },
+    "runningDialog": {
+      "title": "實例已在運行",
+      "desc": "該實例已經啟動，您可以切換窗口，或根據當前策略重啟。",
+      "current": "當前策略：{{name}}",
+      "pathLabel": "實例目錄",
+      "go": "立即切換",
+      "restart": "關閉並重啟"
+    },
+    "restartStrategy": {
+      "button": "重啟策略",
+      "title": "重啟策略設置",
+      "desc": "選擇重啟實例時採用的方式，不同的選項會影響影響範圍和穩定性。",
+      "recommended": "推薦",
+      "labels": {
+        "principle": "技術原理",
+        "command": "核心指令",
+        "pros": "優點",
+        "cons": "缺點"
+      },
+      "safe": {
+        "title": "安全重啟（推薦）",
+        "principle": "向所有 Antigravity 進程發送 SIGTERM 信號，請求程序保存數據並退出，隨後啟動目標實例（必要時強制結束）。",
+        "commandMac": "macOS/Linux: kill -15 <pid>（全體 Antigravity）",
+        "commandWin": "Windows: taskkill /F /PID <pid>（全體 Antigravity）",
+        "pros": "最接近正常關閉，不易觸發錯誤提示，數據安全性高。",
+        "cons": "僅支持全局重啟所有實例。"
+      },
+      "force": {
+        "title": "精準強啟",
+        "principle": "通過 --user-data-dir 識別進程並強制關閉（SIGKILL / taskkill /F），隨後啟動目標實例。",
+        "commandMac": "macOS/Linux：pkill -9 -f“--user-data-dir <dir>”",
+        "commandWin": "Windows: taskkill /F /PID <pid>（匹配 --user-data-dir）",
+        "pros": "可以精準地僅重啟單個實例。",
+        "cons": "可能導致「意外關閉」警告，存在未保存數據丟失風險。"
+      }
+    },
+    "stop": {
+      "title": "強制停止實例",
+      "message": "將向實例進程發送結束信號 (SIGTERM)，未保存的數據可能會丟失。是否繼續？"
+    },
+    "delete": {
+      "title": "刪除實例",
+      "message": "是否刪除實例 {{name}}？這將移除配置並刪除實例目錄。"
+    },
+    "modal": {
+      "createTitle": "新增實例",
+      "editTitle": "編輯實例"
+    },
+    "sort": {
+      "label": "排序",
+      "createdAt": "按建立時間",
+      "lastLaunchedAt": "按啟動時間",
+      "ascTooltip": "目前：正序，點擊切換為倒序",
+      "descTooltip": "目前：倒序，點擊切換為正序",
+      "toggleDirection": "切換排序方向"
+    },
+    "initGuide": {
+      "title": "實例尚未初始化",
+      "desc": "此實例為「空白實例」，目前僅建立目錄，尚未產生實例資料。",
+      "tip": "請先啟動一次實例，初始化完成後即可綁定帳號。",
+      "startNow": "立即啟動"
+    }
+  },
+  "appPath": {
+    "missing": {
+      "title": "找不到應用程式路徑",
+      "desc": "找不到 {{app}} 的應用程式路徑。請立即設定以繼續。",
+      "action": "立即設定"
+    }
+  },
+  "githubCopilot": {
+    "title": "GitHub Copilot 帳號管理",
+    "instances": {
+      "unsupported": {
+        "desc": "GitHub Copilot 多開實例僅支援 macOS，請在 macOS 上使用。"
+      }
+    },
+    "empty": {
+      "description": "點擊「新增帳號」開始管理您的 GitHub Copilot 帳號"
+    },
+    "addModal": {
+      "title": "新增 GitHub Copilot 帳號"
+    },
+    "oauth": {
+      "desc": "點擊下方按鈕，在瀏覽器中完成 GitHub Copilot 授權。"
+    },
+    "token": {
+      "desc": "貼上 GitHub Copilot 存取權杖或匯出的 JSON 資料。"
+    },
+    "import": {
+      "localDesc": "從本機已登入的會話匯入 GitHub Copilot 帳號。"
+    },
+    "sort": {
+      "weekly": "按週配額",
+      "hourly": "按5小時配額",
+      "weeklyReset": "按週配額重置時間",
+      "hourlyReset": "按5小時配額重置時間"
+    },
+    "columns": {
+      "hourly": "5小時配額",
+      "weekly": "週配額"
+    },
+    "flowNotice": {
+      "title": "GitHub Copilot 帳號指南（點擊展開/收合）",
+      "desc": "切換帳號時需要讀取 VS Code 本機認證儲存，並呼叫系統憑證服務完成解密與回寫；資料僅在本機處理。",
+      "reason": "權限需求：讀取 VS Code 認證資料庫（state.vscdb），並呼叫系統加密能力（Windows DPAPI / macOS Keychain / Linux Secret Service）進行解密與寫回。",
+      "storage": "讀取範圍：僅處理 GitHub 登入工作階段相關資料，所有流程均在本機執行。",
+      "inject": "一鍵切換：本工具會讀取本機 VS Code 加密材料（DPAPI/Keychain/Secret Service），解密 state.vscdb 中的驗證工作階段，替換 GitHub Copilot 權杖後再加密，全部流程都在本機完成。"
+    },
+    "injectToVSCode": "切換到 VS Code",
+    "injectSuccess": "已成功將權杖注入 VS Code，VS Code 正在啟動。",
+    "injectRequireClose": "注入前請先關閉 VS Code。"
+  },
+  "quickSettings": {
+    "antigravity": {
+      "title": "Antigravity 設定",
+      "appPath": "啟動路徑"
+    },
+    "codex": {
+      "title": "Codex 設定",
+      "appPath": "啟動路徑"
+    },
+    "githubCopilot": {
+      "title": "GitHub Copilot 設定",
+      "appPath": "VS Code 路徑"
+    },
+    "refreshInterval": "配額自動重新整理",
+    "codexRefreshInterval": "配額自動重新整理",
+    "ghcpRefreshInterval": "配額自動重新整理",
+    "autoSwitch": {
+      "title": "自動切換",
+      "enable": "自動切換",
+      "threshold": "切換閾值",
+      "thresholdDesc": "任意模型配額低於此百分比時觸發自動切換",
+      "hint": "當任意模型配額低於閾值時，自動切換到配額最高的帳號。"
+    },
+    "quotaAlert": {
+      "title": "超額預警",
+      "enable": "超額預警",
+      "threshold": "預警閾值",
+      "thresholdDesc": "任意模型配額低於此百分比時觸發預警",
+      "hint": "當目前帳號任意模型配額低於閾值時，發送原生通知並在頁面提示快捷切號。"
+    },
+    "customInput": "自訂",
+    "apply": "確定",
+    "inputMinutes": "輸入分鐘數",
+    "inputPercent": "輸入百分比",
+    "windsurf": {
+      "title": "Windsurf 設定",
+      "appPath": "Windsurf 路徑"
+    },
+    "windsurfRefreshInterval": "配額自動重新整理",
+    "kiro": {
+      "title": "基羅設定",
+      "appPath": "基羅之路"
+    },
+    "kiroRefreshInterval": "自動刷新配額"
+  },
+  "quotaAlert": {
+    "bannerText": "帳號 {{email}} 觸發配額預警（閾值 {{threshold}}%，最低 {{lowest}}%，模型：{{models}}）",
+    "switchAction": "快捷切號：{{email}}",
+    "switching": "切換中...",
+    "switchFailed": "快捷切號失敗：{{error}}",
+    "modal": {
+      "title": "配額預警",
+      "desc": "目前帳號配額已達到預警閾值，請盡快處理。",
+      "unknownModel": "未知模型",
+      "platform": "平台",
+      "account": "目前帳號",
+      "threshold": "預警閾值",
+      "lowest": "目前最低",
+      "models": "觸發模型",
+      "recommended": "建議切換",
+      "noRecommendation": "暫無可切換帳號",
+      "later": "稍後處理",
+      "openSettings": "調整預警設定",
+      "switchNow": "快捷切號到 {{email}}",
+      "switchFailedTitle": "切號失敗",
+      "switchFailedBody": "快捷切號失敗：{{error}}"
+    }
+  },
+  "privacy": {
+    "hideSensitive": "隱藏電子郵件",
+    "showSensitive": "顯示電子郵件"
+  },
+  "windsurf": {
+    "title": "Windsurf 帳號管理",
+    "instances": {
+      "unsupported": {
+        "desc": "Windsurf 多開實例僅支援 macOS，請在 macOS 上使用。"
+      }
+    },
+    "empty": {
+      "description": "點擊「新增帳號」開始管理您的 Windsurf 帳號"
+    },
+    "addModal": {
+      "title": "新增 Windsurf 帳號",
+      "password": "電子郵件密碼"
+    },
+    "oauth": {
+      "desc": "點擊下方按鈕，在瀏覽器中完成 Windsurf 授權。"
+    },
+    "token": {
+      "desc": "貼上 Windsurf 存取權杖或匯出的 JSON 資料。"
+    },
+    "import": {
+      "localDesc": "從本機已登入的會話匯入 Windsurf 帳號。",
+      "localClient": "從本機 Windsurf 匯入"
+    },
+    "credits": {
+      "title": "方案",
+      "renewMonthly": "點數每月自動重置",
+      "left": "剩餘 {{count}} 點數",
+      "leftUnknown": "剩餘點數 -",
+      "promptLeft": "剩餘 {{remaining}}/{{total}} prompt 點數",
+      "promptLeftNoTotal": "剩餘 {{remaining}} prompt 點數",
+      "promptLeftUnknown": "剩餘 prompt 點數 -",
+      "addOnAvailable": "{{count}} add-on 點數可用"
+    },
+    "columns": {
+      "plan": "標籤"
+    },
+    "injectToVSCode": "切換到 Windsurf",
+    "injectSuccess": "已完成切換，Windsurf 正在啟動。",
+    "injectRequireClose": "請先關閉 Windsurf 再進行切換。",
+    "flowNotice": {
+      "title": "Windsurf 帳號指南（點擊展開/收合）",
+      "desc": "切換帳號時需要讀取 Windsurf 本機認證儲存，並呼叫系統憑證服務完成解密與回寫；資料僅在本機處理。",
+      "inject": "一鍵切換：本工具會讀取本機 Windsurf 加密材料（DPAPI/Keychain/Secret Service），解密 state.vscdb 中的驗證工作階段，替換 Windsurf 權杖後再加密，全部流程都在本機完成。",
+      "reason": "權限需求：讀取 Windsurf 認證資料庫（state.vscdb），並呼叫系統加密能力（Windows DPAPI / macOS Keychain / Linux Secret Service）進行解密與寫回。",
+      "storage": "讀取範圍：僅處理 Windsurf 登入工作階段相關資料，所有流程均在本機執行。"
+    },
+    "password": {
+      "desc": "使用 Windsurf 帳號的電子郵件與密碼登入，自動取得 API Key 與帳號資訊。",
+      "emailPlaceholder": "電子郵件地址",
+      "passwordPlaceholder": "密碼",
+      "login": "登入",
+      "logging": "登入中...",
+      "empty": "請輸入電子郵件和密碼",
+      "success": "登入成功: {{login}}",
+      "failed": "登入失敗: {{error}}"
+    }
+  },
+  "platformLayout": {
+    "title": "平台佈局",
+    "sidebarSelected": "側邊欄已選擇 {{count}}/{{max}}",
+    "reset": "恢復預設",
+    "tip": "拖曳可排序；側邊欄最多可顯示兩個平台。若只選擇一個，側邊欄只顯示一個。",
+    "sidebarToggle": "側邊欄顯示",
+    "dashboardToggle": "儀表板顯示",
+    "trayToggle": "選單列顯示",
+    "hiddenBadge": "已隱藏",
+    "openFromMore": "管理平台佈局",
+    "dragHandleLabel": "拖曳排序"
+  },
+  "breakout": {
+    "gameOver": "本局結束",
+    "gameOverRank": "當前本地排名 #{{rank}}",
+    "startGame": "開始遊戲",
+    "startHint": "點擊開始按鈕或按空白鍵",
+    "rankTitle": "本地歷史排名",
+    "rankCurrent": "當前",
+    "rankNoData": "--",
+    "restart": "重新開始",
+    "pause": "暫停",
+    "resume": "繼續",
+    "paused": "已暫停",
+    "level": "關卡 {{level}}",
+    "levelScore": "本關分數 {{score}}",
+    "levelCleared": "關卡完成",
+    "nextLevel": "下一關",
+    "history": "歷史記錄",
+    "historyShort": "歷史",
+    "historyEmpty": "暫無歷史記錄",
+    "historyClear": "清空",
+    "historyScoreShort": "分 {{score}}",
+    "historyLevelShort": "關 {{level}}",
+    "historyDurationShort": "時長 {{duration}}",
+    "historyReasonGameOver": "本局結束",
+    "historyReasonManualExit": "手動退出",
+    "serveHint": "按空白鍵開始發球",
+    "ranking": "本地歷史記錄",
+    "rankingShort": "本地",
+    "rankingEmpty": "暫無本地歷史記錄",
+    "rankingClear": "清空本地排名",
+    "rankingRankShort": "#{{rank}}"
+  },
+  "kiro": {
+    "account": {
+      "signedInWith": "使用 {{provider}} 登入",
+      "providerUnknown": "未知",
+      "userId": "使用者身分"
+    },
+    "credits": {
+      "estimatedResetOn": "預計使用量在 {{date}} 上重置",
+      "bonusUsageLine": "使用 {{used}} / 總共 {{total}}",
+      "planUsageCoveredLine": "{{used}} 已使用 / {{total}} 包含在計劃中",
+      "expiryDays": "{{days}} 天",
+      "expiryUnknown": "—",
+      "resetNow": "盡快重置",
+      "resetInHours": "在 {{hours}}h 中重置",
+      "resetInMinutes": "在 {{minutes}}m 中重置"
+    },
+    "columns": {
+      "bonusCredits": "獎勵積分",
+      "estimatedUsage": "預計使用量",
+      "expiry": "到期日",
+      "estUsage": "預計。用法"
+    },
+    "plan": {
+      "free": "Kiro Free",
+      "individual": "Kiro Individual",
+      "pro": "Kiro Pro",
+      "business": "Kiro Business",
+      "enterprise": "Kiro Enterprise",
+      "unknown": "未知"
+    },
+    "flowNotice": {
+      "title": "Kiro 帳號管理說明（點擊展開/收起）",
+      "desc": "帳號切換會在本機讀寫 Kiro 登入檔與實例設定；OAuth 登入與配額刷新會呼叫 Kiro 官方介面。",
+      "reason": "處理路徑包含 ~/.aws/sso/cache/kiro-auth-token.json、實例目錄 profile.json，以及 state.vscdb 中的 kiro.kiroAgent 條目。",
+      "storage": "處理資料包含 Kiro 登入會話與配額資訊；請求 Kiro 官方介面時會傳送必要認證欄位（如 code、refreshToken、accessToken、profileArn）。"
+    },
+    "title": "Kiro 帳戶管理",
+    "instances": {
+      "unsupported": {
+        "descPlatform": "Kiro 多執行個體僅適用於 macOS、Windows 和 Linux。"
+      }
+    },
+    "empty": {
+      "description": "點擊「新增帳戶」開始管理您的 Kiro 帳戶"
+    },
+    "addModal": {
+      "title": "新增 Kiro 帳戶"
+    },
+    "oauth": {
+      "desc": "點擊下面的按鈕並在瀏覽器中完成 Kiro 授權。"
+    },
+    "token": {
+      "desc": "貼上您的 Kiro 存取權杖或匯出的 JSON 資料。"
+    },
+    "import": {
+      "localDesc": "從本機 Kiro 用戶端或 JSON 檔案匯入 Kiro 帳戶資料。",
+      "localClient": "從當地Kiro進口"
+    },
+    "injectToVSCode": "切換到基羅"
+  }
+}

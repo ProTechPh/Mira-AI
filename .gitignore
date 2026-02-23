@@ -1,71 +1,31 @@
-# Dependencies
-node_modules
-.pnp
-.pnp.js
-
-# Build outputs
-dist
-out
-*.asar
-
-# Electron-builder
-builder-debug.yml
-builder-effective-config.yaml
-latest.yml
-*.blockmap
-win-unpacked
-mac
-linux-unpacked
-*.exe
-*.dmg
-*.AppImage
-*.deb
-*.snap
-*.rpm
-
-# Python
-.venv
-__pycache__
-*.py[cod]
-*$py.class
-.pytest_cache
-*.egg-info
-
-# Environment variables
-.env
-.env.*
-!.env.example
-
 # Logs
-*.log*
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 lerna-debug.log*
 
-# Cache
-.eslintcache
-.cache
-*.tsbuildinfo
+node_modules
+dist
+dist-ssr
+*.local
 
-# OS files
-.DS_Store
-Thumbs.db
-desktop.ini
-*~
-
-# IDE
+# Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-!.vscode/launch.json
 .idea
-*.swp
-*.swo
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# Temporary files
-*.tmp
-*.temp
+# Local AI instructions
+AGENTS.md
 
-# Coverage
-coverage
-.nyc_output
+locale-check-report.md
+
+docs/platform-integration-guide.md

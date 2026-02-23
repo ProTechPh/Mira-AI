@@ -1,0 +1,143 @@
+.update-overlay {
+  animation: updateFadeIn 0.2s ease;
+}
+
+.update-modal {
+  max-width: 420px;
+  animation: updateSlideIn 0.2s ease;
+}
+
+.update-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.update-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-primary);
+  color: #ffffff;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+.update-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.update-version {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.update-message {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+@keyframes updateFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes updateSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Release Notes Section */
+.release-notes {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-light);
+}
+
+.release-notes-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.release-notes-content {
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.release-notes-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.release-notes-heading {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 8px 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.release-notes-heading:first-child {
+  margin-top: 0;
+}
+
+.release-notes-item {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  padding: 4px 0 4px 16px;
+  position: relative;
+}
+
+.release-notes-item::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.release-notes-item strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Scrollbar styling */
+.release-notes-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.release-notes-content::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: 2px;
+}
+
+.release-notes-content::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+.release-notes-content::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}

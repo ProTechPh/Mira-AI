@@ -1,0 +1,1391 @@
+{
+  "common": {
+    "confirm": "确认",
+    "cancel": "取消",
+    "save": "保存",
+    "saving": "保存中...",
+    "delete": "删除",
+    "refresh": "刷新",
+    "loading": "加载中...",
+    "success": "成功",
+    "failed": "失败",
+    "enabled": "已启用",
+    "disabled": "已禁用",
+    "close": "关闭",
+    "open": "打开",
+    "copy": "复制",
+    "add": "添加",
+    "enable": "启用",
+    "disable": "停用",
+    "none": "暂无",
+    "detail": "详情",
+    "editable": "可编辑",
+    "preview": "预览",
+    "shared": {
+      "addAccount": "添加账号",
+      "columns": {
+        "actions": "操作",
+        "plan": "订阅",
+        "addOnPromptCredits": "Add-on prompt credits",
+        "credits": "制作人员",
+        "email": "邮箱",
+        "promptCredits": "User Prompt credits"
+      },
+      "empty": {
+        "title": "暂无账号"
+      },
+      "export": "导出",
+      "filter": {
+        "all": "全部 ({{count}})",
+        "enterprise": "企业 ({{count}})",
+        "free": "免费（{{count}}）",
+        "pro": "专业版 ({{count}})",
+        "business": "商业 ({{count}})",
+        "individual": "个人 ({{count}})"
+      },
+      "filterLabel": "筛选",
+      "import": {
+        "failedMsg": "导入失败: {{error}}",
+        "label": "导入",
+        "importing": "正在导入...",
+        "pickFile": "选择 JSON 文件导入",
+        "orJson": "或从 JSON 文件导入"
+      },
+      "instances": {
+        "unsupported": {
+          "title": "暂不支持当前系统"
+        },
+        "quota": {
+          "chat": "聊天消息",
+          "inline": "内嵌建议"
+        },
+        "subtitle": "多实例独立配置，多账号并行运行。",
+        "title": "多开实例"
+      },
+      "noMatch": {
+        "desc": "请尝试调整搜索或筛选条件",
+        "title": "没有匹配的账号"
+      },
+      "oauth": {
+        "failed": "授权失败",
+        "hint": "完成授权后，此窗口将自动更新",
+        "openBrowser": "在浏览器中打开",
+        "success": "授权成功",
+        "meta": "授权有效期：{{expires}}s；轮询间隔：{{interval}}s",
+        "preparing": "正在准备授权信息...",
+        "retry": "重新生成授权信息",
+        "timeoutRetry": "刷新授权链接",
+        "waiting": "等待授权完成..."
+      },
+      "refreshAll": "刷新全部",
+      "refreshQuota": "刷新配额",
+      "search": "搜索账号...",
+      "sort": {
+        "ascTooltip": "当前：升序，点击切换为降序",
+        "createdAt": "按创建时间",
+        "descTooltip": "当前：降序，点击切换为升序",
+        "toggleDirection": "切换排序方向",
+        "credits": "按剩余 Credits",
+        "planEnd": "按配额周期结束时间"
+      },
+      "sortLabel": "排序",
+      "token": {
+        "empty": "请输入 Token 或 JSON",
+        "import": "导入",
+        "importFailedMsg": "导入失败: {{error}}",
+        "importing": "正在导入...",
+        "importSuccessMsg": "成功导入 {{count}} 个账号",
+        "placeholder": "粘贴 Token 或 JSON..."
+      },
+      "view": {
+        "grid": "卡片视图",
+        "list": "列表视图"
+      },
+      "addModal": {
+        "import": "本地导入",
+        "oauth": "开放认证",
+        "token": "令牌/JSON"
+      },
+      "overview": {
+        "title": "账号总览"
+      },
+      "quota": {
+        "noData": "暂无配额数据",
+        "resetDone": "已重置",
+        "hourly": "Inline Suggestions",
+        "weekly": "Chat messages"
+      },
+      "subtitle": "实时监控所有账号的配额状态。",
+      "time": {
+        "lessThanMinute": "<1分钟",
+        "relativeDays": "{{days}}天",
+        "relativeDaysHours": "{{days}}天{{hours}}小时",
+        "relativeHours": "{{hours}}小时",
+        "relativeHoursMinutes": "{{hours}}小时{{minutes}}分钟",
+        "relativeMinutes": "{{minutes}}分钟",
+        "relativeWithAbsolute": "{{relative}} ({{absolute}})"
+      },
+      "credits": {
+        "leftInline": "{{left}} left",
+        "periodEndOnly": "周期结束：{{end}}",
+        "periodRange": "周期：{{start}} - {{end}}",
+        "planEndsIn": "配额周期剩余 {{days}} 天",
+        "planEndsUnknown": "配额周期时间未知",
+        "usedLine": "{{used}} / {{total}} used"
+      },
+      "flowNotice": {
+        "alternative": "多开实例隔离：使用不同 --user-data-dir 做账号隔离；每个实例登录一次，后续按实例启动即可快速切换到对应账号环境。"
+      },
+      "injecting": "注入中...",
+      "usage": {
+        "resetLine": "Allowance resets {{dateText}}.",
+        "resetUnknown": "Allowance resets -"
+      }
+    }
+  },
+  "nav": {
+    "dashboard": "仪表盘",
+    "overview": "Antigravity 账号",
+    "accounts": "账号管理",
+    "wakeup": "唤醒任务",
+    "fingerprints": "设备指纹",
+    "settings": "设置",
+    "codex": "Codex 账号",
+    "githubCopilot": "GitHub Copilot",
+    "windsurf": "Windsurf",
+    "morePlatforms": "更多平台",
+    "instances": "多开实例"
+  },
+  "breakout": {
+    "gameOver": "本局结束",
+    "gameOverRank": "当前本地排名 #{{rank}}",
+    "startGame": "开始游戏",
+    "startHint": "点击开始按钮或按空格",
+    "serveHint": "按空格开始发球",
+    "rankTitle": "本地历史排名",
+    "rankCurrent": "当前",
+    "rankNoData": "--",
+    "ranking": "本地历史排名",
+    "rankingShort": "本地",
+    "rankingEmpty": "暂无本地排名数据",
+    "rankingClear": "清空本地排名",
+    "rankingRankShort": "#{{rank}}",
+    "restart": "重新开始",
+    "pause": "暂停",
+    "resume": "继续",
+    "paused": "已暂停",
+    "level": "关卡 {{level}}",
+    "levelScore": "本关分数 {{score}}",
+    "levelCleared": "关卡完成",
+    "nextLevel": "下一关",
+    "history": "历史记录",
+    "historyShort": "历史",
+    "historyEmpty": "暂无历史记录",
+    "historyClear": "清空",
+    "historyScoreShort": "分 {{score}}",
+    "historyLevelShort": "关 {{level}}",
+    "historyDurationShort": "时长 {{duration}}",
+    "historyReasonGameOver": "本局结束",
+    "historyReasonManualExit": "手动退出"
+  },
+  "platformLayout": {
+    "title": "平台布局",
+    "sidebarSelected": "侧边栏已选择 {{count}}/{{max}}",
+    "reset": "恢复默认",
+    "tip": "拖拽可排序；最多选择两个平台显示在侧边栏。若只选择一个，侧边栏只显示一个。",
+    "sidebarToggle": "侧边栏显示",
+    "dashboardToggle": "仪表盘显示",
+    "trayToggle": "菜单栏显示",
+    "hiddenBadge": "已隐藏",
+    "openFromMore": "管理平台布局",
+    "dragHandleLabel": "拖拽排序"
+  },
+  "privacy": {
+    "hideSensitive": "隐藏邮箱",
+    "showSensitive": "显示邮箱"
+  },
+  "instances": {
+    "title": "多开实例",
+    "subtitle": "多实例独立配置，多账号并行运行。",
+    "defaultName": "默认实例",
+    "search": "搜索实例",
+    "sort": {
+      "label": "排序",
+      "createdAt": "按创建时间",
+      "lastLaunchedAt": "按启动时间",
+      "ascTooltip": "当前：正序，点击切换为倒序",
+      "descTooltip": "当前：倒序，点击切换为正序",
+      "toggleDirection": "切换排序方向"
+    },
+    "actions": {
+      "create": "新建实例",
+      "refresh": "刷新",
+      "startAll": "全部启动",
+      "restartAll": "全部重启",
+      "stopAll": "全部关闭",
+      "start": "启动",
+      "stop": "停止",
+      "openFolder": "打开目录",
+      "edit": "编辑",
+      "openRootDir": "打开目录",
+      "selectPath": "选择目录",
+      "openWindow": "定位窗口"
+    },
+    "bulkConfirm": {
+      "startAll": "确认启动所有未运行实例？",
+      "restartAll": "确认重启所有运行中的实例？",
+      "stopAll": "确认关闭全部实例？"
+    },
+    "status": {
+      "running": "运行中",
+      "stopped": "未运行",
+      "restarting": "重启中",
+      "starting": "启动中"
+    },
+    "labels": {
+      "path": "目录",
+      "args": "启动参数",
+      "argsEmpty": "无",
+      "bindAccount": "绑定账号",
+      "unbound": "未绑定",
+      "pendingInit": "待初始化（先启动一次）",
+      "quota": "配额",
+      "lastLaunched": "上次启动"
+    },
+    "columns": {
+      "instance": "实例",
+      "email": "账号",
+      "quota": "配额状态",
+      "actions": "操作"
+    },
+    "empty": {
+      "title": "还没有实例",
+      "desc": "创建一个独立配置目录，快速开启多实例。"
+    },
+    "modal": {
+      "createTitle": "新建实例",
+      "editTitle": "编辑实例"
+    },
+    "form": {
+      "name": "实例名称",
+      "namePlaceholder": "例如：工作账号",
+      "path": "实例目录",
+      "pathPlaceholder": "选择实例目录",
+      "pathReadOnly": "编辑时不可修改路径",
+      "pathAutoHint": "修改名称时自动更新路径，也可手动选择",
+      "copyLogin": "复制当前登录状态",
+      "copyLoginDesc": "从默认目录复制配置与登录信息",
+      "initMode": "初始化方式",
+      "initModeCopy": "复制来源实例（默认）",
+      "initModeEmpty": "空白实例（不复制）",
+      "emptyInitHint": "选择无需复制实例，只会创建空白目录。需要启动一次后，才可以进行账号绑定。",
+      "copySource": "复制来源实例",
+      "copySourceDesc": "从指定实例复制配置与登录信息",
+      "copySourcePlaceholder": "选择来源实例",
+      "copySourceRequired": "请选择复制来源实例",
+      "copySourceRunningHint": "该实例正在运行，建议先关闭以避免数据不一致",
+      "bindInject": "绑定账号",
+      "bindAfterInit": "初始化后可绑定",
+      "bindDisabledHint": "空白实例需先启动一次生成实例数据后，才可绑定账号。",
+      "followCurrent": "跟随当前账号",
+      "selectAccount": "选择账号",
+      "bindAccount": "绑定账号",
+      "unbound": "不绑定",
+      "extraArgs": "自定义启动参数",
+      "extraArgsPlaceholder": "例如：--disable-gpu --log-level=2",
+      "extraArgsDesc": "按空格分隔参数，支持引号包裹",
+      "nameRequired": "请输入实例名称",
+      "pathRequired": "请选择实例目录",
+      "bindRequired": "请选择要绑定的账号"
+    },
+    "quota": {
+      "unbound": "未绑定账号",
+      "accountMissing": "账号不存在",
+      "empty": "暂无配额缓存"
+    },
+    "messages": {
+      "created": "实例已创建",
+      "emptyCreated": "空白实例已创建，请先启动一次后再绑定账号",
+      "updated": "实例已更新",
+      "deleted": "实例已删除",
+      "started": "实例已启动",
+      "stopped": "实例已关闭",
+      "startedAll": "已启动所有未运行实例",
+      "restartedAll": "已重启运行中的实例",
+      "closedAll": "已关闭所有实例",
+      "allAlreadyRunning": "所有实例已在运行",
+      "noneRunning": "当前没有运行中的实例"
+    },
+    "runningDialog": {
+      "title": "实例已在运行",
+      "desc": "实例已在运行中，可立马前往或关闭后重启。",
+      "current": "当前策略：{{name}}",
+      "pathLabel": "实例目录",
+      "go": "立马前往",
+      "restart": "关闭并重启"
+    },
+    "initGuide": {
+      "title": "实例尚未初始化",
+      "desc": "该实例为“空白实例”，当前仅创建了目录，尚未生成实例数据。",
+      "tip": "请先启动一次实例，初始化完成后即可绑定账号。",
+      "startNow": "立即启动"
+    },
+    "restartStrategy": {
+      "button": "重启策略",
+      "title": "重启策略",
+      "desc": "选择实例重启方式，不同方式影响退出范围与稳定性。",
+      "recommended": "推荐",
+      "labels": {
+        "principle": "技术原理",
+        "command": "命令",
+        "pros": "优点",
+        "cons": "缺点"
+      },
+      "safe": {
+        "title": "安全重启（推荐）",
+        "principle": "向目标实例进程发送 SIGTERM，请求应用自行保存并退出，退出后再启动该实例（必要时会强制结束）。",
+        "commandMac": "macOS/Linux: kill -15 <pid> （匹配 --user-data-dir）",
+        "commandWin": "Windows: taskkill /F /PID <pid> （匹配 --user-data-dir）",
+        "pros": "更接近正常退出，不易触发崩溃提示，数据更安全。",
+        "cons": "需要等待进程优雅退出，耗时更长。"
+      },
+      "force": {
+        "title": "强制重启",
+        "principle": "按 --user-data-dir 匹配进程并强制终止（SIGKILL / taskkill /F），再启动目标实例。",
+        "commandMac": "macOS/Linux：pkill -9 -f“--user-data-dir <dir>”",
+        "commandWin": "Windows: taskkill /F /PID <pid> （匹配 --user-data-dir）",
+        "pros": "可精准重启单个实例。",
+        "cons": "可能触发“意外终止”提示，存在未保存数据丢失风险。"
+      }
+    },
+    "stop": {
+      "title": "强制关闭实例",
+      "message": "将向实例进程发送终止信号（SIGTERM）强制关闭，可能导致未保存的数据丢失。确认继续？"
+    },
+    "delete": {
+      "title": "删除实例",
+      "message": "确认删除实例 {{name}}？将移除配置并删除实例目录。"
+    }
+  },
+  "settings": {
+    "title": "应用设置",
+    "subtitle": "个性化您的 Mira Tools 体验。",
+    "tabs": {
+      "general": "通用",
+      "network": "网络服务",
+      "about": "关于"
+    },
+    "general": {
+      "appearance": "界面外观",
+      "language": "显示语言",
+      "languageDesc": "选择界面的显示语言",
+      "theme": "应用主题",
+      "themeDesc": "切换深色或浅色模式",
+      "themeLight": "浅色 (Light)",
+      "themeDark": "深色 (Dark)",
+      "themeSystem": "跟随系统",
+      "accountManagement": "账号管理",
+      "autoRefresh": "Antigravity 自动刷新配额",
+      "codexAutoRefresh": "Codex 自动刷新配额",
+      "autoRefreshDesc": "后台自动更新频率",
+      "codexAutoRefreshDesc": "后台自动更新频率",
+      "autoRefreshDisabled": "禁用",
+      "autoRefreshCustom": "自定义...",
+      "every15min": "每 15 分钟",
+      "every30min": "每 30 分钟",
+      "every1hour": "每 1 小时",
+      "minutes": "分",
+      "refreshIntervalLimited": "配额重置唤醒已启用，刷新间隔最小值为 2 分钟",
+      "closeBehavior": "窗口关闭行为",
+      "closeBehaviorDesc": "选择关闭窗口时的默认行为",
+      "closeBehaviorAsk": "每次询问",
+      "closeBehaviorMinimize": "最小化到托盘",
+      "closeBehaviorQuit": "退出应用",
+      "storageTitle": "目录与存储",
+      "dataDir": "数据目录",
+      "dataDirDesc": "账号与配置文件的存储位置。",
+      "fpDir": "Antigravity存储目录",
+      "fpDirDesc": "Antigravity数据文件的存储位置。",
+      "opencodeTitle": "OpenCode 联动",
+      "opencodeRestart": "切换 Codex 时自动重启 OpenCode",
+      "opencodeRestartDesc": "同步切换OpenCode里codex账户信息",
+      "opencodeAppPath": "OpenCode 启动路径",
+      "opencodeAppPathDesc": "留空则使用默认路径",
+      "opencodeAppPathPlaceholder": "默认路径",
+      "opencodePathReset": "重置默认",
+      "opencodePathSelect": "选择",
+      "codexTitle": "Codex 启动",
+      "codexAppPath": "Codex 启动路径",
+      "codexAppPathDesc": "留空则使用默认路径",
+      "codexAppPathPlaceholder": "默认路径",
+      "codexPathSelect": "选择",
+      "codexPathReset": "重置默认",
+      "vscodeTitle": "VS Code 启动",
+      "vscodeAppPath": "VS Code 启动路径",
+      "vscodeAppPathDesc": "留空则使用默认路径",
+      "vscodeAppPathPlaceholder": "默认路径",
+      "vscodePathSelect": "选择",
+      "vscodePathReset": "重置默认",
+      "antigravityAppPath": "Antigravity 启动路径",
+      "antigravityTitle": "Antigravity 启动",
+      "commonTitle": "通用",
+      "antigravitySettingsTitle": "Antigravity 设置",
+      "codexSettingsTitle": "Codex 设置",
+      "githubCopilotSettingsTitle": "GitHub Copilot 设置",
+      "ghcpAutoRefresh": "GitHub Copilot 自动刷新配额",
+      "ghcpAutoRefreshDesc": "后台自动更新频率",
+      "windsurfSettingsTitle": "Windsurf 设置",
+      "windsurfAutoRefresh": "Windsurf 自动刷新配额",
+      "windsurfAutoRefreshDesc": "后台自动更新频率",
+      "windsurfAppPath": "Windsurf 启动路径",
+      "windsurfAppPathDesc": "留空则使用默认路径",
+      "windsurfAppPathPlaceholder": "默认路径",
+      "windsurfPathSelect": "选择",
+      "windsurfPathReset": "重置默认",
+      "kiroSettingsTitle": "Kiro 设置",
+      "kiroAutoRefresh": "Kiro 自动刷新配额",
+      "kiroAutoRefreshDesc": "后台自动更新频率",
+      "kiroAppPath": "Kiro 启动路径",
+      "kiroAppPathDesc": "留空则使用默认路径",
+      "kiroAppPathPlaceholder": "默认路径",
+      "kiroPathSelect": "选择",
+      "kiroPathReset": "重置默认",
+      "codexLaunchOnSwitch": "切换 Codex 时自动启动 Codex App",
+      "codexLaunchOnSwitchDesc": "切换账号后自动启动或重启 Codex App"
+    },
+    "network": {
+      "apiTitle": "反重力驾驶舱 API",
+      "wsService": "WebSocket 服务",
+      "wsServiceDesc": "允许外部程序（如 VS Code 插件）连接控制",
+      "preferredPort": "首选端口",
+      "preferredPortDesc": "默认为 {{port}}，修改后需重启应用",
+      "currentPort": "当前运行端口",
+      "portNormal": "服务运行正常",
+      "portFallback": "配置端口 {{configured}} 被占用，已自动使用 {{actual}}",
+      "restartRequired": "配置已更改，请重启应用以使新端口生效",
+      "saveSuccess": "设置已保存！",
+      "saveSuccessRestart": "设置已保存！由于端口配置已更改，请重启应用以生效。",
+      "saveFailed": "保存失败: {{error}}"
+    },
+    "about": {
+      "appName": "Mira Tools",
+      "slogan": "专业账号管理解决方案",
+      "author": "主作者",
+      "wechat": "微信公众号",
+      "github": "开源仓库",
+      "alipay": "支付宝",
+      "wechatpay": "微信支付",
+      "sponsor": "赞助支持",
+      "sponsorDesc": "支持项目持续开发",
+      "feedback": "意见反馈",
+      "feedbackDesc": "报告问题或提交建议",
+      "supportDev": "支持开发",
+      "checkUpdate": "检查更新",
+      "checking": "检查中...",
+      "upToDate": "已是最新版本",
+      "newVersion": "发现 v{{version}}",
+      "download": "下载",
+      "checkFailed": "检查更新失败，请稍后重试"
+    },
+    "saveSettings": "保存设置"
+  },
+  "appPath": {
+    "missing": {
+      "title": "未找到应用程序路径",
+      "desc": "未找到 {{app}} 应用程序路径，请立即设置后继续启动。",
+      "action": "立即设置"
+    }
+  },
+  "accounts": {
+    "title": "账号管理",
+    "subtitle": "管理你的 Antigravity 账号列表。",
+    "total": "共 {{count}} 个账号",
+    "search": "搜索账号...",
+    "addAccount": "添加账号",
+    "refreshAll": "刷新全部",
+    "export": "导出",
+    "import": "导入",
+    "switchLogin": "切换登录",
+    "refreshQuota": "刷新配额",
+    "copyToken": "复制 Token",
+    "deleteAccount": "删除账号",
+    "confirmDelete": "确定要删除账号 {{email}} 吗？",
+    "columns": {
+      "email": "邮箱",
+      "subscription": "订阅类型",
+      "quota": "配额状态",
+      "fingerprint": "指纹",
+      "lastUsed": "最后使用",
+      "actions": "操作"
+    },
+    "status": {
+      "current": "当前",
+      "disabled": "已禁用",
+      "authInvalid": "凭证无效",
+      "refreshFailed": "刷新失败",
+      "normal": "正常",
+      "forbidden": "403",
+      "forbidden_tooltip": "API 返回 403 Forbidden，账号无权使用 Gemini Code Assist",
+      "forbidden_msg": "账号无权限，已跳过自动刷新"
+    },
+    "tier": {
+      "pro": "PRO",
+      "ultra": "ULTRA",
+      "free": "FREE"
+    },
+    "empty": {
+      "title": "暂无账号",
+      "desc": "点击\"添加\"开始使用",
+      "btn": "添加账号"
+    },
+    "noMatch": {
+      "title": "无匹配账号",
+      "desc": "没有找到符合筛选条件的账号"
+    },
+    "view": {
+      "compact": "紧凑视图",
+      "list": "列表视图",
+      "grid": "卡片视图"
+    },
+    "filterLabel": "筛选账号",
+    "filter": {
+      "all": "全部 ({{count}})",
+      "pro": "专业版 ({{count}})",
+      "ultra": "超 ({{count}})",
+      "free": "免费（{{count}}）"
+    },
+    "sortLabel": "排序",
+    "sort": {
+      "default": "默认排序",
+      "overall": "按综合配额",
+      "createdAt": "按创建时间",
+      "byGroup": "按 {{group}} 配额",
+      "byGroupReset": "按 {{group}} 重置时间",
+      "descTooltip": "当前：降序，点击切换为升序",
+      "ascTooltip": "当前：升序，点击切换为降序",
+      "toggleDirection": "切换排序方向"
+    },
+    "filterTags": "标签筛选",
+    "filterTagsCount": "标签",
+    "noAvailableTags": "暂无可用标签",
+    "clearFilter": "清空筛选",
+    "editTags": "编辑标签",
+    "tagModal": {
+      "title": "账户标签",
+      "hint": "最多 {{max}} 个标签，单个标签长度不超过 {{maxLength}} 个字符。",
+      "empty": "暂无标签",
+      "suggestionsTitle": "已有标签",
+      "suggestionsEmpty": "暂无可选标签",
+      "inputPlaceholder": "输入标签（还能添加 {{remaining}} 个）",
+      "inputDisabledPlaceholder": "已达到标签上限",
+      "add": "添加",
+      "save": "保存标签",
+      "error": {
+        "empty": "标签不能为空",
+        "tooLong": "标签长度不能超过 {{max}} 个字符",
+        "duplicate": "标签已存在",
+        "tooMany": "标签数量不能超过 {{max}} 个"
+      }
+    },
+    "groupByTag": "按标签分组展示",
+    "untagged": "默认分组",
+    "deleteTagAria": "删除标签 {{tag}}",
+    "confirmDeleteTag": "确认删除标签 \"{{tag}}\" 吗？该标签将从 {{count}} 个账号中移除。",
+    "defaultGroup": "默认分组",
+    "actions": {
+      "viewDetails": "查看详情",
+      "viewError": "查看错误",
+      "fingerprint": "指纹",
+      "switch": "切换账号",
+      "switchTo": "切换到此账号",
+      "selectFingerprint": "点击选择指纹"
+    },
+    "tabs": {
+      "oauth": "OAuth 授权",
+      "token": "刷新令牌",
+      "import": "导入"
+    },
+    "oauth": {
+      "authorizing": "OAuth 授权中...",
+      "success": "OAuth 授权成功",
+      "failed": "OAuth 授权失败: {{error}}",
+      "hint": "推荐使用浏览器完成 Google 授权",
+      "start": "开始 OAuth 授权",
+      "continue": "我已授权，继续",
+      "linkLabel": "授权链接",
+      "generatingLink": "正在生成授权链接..."
+    },
+    "token": {
+      "desc": "粘贴 refresh_token 或账号 JSON，支持批量导入。",
+      "placeholder": "支持格式：[{\"email\":\"xxx\",\"refresh_token\":\"1//...\"}] 或直接粘贴 refresh_token",
+      "importStart": "开始导入",
+      "invalid": "未找到有效 refresh_token",
+      "importProgress": "导入中 {{current}}/{{total}}...",
+      "importSuccess": "导入成功 {{count}} 个账号",
+      "importPartial": "导入成功 {{success}} 个，失败 {{fail}} 个",
+      "importFailed": "导入失败，请检查 refresh_token"
+    }
+  },
+  "overview": {
+    "title": "账号总览",
+    "subtitle": "实时监控所有账号的模型配额状态。",
+    "total": "共 {{count}} 个账号",
+    "accountDisabled": "账号已禁用",
+    "noQuotaData": "暂无配额数据",
+    "currentAccount": "当前使用中",
+    "switchTo": "切换至该账号",
+    "switching": "切换中...",
+    "fingerprint": "指纹",
+    "bound": "已绑定",
+    "brandTitle": "Antigravity 账号管理"
+  },
+  "fingerprints": {
+    "title": "设备指纹",
+    "subtitle": "管理绑定到账号的设备指纹。",
+    "toolbar": {
+      "generate": "生成新指纹",
+      "capture": "捕获当前",
+      "import": "导入",
+      "folder": "目录",
+      "delete": "删除"
+    },
+    "table": {
+      "name": "指纹名称",
+      "machineId": "设备 ID",
+      "accounts": "绑定账号",
+      "actions": "操作",
+      "preview": "预览",
+      "apply": "应用",
+      "rename": "重命名",
+      "noData": "暂无指纹数据",
+      "accountCount": "{{count}} 个账号"
+    },
+    "modals": {
+      "generate": {
+        "title": "生成新指纹",
+        "btn": "生成"
+      },
+      "capture": {
+        "title": "捕获当前指纹",
+        "btn": "捕获"
+      },
+      "rename": {
+        "title": "重命名指纹",
+        "label": "指纹名称"
+      },
+      "import": {
+        "title": "导入指纹",
+        "fromTools": "导入 Antigravity Tools指纹",
+        "desc": "从 ~/.antigravity_tools/ 目录导入",
+        "orPasteJson": "或粘贴 JSON",
+        "jsonExample": "格式示例：",
+        "jsonPlaceholder": "工作指纹",
+        "fromJsonBtn": "从 JSON 导入"
+      },
+      "bound": {
+        "title": "绑定账号管理",
+        "add": "添加账号",
+        "empty": "暂无账号绑定此指纹",
+        "emptyAll": "所有账号都已绑定此指纹",
+        "select": "选择要添加的账号",
+        "from": "来自: {{name}}",
+        "back": "返回"
+      },
+      "detail": {
+        "title": "指纹详细信息",
+        "created": "创建于 {{time}}"
+      }
+    },
+    "messages": {
+      "deleteConfirm": "确定要删除这个指纹吗？绑定此指纹的账号将自动改为原始指纹。",
+      "batchDeleteConfirm": "确定要删除选中的 {{count}} 个指纹吗？绑定此指纹的账号将自动改为原始指纹。",
+      "generated": "已生成新指纹",
+      "captured": "已捕获当前指纹",
+      "renamed": "已重命名",
+      "deleted": "已删除指纹",
+      "imported": "已导入 {{count}} 个指纹",
+      "addedAccounts": "已添加 {{count}} 个账号",
+      "enterName": "请输入指纹名称",
+      "previewNotReady": "预览未就绪，请稍后重试",
+      "duplicate": "已存在相同指纹：{{name}}，无需重复添加。",
+      "readOnly": "只读",
+      "current": "当前",
+      "loadFailed": "加载指纹列表失败",
+      "generateFailed": "生成失败",
+      "captureFailed": "捕获失败",
+      "renameFailed": "重命名失败",
+      "deleteFailed": "删除失败",
+      "importFailed": "导入失败",
+      "applyFailed": "应用失败",
+      "addFailed": "添加失败",
+      "processing": "处理中...",
+      "adding": "添加中...",
+      "importing": "导入中...",
+      "boundCount": "已绑定 {{count}} 个账号",
+      "addCount": "添加 {{count}} 个账号",
+      "count": "{{count}} 个",
+      "fpLabel": "指纹:",
+      "serviceMachineIdEmpty": "空"
+    }
+  },
+  "modals": {
+    "addAccount": {
+      "title": "添加账号",
+      "desc": "通过 Google OAuth 授权添加您的 Antigravity 账号",
+      "loginBtn": "Google OAuth 登录",
+      "waiting": "等待授权..."
+    },
+    "import": {
+      "title": "导入账号",
+      "desc": "请选择导入方式",
+      "local": "导入本地账户",
+      "localDesc": "从 Antigravity 客户端导入当前登录账户",
+      "tools": "导入 Antigravity Tools",
+      "toolsDesc": "从 ~/.antigravity_tools/ 目录导入",
+      "jsonDivider": "或粘贴 JSON",
+      "orJson": "或粘贴 JSON",
+      "jsonPlaceholder": "粘贴账号 JSON 内容",
+      "jsonBtn": "从 JSON 导入",
+      "importing": "导入中...",
+      "importBtn": "导入",
+      "oauthAction": "OAuth 授权",
+      "fromExtension": "从插件导入",
+      "syncBadge": "同步 Antigravity Cockpit 插件账号",
+      "fromLocalDB": "从本地数据库导入",
+      "localDBDesc": "读取本机 Antigravity 客户端登录账号",
+      "toolsDescMigrate": "从 ~/.antigravity_tools/ 迁移历史账号",
+      "importingTools": "导入 Antigravity Tools...",
+      "importingLocal": "导入本地账号...",
+      "importingExtension": "导入插件账号...",
+      "noAccountsFound": "未发现可导入账号"
+    },
+    "fingerprint": {
+      "title": "选择指纹",
+      "desc": "为账号 <1>{{email}}</1> 选择指纹",
+      "original": "原始指纹",
+      "new": "添加新指纹",
+      "bind": "确认绑定",
+      "selectLabel": "选择指纹",
+      "boundCount": "个账号"
+    },
+    "quota": {
+      "title": "配额详细信息",
+      "noData": "无配额数据",
+      "close": "关闭",
+      "resetTime": "重置时间"
+    },
+    "errors": {
+      "title": "错误详情",
+      "empty": "暂无错误信息",
+      "account": "账号",
+      "code": "错误码",
+      "time": "发生时间"
+    }
+  },
+  "pagination": {
+    "info": "显示 {{start}} - {{end}} 条，共 {{total}} 条",
+    "perPage": "{{count}} 条/页",
+    "prev": "上一页",
+    "next": "下一页",
+    "page": "第 {{current}} / {{total}} 页"
+  },
+  "messages": {
+    "deleteConfirm": "确定要删除这个账号吗？",
+    "batchDeleteConfirm": "确定要删除选中的 {{count}} 个账号吗？",
+    "switched": "已切换至 {{email}}",
+    "switchFailed": "切换失败：{{error}}",
+    "importSuccess": "成功导入 {{count}} 个账号",
+    "importLocalSuccess": "成功导入账号: {{email}}",
+    "importFailed": "导入失败: {{error}}",
+    "exportFailed": "导出失败: {{error}}",
+    "bindFailed": "绑定失败: {{error}}",
+    "jsonRequired": "请输入或粘贴 JSON 内容",
+    "example": "示例",
+    "actionRunning": "{{action}}中...",
+    "actionSuccess": "{{action}}成功",
+    "actionFailed": "{{action}}失败: {{error}}"
+  },
+  "wakeup": {
+    "title": "唤醒任务",
+    "subtitle": "管理唤醒任务，支持独立启停与统一开关。",
+    "globalToggle": "唤醒总开关",
+    "newTask": "新建任务",
+    "runTest": "立即测试",
+    "history": "触发历史",
+    "gotoAddAccount": "去添加账号",
+    "emptyTitle": "还没有唤醒任务",
+    "emptyDesc": "创建任务后将按规则自动触发唤醒。",
+    "statusEnabled": "启用",
+    "statusDisabled": "停用",
+    "statusRunning": "运行中",
+    "edit": "编辑",
+    "defaultTaskName": "唤醒任务",
+    "newTaskName": "新唤醒任务",
+    "historyCount": "触发历史 ({{count}})",
+    "historyEmpty": "暂无记录",
+    "historyClear": "清空历史",
+    "historyPromptLabel": "唤醒词：{{prompt}}",
+    "format": {
+      "noReply": "(无回复)",
+      "durationMs": "{{ms}}ms",
+      "tokens": "令牌={{prompt}}+{{completion}}={{total}}",
+      "traceId": "跟踪ID={{traceId}}",
+      "detailJoiner": "，",
+      "message": "[[{{model}}]]：{{reply}}{{suffix}}",
+      "none": "--",
+      "today": "今天 {{time}}",
+      "tomorrow": "明天 {{time}}",
+      "weekdayWithTime": "{{day}} {{time}}",
+      "notSelected": "未选择",
+      "joiner": "、",
+      "moreItems": "{{items}} 等{{total}}项",
+      "quotaReset": "配额重置自动唤醒",
+      "crontab": "定时任务：{{expr}}",
+      "daily": "每日 {{times}}{{suffix}}",
+      "weekly": "每周 {{days}} {{times}}{{suffix}}",
+      "interval": "间隔 {{hours}} 小时 ({{start}}-{{end}})",
+      "invalidCrontab": "无效 Crontab"
+    },
+    "weekdays": {
+      "sun": "周日",
+      "mon": "周一",
+      "tue": "周二",
+      "wed": "周三",
+      "thu": "周四",
+      "fri": "周五",
+      "sat": "周六"
+    },
+    "notice": {
+      "modelsFetchFailed": "获取模型列表失败，请检查账号状态",
+      "featureDisabled": "唤醒功能未开启",
+      "taskMissingModels": "任务未选择模型",
+      "taskMissingAccounts": "任务未选择账号",
+      "taskFailed": "任务「{{name}}」执行失败 {{count}} 个请求",
+      "taskCompleted": "任务「{{name}}」已完成",
+      "testMissingModel": "请先选择测试模型",
+      "testMissingAccount": "请先选择测试账号",
+      "testFailed": "测试失败 {{count}} 个请求",
+      "testCompleted": "测试已完成",
+      "nameRequired": "请输入任务名称",
+      "accountRequired": "请选择至少一个账号",
+      "modelRequired": "请选择至少一个模型",
+      "crontabRequired": "请输入 crontab 表达式",
+      "taskSaved": "任务「{{name}}」已保存",
+      "featureOff": "唤醒功能已关闭",
+      "featureOn": "唤醒功能已开启",
+      "refreshIntervalAdjusted": "配额刷新间隔已调整：{{old}} → {{new}}"
+    },
+    "refreshInterval": {
+      "disabled": "禁用",
+      "minutes": "分钟"
+    },
+    "triggerSource": {
+      "scheduled": "定时",
+      "crontab": "定时任务",
+      "quotaReset": "配额重置",
+      "manual": "立即测试",
+      "unknown": "未知"
+    },
+    "taskCard": {
+      "accountsCount": "账号 {{count}}",
+      "modelsCount": "模型 {{count}}",
+      "accountsLabel": "账号：{{preview}}",
+      "modelsLabel": "模型：{{preview}}",
+      "lastRun": "上次 {{time}}",
+      "nextRun": "下次 {{time}}"
+    },
+    "dialogs": {
+      "enableTitle": "开启唤醒功能",
+      "enableDesc": "开启唤醒功能会自动关闭插件内的唤醒功能，是否继续？",
+      "deleteConfirm": "确定要删除任务「{{name}}」吗？",
+      "testTitle": "立即测试",
+      "historyTitle": "触发历史",
+      "taskTitleEdit": "编辑唤醒任务",
+      "taskTitleNew": "新建唤醒任务"
+    },
+    "form": {
+      "taskName": "任务名称",
+      "taskStatus": "任务状态",
+      "triggerMode": "唤醒方式",
+      "triggerModeHint": "1. 定时：按照设定时间触发。\\n2. Crontab：使用表达式定义。\\n3. 配额重置：额度满后触发一次。",
+      "modeScheduled": "📅 定时触发",
+      "modeCrontab": "🧩 定时任务",
+      "modeQuotaReset": "🔄 配额重置",
+      "modelSelect": "模型选择",
+      "modelHint": "同一配额组建议只选一个模型，多模型会依次触发。",
+      "modelsEmpty": "暂无推荐模型",
+      "accountSelect": "账号选择",
+      "accountHint": "可多选，自动唤醒会依次使用这些账号。",
+      "accountsEmpty": "暂无账号",
+      "customPrompt": "自定义唤醒词",
+      "promptPlaceholder": "默认 {{word}}",
+      "promptHint": "留空将使用默认唤醒词 {{word}}。",
+      "maxTokens": "最大输出 Token",
+      "maxTokensHint": "默认 0（不限）。",
+      "repeatMode": "重复方式",
+      "repeatDaily": "每日",
+      "repeatWeekly": "每周",
+      "repeatInterval": "间隔",
+      "selectTime": "选择时间",
+      "customTime": "自定义时间",
+      "selectWeekday": "选择星期",
+      "quickWorkdays": "工作日",
+      "quickWeekend": "周末",
+      "quickAll": "全部",
+      "intervalSetting": "间隔设置",
+      "intervalEvery": "每隔",
+      "intervalHours": "小时",
+      "intervalStart": "开始",
+      "intervalEnd": "结束",
+      "nextRuns": "下次触发预览",
+      "nextRunsEmpty": "请选择触发时间",
+      "crontab": "Crontab 表达式",
+      "crontabPlaceholder": "例如：0 8,12,17 * * *",
+      "crontabValidate": "验证",
+      "crontabValidateHint": "保存时将验证表达式",
+      "crontabPreviewEmpty": "请输入有效的 Crontab 表达式",
+      "timeWindowEnabled": "启用时段策略",
+      "timeWindowHint": "启用后，配额重置触发仅在指定时段内执行；时段外使用固定时间触发。",
+      "timeWindow": "配额重置活跃窗口",
+      "timeWindowFrom": "从",
+      "timeWindowTo": "到",
+      "fallbackTimes": "时段外触发时间",
+      "saveTask": "保存任务"
+    },
+    "test": {
+      "modelsLabel": "选择要触发的模型",
+      "accountsLabel": "测试账号",
+      "accountsHint": "可多选，用这些账号进行测试。",
+      "start": "开始测试",
+      "testing": "测试中..."
+    }
+  },
+  "update_notification": {
+    "title": "发现新版本",
+    "message": "当前版本 v{{current}}，新版本已可用。",
+    "action": "前往下载",
+    "whatsNew": "更新内容"
+  },
+  "closeDialog": {
+    "title": "关闭窗口",
+    "description": "请选择关闭窗口时的操作",
+    "minimize": "最小化到托盘",
+    "minimizeDesc": "应用将在后台继续运行",
+    "quit": "退出应用",
+    "quitDesc": "完全关闭应用程序",
+    "remember": "记住我的选择，不再询问"
+  },
+  "group_settings": {
+    "title": "分组管理",
+    "group_list": "分组列表",
+    "group_name_placeholder": "分组名称",
+    "save": "保存分组",
+    "other_group": "其他模型"
+  },
+  "codex": {
+    "title": "Codex 账号管理",
+    "subtitle": "实时监控所有Codex账号的模型配额状态。",
+    "instances": {
+      "subtitle": "多实例独立配置，多账号并行运行。",
+      "comingSoon": "多开实例功能即将上线",
+      "comingSoonDesc": "支持以不同账号同时运行多个 Codex.app 实例，敬请期待。",
+      "unsupported": {
+        "desc": "Codex 多开实例仅支持 macOS，请在 macOS 上使用。"
+      },
+      "quota": {
+        "hourly": "5小时",
+        "weekly": "周"
+      },
+      "restartStrategy": {
+        "safe": {
+          "principle": "向目标 Codex 进程发送 SIGTERM，请求应用自行保存并退出，退出后再启动该实例（必要时会强制结束）。",
+          "commandMac": "macOS: kill -15 <pid> （匹配 CODEX_HOME）",
+          "commandWin": "Windows: taskkill /F /PID <pid> （匹配 CODEX_HOME）"
+        },
+        "force": {
+          "principle": "按 CODEX_HOME 匹配进程并强制终止（SIGKILL / taskkill /F），再启动目标实例。",
+          "commandMac": "macOS：pkill -9 -f“CODEX_HOME=<dir>”",
+          "commandWin": "Windows: taskkill /F /PID <pid> （匹配 CODEX_HOME）"
+        }
+      }
+    },
+    "refreshSuccess": "刷新配额成功",
+    "refreshFailed": "刷新配额失败: {{error}}",
+    "refreshAllSuccess": "刷新完成，共成功 {{count}} 个账号",
+    "refreshAllPartialFailed": "刷新完成，成功 {{success}} / {{total}}，部分账号失败",
+    "switch": "切换",
+    "switched": "已切换至 {{email}}",
+    "switchFailed": "切换失败: {{error}}",
+    "current": "当前",
+    "empty": {
+      "description": "点击\"添加账号\"开始管理您的 Codex 账号"
+    },
+    "addModal": {
+      "title": "添加 Codex 账号",
+      "oauth": "OAuth 登录",
+      "token": "JSON 导入",
+      "local": "本地导入"
+    },
+    "oauth": {
+      "desc": "点击下方按钮，在浏览器中完成 OpenAI 账号授权",
+      "preparing": "正在准备授权链接...",
+      "exchanging": "正在交换令牌...",
+      "portInUse": "端口 {{port}} 已被占用，请关闭占用该端口的程序后重试。",
+      "portInUseTitle": "端口被占用",
+      "portInUseConfirm": "端口 {{port}} 已被占用，是否关闭占用该端口的进程？",
+      "portCloseFailed": "关闭端口失败: {{error}}",
+      "portStillInUse": "端口 {{port}} 仍被占用。",
+      "portInUseAction": "关闭占用端口并重试"
+    },
+    "token": {
+      "desc": "粘贴 auth.json 内容或账号 JSON 数据",
+      "placeholder": "粘贴 JSON 内容..."
+    },
+    "local": {
+      "desc": "从 ~/.codex/auth.json 导入当前已登录的账号",
+      "import": "获取本地账号"
+    },
+    "import": {
+      "localDesc": "从本地已登录的会话中导入 Codex 账号。",
+      "importing": "正在导入本地账号...",
+      "successMsg": "导入成功: {{email}}"
+    },
+    "quota": {
+      "hourly": "5小时配额",
+      "weekly": "周配额",
+      "reset": "重置"
+    },
+    "quotaError": {
+      "badge": "配额异常",
+      "generic": "配额刷新失败，请稍后重试",
+      "deactivatedWorkspace": "工作区已停用，请切换账号或重新授权"
+    },
+    "plan": {
+      "free": "FREE",
+      "plus": "PLUS",
+      "pro": "PRO",
+      "team": "TEAM",
+      "enterprise": "ENTERPRISE"
+    },
+    "time": {
+      "today": "今天 {{time}}",
+      "tomorrow": "明天 {{time}}",
+      "dateTime": "{{date}} {{time}}"
+    },
+    "view": {
+      "compact": "紧凑视图"
+    },
+    "filter": {
+      "plus": "加上（{{count}}）",
+      "team": "团队 ({{count}})"
+    },
+    "sort": {
+      "weekly": "按周配额",
+      "hourly": "按5小时配额",
+      "weeklyReset": "按周配额重置时间",
+      "hourlyReset": "按5小时配额重置时间"
+    },
+    "opencodeSwitch": "OpenCode切换开关",
+    "opencodeSwitchDesc": "同步切换OpenCode里codex账户信息",
+    "opencodeSwitchFailed": "更新 OpenCode 开关失败: {{error}}",
+    "columns": {
+      "hourly": "5小时配额",
+      "weekly": "周配额"
+    },
+    "filterTags": "标签筛选",
+    "filterTagsCount": "标签",
+    "noAvailableTags": "暂无可用标签",
+    "clearFilter": "清空筛选",
+    "editTags": "编辑标签"
+  },
+  "githubCopilot": {
+    "title": "GitHub Copilot 账号管理",
+    "instances": {
+      "unsupported": {
+        "desc": "GitHub Copilot 多开实例仅支持 macOS。"
+      }
+    },
+    "empty": {
+      "description": "点击\"添加账号\"开始管理您的 GitHub Copilot 账号"
+    },
+    "addModal": {
+      "title": "添加 GitHub Copilot 账号"
+    },
+    "oauth": {
+      "desc": "点击下方按钮，在浏览器中完成 GitHub Copilot 授权登录。"
+    },
+    "token": {
+      "desc": "粘贴您的 GitHub Copilot Access Token 或导出的 JSON 数据。"
+    },
+    "import": {
+      "localDesc": "从 JSON 文件导入 GitHub Copilot 账号数据。"
+    },
+    "sort": {
+      "weekly": "按 Chat messages 使用量",
+      "hourly": "按 Inline Suggestions 使用量",
+      "weeklyReset": "按 Chat messages 重置时间",
+      "hourlyReset": "按 Inline Suggestions 重置时间"
+    },
+    "columns": {
+      "hourly": "Inline Suggestions",
+      "weekly": "Chat messages"
+    },
+    "flowNotice": {
+      "title": "GitHub Copilot 账号管理说明（点击展开/收起）",
+      "desc": "切换账号时需要读取 VS Code 本地认证存储，并调用系统凭据服务完成解密与回写；数据仅在本机处理。",
+      "inject": "一键切号：本工具读取本地 VS Code 加密材料（DPAPI/Keychain/Secret Service），解密 state.vscdb 中的认证会话，替换 GitHub Copilot 令牌并重新加密 —— 全部在本机完成。",
+      "reason": "权限需求：读取 VS Code 认证数据库（state.vscdb），并调用系统加密能力（Windows DPAPI / macOS Keychain / Linux Secret Service）进行解密与写回。",
+      "storage": "读取范围：仅处理 GitHub 登录会话相关数据，所有流程均在本地执行。"
+    },
+    "injectToVSCode": "切换到 VS Code",
+    "injectSuccess": "已成功将令牌注入 VS Code，VS Code 正在启动。",
+    "injectRequireClose": "请先关闭 VS Code 再进行注入。"
+  },
+  "dashboard": {
+    "totalAccounts": "账号总数",
+    "current": "当前账户",
+    "recommended": "推荐账号",
+    "noAccount": "无账号",
+    "switch": "切换",
+    "switchTo": "切换到此账号",
+    "noRecommendation": "暂无更好推荐",
+    "noData": "暂无数据",
+    "viewAllAccounts": "查看所有账号",
+    "title": "账号仪表盘",
+    "summary": {
+      "label": "概览",
+      "title": "账号快照",
+      "desc": "一览 Antigravity 与 Codex"
+    },
+    "stats": {
+      "antigravity": "Antigravity 账号",
+      "codex": "Codex 账号",
+      "currentAntigravity": "当前 Antigravity",
+      "currentCodex": "当前 Codex",
+      "providers": "服务提供商",
+      "totalAccounts": "账号总数"
+    },
+    "panels": {
+      "antigravity": "Antigravity",
+      "codex": "Codex",
+      "githubCopilot": "GitHub Copilot",
+      "planDistribution": "订阅分布",
+      "current": "当前账号",
+      "recommended": "推荐账号",
+      "empty": "暂无账号",
+      "emptyDesc": "添加账号以查看详情"
+    },
+    "quota": {
+      "remaining": "剩余额度 {{value}}%",
+      "codex": "5小时 {{hourly}}% · 每周 {{weekly}}%"
+    },
+    "emptyAccount": "无账号",
+    "sections": {
+      "antigravity": "Antigravity 账号",
+      "codex": "Codex 账号"
+    },
+    "actions": {
+      "refresh": "刷新卡片",
+      "viewAll": "全部账号"
+    },
+    "badges": {
+      "recommended": "推荐"
+    }
+  },
+  "error": {
+    "fileCorrupted": {
+      "title": "文件读取失败",
+      "description": "文件 {{fileName}} 已损坏，无法解析。",
+      "errorInfo": "错误信息",
+      "filePath": "文件位置",
+      "helpText": "请打开文件夹手动修复或删除该文件，然后重新启动应用。",
+      "openFolder": "打开文件夹"
+    }
+  },
+  "quickSettings": {
+    "antigravity": {
+      "title": "Antigravity 设置",
+      "appPath": "启动路径"
+    },
+    "codex": {
+      "title": "Codex 设置",
+      "appPath": "启动路径"
+    },
+    "githubCopilot": {
+      "title": "GitHub Copilot 设置",
+      "appPath": "VS Code 路径"
+    },
+    "refreshInterval": "配额自动刷新",
+    "codexRefreshInterval": "配额自动刷新",
+    "ghcpRefreshInterval": "配额自动刷新",
+    "autoSwitch": {
+      "title": "自动切号",
+      "enable": "自动切号",
+      "threshold": "切号阈值",
+      "thresholdDesc": "任意模型配额低于此百分比时触发自动切号",
+      "hint": "当任意模型配额低于阈值时，自动切换到配额最高的账号。"
+    },
+    "quotaAlert": {
+      "title": "超额预警",
+      "enable": "超额预警",
+      "threshold": "预警阈值",
+      "thresholdDesc": "任意模型配额低于此百分比时触发预警",
+      "hint": "当当前账号任意模型配额低于阈值时，发送原生通知并在页面提示快捷切号。"
+    },
+    "customInput": "自定义",
+    "apply": "确定",
+    "inputMinutes": "输入分钟数",
+    "inputPercent": "输入百分比",
+    "windsurf": {
+      "title": "Windsurf 设置",
+      "appPath": "Windsurf 路径"
+    },
+    "windsurfRefreshInterval": "配额自动刷新",
+    "kiro": {
+      "title": "Kiro 设置",
+      "appPath": "Kiro 路径"
+    },
+    "kiroRefreshInterval": "配额自动刷新"
+  },
+  "quotaAlert": {
+    "bannerText": "账号 {{email}} 触发配额预警（阈值 {{threshold}}%，最低 {{lowest}}%，模型：{{models}}）",
+    "switchAction": "快捷切号：{{email}}",
+    "switching": "切换中...",
+    "switchFailed": "快捷切号失败：{{error}}",
+    "modal": {
+      "title": "配额预警",
+      "desc": "当前账号配额已达到预警阈值，请尽快处理。",
+      "unknownModel": "未知模型",
+      "platform": "平台",
+      "account": "当前账号",
+      "threshold": "预警阈值",
+      "lowest": "当前最低",
+      "models": "触发模型",
+      "recommended": "建议切换",
+      "noRecommendation": "暂无可切换账号",
+      "later": "稍后处理",
+      "openSettings": "调整预警设置",
+      "switchNow": "快捷切号到 {{email}}",
+      "switchFailedTitle": "切号失败",
+      "switchFailedBody": "快捷切号失败：{{error}}"
+    }
+  },
+  "windsurf": {
+    "title": "Windsurf 账号管理",
+    "instances": {
+      "unsupported": {
+        "desc": "Windsurf 多开实例仅支持 macOS。"
+      }
+    },
+    "empty": {
+      "description": "点击\"添加账号\"开始管理您的 Windsurf 账号"
+    },
+    "addModal": {
+      "title": "添加 Windsurf 账号",
+      "password": "邮箱密码"
+    },
+    "oauth": {
+      "desc": "点击下方按钮，在浏览器中完成 Windsurf 授权登录。"
+    },
+    "token": {
+      "desc": "粘贴您的 Windsurf Access Token 或导出的 JSON 数据。"
+    },
+    "import": {
+      "localDesc": "从 JSON 文件导入 Windsurf 账号数据。",
+      "localClient": "从本机 Windsurf 导入"
+    },
+    "credits": {
+      "title": "计划",
+      "renewMonthly": "Credits 每月自动重置",
+      "left": "剩余 {{count}} credits",
+      "leftUnknown": "剩余 credits -",
+      "promptLeft": "剩余 {{remaining}}/{{total}} prompt credits",
+      "promptLeftNoTotal": "剩余 {{remaining}} prompt credits",
+      "promptLeftUnknown": "Prompt credits -",
+      "addOnAvailable": "{{count}} add-on credits 可用"
+    },
+    "columns": {
+      "plan": "标签"
+    },
+    "flowNotice": {
+      "title": "Windsurf 账号管理说明（点击展开/收起）",
+      "desc": "切换账号时需要读取 Windsurf 本地认证存储，并按客户端兼容规则调用系统凭据能力完成会话解密与写回；数据仅在本机处理。",
+      "inject": "一键切号：本工具读取本机 Windsurf 加密材料（DPAPI/Keychain/Secret Service），处理 state.vscdb 中的认证会话并写回 Windsurf 令牌 —— 全部在本机完成。",
+      "reason": "权限需求：读取 Windsurf 认证数据库（state.vscdb），并使用系统加密能力（Windows DPAPI / macOS Keychain / Linux Secret Service）处理登录会话的解密与写回。",
+      "storage": "读取范围：仅处理 Windsurf 登录会话相关数据，所有流程均在本地执行。"
+    },
+    "injectToVSCode": "切换到 Windsurf",
+    "injectSuccess": "已完成切换，Windsurf 正在启动。",
+    "injectRequireClose": "请先关闭 Windsurf 再进行切换。",
+    "password": {
+      "desc": "使用 Windsurf 账号的邮箱和密码登录，自动获取 API Key 和账号信息。",
+      "emailPlaceholder": "邮箱地址",
+      "passwordPlaceholder": "密码",
+      "login": "登录",
+      "logging": "正在登录...",
+      "empty": "请输入邮箱和密码",
+      "success": "登录成功: {{login}}",
+      "failed": "登录失败: {{error}}"
+    }
+  },
+  "kiro": {
+    "account": {
+      "signedInWith": "使用 {{provider}} 登录",
+      "providerUnknown": "未知方式",
+      "userId": "用户 ID"
+    },
+    "credits": {
+      "estimatedResetOn": "Estimated Usage 在 {{date}} 重置",
+      "bonusUsageLine": "使用 {{used}} / 总共 {{total}}",
+      "planUsageCoveredLine": "{{used}} 已使用 / {{total}} 包含在计划中",
+      "expiryDays": "{{days}} 天",
+      "expiryUnknown": "—",
+      "resetNow": "即将重置",
+      "resetInHours": "{{hours}} 小时后重置",
+      "resetInMinutes": "{{minutes}} 分钟后重置"
+    },
+    "columns": {
+      "bonusCredits": "奖励积分",
+      "estimatedUsage": "预计使用量",
+      "expiry": "到期日",
+      "estUsage": "预计。用法"
+    },
+    "plan": {
+      "free": "Kiro Free",
+      "individual": "Kiro Individual",
+      "pro": "Kiro Pro",
+      "business": "Kiro Business",
+      "enterprise": "Kiro Enterprise",
+      "unknown": "未知"
+    },
+    "flowNotice": {
+      "title": "Kiro 账号管理说明（点击展开/收起）",
+      "desc": "账号切换会在本机读写 Kiro 登录文件与实例配置；OAuth 登录与配额刷新会调用 Kiro 官方接口。",
+      "reason": "处理路径包括 ~/.aws/sso/cache/kiro-auth-token.json、实例目录 profile.json，以及 state.vscdb 中 kiro.kiroAgent 条目。",
+      "storage": "处理数据包括 Kiro 登录会话与配额信息；请求 Kiro 官方接口时会发送必要认证字段（如 code、refreshToken、accessToken、profileArn）。"
+    },
+    "title": "Kiro 账号管理",
+    "instances": {
+      "unsupported": {
+        "descPlatform": "Kiro 多开实例仅支持 macOS、Windows 和 Linux。"
+      }
+    },
+    "empty": {
+      "description": "点击\"添加账号\"开始管理您的 Kiro 账号"
+    },
+    "addModal": {
+      "title": "添加 Kiro 账号"
+    },
+    "oauth": {
+      "desc": "点击下方按钮，在浏览器中完成 Kiro 授权登录。"
+    },
+    "token": {
+      "desc": "粘贴您的 Kiro Access Token 或导出的 JSON 数据。"
+    },
+    "import": {
+      "localDesc": "支持从本机 Kiro 客户端或 JSON 文件导入账号数据。",
+      "localClient": "从本机 Kiro 导入"
+    },
+    "injectToVSCode": "切换到 Kiro"
+  }
+}

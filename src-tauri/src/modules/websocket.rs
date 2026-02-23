@@ -1,0 +1,797 @@
+//! WebSocket 服务模块
+//! 提供本地 WebSocket 服务供 VS Code 扩展实时通信
+
+use futures_util::{SinkExt, StreamExt};
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::net::SocketAddr;
+use std::sync::Arc;
+use tokio::net::{TcpListener, TcpStream};
+use tokio::sync::{broadcast, RwLock};
+use tokio_tungstenite::tungstenite::Message;
+
+use super::config::{get_preferred_port, init_server_status, PORT_RANGE};
+
+/// 消息类型
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type", content = "payload")]
+pub enum WsMessage {
+    // ============ 事件通知（Tools -> 扩展） ============
+    /// 服务就绪
+    #[serde(rename = "event.ready")]
+    Ready { version: String },
+
+    /// 数据已变更，请刷新
+    #[serde(rename = "event.data_changed")]
+    DataChanged { source: String },
+
+    /// 语言已变更
+    #[serde(rename = "event.language_changed")]
+    LanguageChanged { language: String, source: String },
+
+    /// 账号切换完成
+    #[serde(rename = "event.account_switched")]
+    AccountSwitched { account_id: String, email: String },
+
+    /// 切换账号错误
+    #[serde(rename = "event.switch_error")]
+    SwitchError { message: String },
+
+    /// 唤醒功能互斥开关
+    #[serde(rename = "event.wakeup_override")]
+    WakeupOverride { enabled: bool },
+
+    // ============ 请求（扩展 -> Tools） ============
+    /// 请求获取账号列表
+    #[serde(rename = "request.get_accounts")]
+    GetAccounts { request_id: String },
+
+    /// 请求获取账号列表（包含 Token）
+    #[serde(rename = "request.get_accounts_with_tokens")]
+    GetAccountsWithTokens { request_id: String },
+
+    /// 请求获取当前账号
+    #[serde(rename = "request.get_current_account")]
+    GetCurrentAccount { request_id: String },
+
+    /// 请求切换账号（真正的切换）
+    #[serde(rename = "request.switch_account")]
+    SwitchAccount { account_id: String },
+
+    /// 请求设置语言
+    #[serde(rename = "request.set_language")]
+    SetLanguage {
+        request_id: String,
+        language: String,
+        source: Option<String>,
+    },
+
+    /// 请求添加/更新账号（扩展端登录后同步）
+    #[serde(rename = "request.add_account")]
+    AddAccount {
+        request_id: String,
+        email: String,
+        refresh_token: String,
+        access_token: Option<String>,
+        expires_at: Option<i64>,
+    },
+
+    /// 请求删除账号（扩展端删除后同步）
+    #[serde(rename = "request.delete_account")]
+    DeleteAccountByEmail { request_id: String, email: String },
+
+    /// 通知数据已变更
+    #[serde(rename = "request.data_changed")]
+    NotifyDataChanged { source: String },
+
+    /// Ping（心跳）
+    #[serde(rename = "ping")]
+    Ping,
+
+    /// Pong（心跳响应）
+    #[serde(rename = "pong")]
+    Pong,
+
+    // ============ 响应（Tools -> 扩展） ============
+    /// 账号列表响应
+    #[serde(rename = "response.accounts")]
+    AccountsResponse {
+        request_id: String,
+        accounts: Vec<AccountInfo>,
+        current_account_id: Option<String>,
+    },
+
+    /// 账号列表响应（包含 Token）
+    #[serde(rename = "response.accounts_with_tokens")]
+    AccountsWithTokensResponse {
+        request_id: String,
+        accounts: Vec<AccountTokenInfo>,
+        current_account_id: Option<String>,
+    },
+
+    /// 当前账号响应
+    #[serde(rename = "response.current_account")]
+    CurrentAccountResponse {
+        request_id: String,
+        account: Option<AccountInfo>,
+    },
+
+    /// 操作成功响应
+    #[serde(rename = "response.success")]
+    SuccessResponse { request_id: String, message: String },
+
+    /// 错误响应
+    #[serde(rename = "response.error")]
+    ErrorResponse { request_id: String, error: String },
+}
+
+/// 账号信息（用于 WebSocket 传输）
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AccountInfo {
+    pub id: String,
+    pub email: String,
+    pub name: Option<String>,
+    pub is_current: bool,
+    pub disabled: bool,
+    pub has_fingerprint: bool,
+    pub last_used: i64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub subscription_tier: Option<String>,
+}
+
+/// 账号信息（包含 Token，用于同步）
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AccountTokenInfo {
+    pub id: String,
+    pub email: String,
+    pub name: Option<String>,
+    pub is_current: bool,
+    pub disabled: bool,
+    pub has_fingerprint: bool,
+    pub last_used: i64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub subscription_tier: Option<String>,
+    pub refresh_token: String,
+    pub access_token: String,
+    pub expires_at: i64,
+    pub project_id: Option<String>,
+}
+
+/// 已连接的客户端信息
+#[derive(Debug)]
+struct Client {
+    _addr: SocketAddr,
+}
+
+/// WebSocket 服务状态
+pub struct WsServer {
+    /// 广播发送器
+    tx: broadcast::Sender<String>,
+    /// 已连接的客户端
+    clients: Arc<RwLock<HashMap<SocketAddr, Client>>>,
+}
+
+impl WsServer {
+    /// 创建新的 WebSocket 服务
+    pub fn new() -> Self {
+        let (tx, _) = broadcast::channel(100);
+        Self {
+            tx,
+            clients: Arc::new(RwLock::new(HashMap::new())),
+        }
+    }
+
+    /// 广播消息给所有客户端
+    pub fn broadcast(&self, message: WsMessage) {
+        if let Ok(json) = serde_json::to_string(&message) {
+            let _ = self.tx.send(json);
+        }
+    }
+}
+
+/// 全局 WebSocket 服务实例
+static WS_SERVER: std::sync::OnceLock<Arc<WsServer>> = std::sync::OnceLock::new();
+
+/// 获取全局 WebSocket 服务实例
+pub fn get_server() -> &'static Arc<WsServer> {
+    WS_SERVER.get_or_init(|| Arc::new(WsServer::new()))
+}
+
+/// 广播数据变更通知
+pub fn broadcast_data_changed(source: &str) {
+    let server = get_server();
+    server.broadcast(WsMessage::DataChanged {
+        source: source.to_string(),
+    });
+    crate::modules::logger::log_info(&format!("[WS] Broadcast data changed: {}", source));
+
+    // 同时发送 Tauri 事件通知前端刷新
+    if let Some(app_handle) = crate::get_app_handle() {
+        use tauri::Emitter;
+        let _ = app_handle.emit("accounts:refresh", source);
+    }
+}
+
+/// 广播语言变更
+pub fn broadcast_language_changed(language: &str, source: &str) {
+    let server = get_server();
+    server.broadcast(WsMessage::LanguageChanged {
+        language: language.to_string(),
+        source: source.to_string(),
+    });
+    crate::modules::logger::log_info(&format!(
+        "[WS] Broadcast language changed: {} (source={})",
+        language, source
+    ));
+
+    if let Some(app_handle) = crate::get_app_handle() {
+        use tauri::Emitter;
+        let _ = app_handle.emit("settings:language_changed", language);
+    }
+}
+
+/// 广播账号切换完成
+pub fn broadcast_account_switched(account_id: &str, email: &str) {
+    let server = get_server();
+    server.broadcast(WsMessage::AccountSwitched {
+        account_id: account_id.to_string(),
+        email: email.to_string(),
+    });
+    crate::modules::logger::log_info("[WS] Broadcast account switched");
+}
+
+/// 广播唤醒互斥开关
+pub fn broadcast_wakeup_override(enabled: bool) {
+    let server = get_server();
+    server.broadcast(WsMessage::WakeupOverride { enabled });
+    crate::modules::logger::log_info(&format!("[WS] Broadcast wakeup override: enabled={}", enabled));
+}
+
+/// 启动 WebSocket 服务（支持动态端口尝试）
+pub async fn start_server() {
+    // 从用户配置获取首选端口
+    let preferred_port = get_preferred_port();
+
+    // 尝试绑定端口，如果失败则尝试下一个
+    let mut port = preferred_port;
+    let mut listener = None;
+
+    for attempt in 0..PORT_RANGE {
+        let addr = format!("127.0.0.1:{}", port);
+        match TcpListener::bind(&addr).await {
+            Ok(l) => {
+                listener = Some(l);
+                if attempt > 0 {
+                    crate::modules::logger::log_info(&format!(
+                        "[WS] Preferred port {} is occupied, using port: {}",
+                        preferred_port, port
+                    ));
+                }
+                break;
+            }
+            Err(e) => {
+                if attempt < PORT_RANGE - 1 {
+                    port += 1;
+                } else {
+                    crate::modules::logger::log_error(&format!(
+                        "[WS] Failed to bind any port ({}-{}), last error: {}",
+                        preferred_port,
+                        preferred_port + PORT_RANGE - 1,
+                        e
+                    ));
+                    return;
+                }
+            }
+        }
+    }
+
+    let listener = match listener {
+        Some(l) => l,
+        None => return,
+    };
+
+    // 保存服务状态到共享文件（供 VS Code 扩展读取）
+    if let Err(e) = init_server_status(port) {
+        crate::modules::logger::log_error(&format!("[WS] Failed to save server status: {}", e));
+    }
+
+    crate::modules::logger::log_info(&format!(
+        "[WS] WebSocket server started: ws://127.0.0.1:{}",
+        port
+    ));
+
+    let server = get_server();
+
+    while let Ok((stream, addr)) = listener.accept().await {
+        let server_clone = Arc::clone(server);
+        tokio::spawn(handle_connection(server_clone, stream, addr));
+    }
+}
+
+/// 处理单个客户端连接
+async fn handle_connection(server: Arc<WsServer>, stream: TcpStream, addr: SocketAddr) {
+    let ws_stream = match tokio_tungstenite::accept_async(stream).await {
+        Ok(ws) => ws,
+        Err(e) => {
+            crate::modules::logger::log_error(&format!("[WS] Handshake failed {}: {}", addr, e));
+            return;
+        }
+    };
+
+    crate::modules::logger::log_info(&format!("[WS] New connection: {}", addr));
+
+    // 添加客户端
+    {
+        let mut clients = server.clients.write().await;
+        clients.insert(addr, Client { _addr: addr });
+    }
+
+    let (mut ws_sender, mut ws_receiver) = ws_stream.split();
+
+    // 发送 Ready 消息
+    let ready_msg = WsMessage::Ready {
+        version: env!("CARGO_PKG_VERSION").to_string(),
+    };
+    if let Ok(json) = serde_json::to_string(&ready_msg) {
+        let _ = ws_sender.send(Message::Text(json.into())).await;
+    }
+
+    // 订阅广播
+    let mut broadcast_rx = server.tx.subscribe();
+
+    loop {
+        tokio::select! {
+            // 接收客户端消息
+            msg = ws_receiver.next() => {
+                match msg {
+                    Some(Ok(Message::Text(text))) => {
+                        if let Err(e) = handle_client_message(&server, &mut ws_sender, &text).await {
+                            crate::modules::logger::log_error(&format!("[WS] Failed to handle message: {}", e));
+                        }
+                    }
+                    Some(Ok(Message::Close(_))) => {
+                        crate::modules::logger::log_info(&format!("[WS] Client disconnected: {}", addr));
+                        break;
+                    }
+                    Some(Err(e)) => {
+                        crate::modules::logger::log_error(&format!("[WS] Receive error {}: {}", addr, e));
+                        break;
+                    }
+                    None => break,
+                    _ => {}
+                }
+            }
+            // 发送广播消息
+            msg = broadcast_rx.recv() => {
+                if let Ok(json) = msg {
+                    if ws_sender.send(Message::Text(json.into())).await.is_err() {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    // 移除客户端
+    {
+        let mut clients = server.clients.write().await;
+        clients.remove(&addr);
+    }
+
+    crate::modules::logger::log_info(&format!("[WS] Connection closed: {}", addr));
+}
+
+/// 处理客户端消息
+async fn handle_client_message(
+    server: &WsServer,
+    sender: &mut futures_util::stream::SplitSink<
+        tokio_tungstenite::WebSocketStream<TcpStream>,
+        Message,
+    >,
+    text: &str,
+) -> Result<(), String> {
+    let msg: WsMessage = serde_json::from_str(text).map_err(|e| format!("解析消息失败: {}", e))?;
+
+    match msg {
+        WsMessage::Ping => {
+            let pong = serde_json::to_string(&WsMessage::Pong).unwrap();
+            sender
+                .send(Message::Text(pong.into()))
+                .await
+                .map_err(|e| format!("发送 Pong 失败: {}", e))?;
+        }
+
+        WsMessage::GetAccounts { request_id } => {
+            crate::modules::logger::log_info("[WS] Received get accounts request");
+
+            let response = match get_accounts_info() {
+                Ok((accounts, current_id)) => WsMessage::AccountsResponse {
+                    request_id,
+                    accounts,
+                    current_account_id: current_id,
+                },
+                Err(e) => WsMessage::ErrorResponse {
+                    request_id,
+                    error: e,
+                },
+            };
+
+            if let Ok(json) = serde_json::to_string(&response) {
+                sender
+                    .send(Message::Text(json.into()))
+                    .await
+                    .map_err(|e| format!("发送响应失败: {}", e))?;
+            }
+        }
+
+        WsMessage::GetAccountsWithTokens { request_id } => {
+            crate::modules::logger::log_info("[WS] Received get accounts-with-tokens request");
+
+            let response = match get_accounts_with_tokens_info() {
+                Ok((accounts, current_id)) => WsMessage::AccountsWithTokensResponse {
+                    request_id,
+                    accounts,
+                    current_account_id: current_id,
+                },
+                Err(e) => WsMessage::ErrorResponse {
+                    request_id,
+                    error: e,
+                },
+            };
+
+            if let Ok(json) = serde_json::to_string(&response) {
+                sender
+                    .send(Message::Text(json.into()))
+                    .await
+                    .map_err(|e| format!("发送响应失败: {}", e))?;
+            }
+        }
+
+        WsMessage::GetCurrentAccount { request_id } => {
+            crate::modules::logger::log_info("[WS] Received get current account request");
+
+            let response = match get_current_account_info() {
+                Ok(account) => WsMessage::CurrentAccountResponse {
+                    request_id,
+                    account,
+                },
+                Err(e) => WsMessage::ErrorResponse {
+                    request_id,
+                    error: e,
+                },
+            };
+
+            if let Ok(json) = serde_json::to_string(&response) {
+                sender
+                    .send(Message::Text(json.into()))
+                    .await
+                    .map_err(|e| format!("发送响应失败: {}", e))?;
+            }
+        }
+
+        WsMessage::SwitchAccount { account_id } => {
+            crate::modules::logger::log_info("[WS] Received switch account request");
+
+            // 异步执行切换
+            let server_clone = server.tx.clone();
+            tokio::spawn(async move {
+                match crate::modules::account::switch_account_internal(&account_id).await {
+                    Ok(account) => {
+                        let msg = WsMessage::AccountSwitched {
+                            account_id: account.id,
+                            email: account.email,
+                        };
+                        if let Ok(json) = serde_json::to_string(&msg) {
+                            let _ = server_clone.send(json);
+                        }
+                    }
+                    Err(e) => {
+                        let msg = WsMessage::SwitchError { message: e };
+                        if let Ok(json) = serde_json::to_string(&msg) {
+                            let _ = server_clone.send(json);
+                        }
+                    }
+                }
+            });
+        }
+
+        WsMessage::SetLanguage {
+            request_id,
+            language,
+            source,
+        } => {
+            crate::modules::logger::log_info(&format!("[WS] Received set language request: {}", language));
+
+            let response = match handle_set_language(&language, source.as_deref()) {
+                Ok(msg) => WsMessage::SuccessResponse {
+                    request_id,
+                    message: msg,
+                },
+                Err(e) => WsMessage::ErrorResponse {
+                    request_id,
+                    error: e,
+                },
+            };
+
+            if let Ok(json) = serde_json::to_string(&response) {
+                sender
+                    .send(Message::Text(json.into()))
+                    .await
+                    .map_err(|e| format!("发送响应失败: {}", e))?;
+            }
+        }
+
+        WsMessage::AddAccount {
+            request_id,
+            email,
+            refresh_token,
+            access_token,
+            expires_at,
+        } => {
+            crate::modules::logger::log_info("[WS] Received add account request");
+
+            let response = match handle_add_account(
+                &email,
+                &refresh_token,
+                access_token.as_deref(),
+                expires_at,
+            ) {
+                Ok(msg) => {
+                    // 广播数据变更（同时发送 Tauri 事件通知前端）
+                    broadcast_data_changed("extension_add_account");
+                    WsMessage::SuccessResponse {
+                        request_id,
+                        message: msg,
+                    }
+                }
+                Err(e) => WsMessage::ErrorResponse {
+                    request_id,
+                    error: e,
+                },
+            };
+
+            if let Ok(json) = serde_json::to_string(&response) {
+                sender
+                    .send(Message::Text(json.into()))
+                    .await
+                    .map_err(|e| format!("发送响应失败: {}", e))?;
+            }
+        }
+
+        WsMessage::DeleteAccountByEmail { request_id, email } => {
+            crate::modules::logger::log_info("[WS] Received delete account request");
+
+            let response = match handle_delete_account_by_email(&email) {
+                Ok(msg) => {
+                    // 广播数据变更（同时发送 Tauri 事件通知前端）
+                    broadcast_data_changed("extension_delete_account");
+                    WsMessage::SuccessResponse {
+                        request_id,
+                        message: msg,
+                    }
+                }
+                Err(e) => WsMessage::ErrorResponse {
+                    request_id,
+                    error: e,
+                },
+            };
+
+            if let Ok(json) = serde_json::to_string(&response) {
+                sender
+                    .send(Message::Text(json.into()))
+                    .await
+                    .map_err(|e| format!("发送响应失败: {}", e))?;
+            }
+        }
+
+        WsMessage::NotifyDataChanged { source } => {
+            crate::modules::logger::log_info(&format!("[WS] Received data changed notification: {}", source));
+            // 广播给其他客户端
+            server.broadcast(WsMessage::DataChanged { source });
+        }
+
+        _ => {}
+    }
+
+    Ok(())
+}
+
+/// 获取账号列表信息
+fn get_accounts_info() -> Result<(Vec<AccountInfo>, Option<String>), String> {
+    use crate::modules::account;
+
+    let accounts = account::list_accounts()?;
+    let current_id = account::get_current_account_id()?;
+
+    let account_infos: Vec<AccountInfo> = accounts
+        .iter()
+        .map(|acc| {
+            let subscription_tier = acc
+                .quota
+                .as_ref()
+                .and_then(|quota| quota.subscription_tier.clone());
+            AccountInfo {
+                id: acc.id.clone(),
+                email: acc.email.clone(),
+                name: acc.name.clone(),
+                is_current: current_id.as_ref() == Some(&acc.id),
+                disabled: acc.disabled,
+                has_fingerprint: acc.fingerprint_id.is_some(),
+                last_used: acc.last_used,
+                subscription_tier,
+            }
+        })
+        .collect();
+
+    Ok((account_infos, current_id))
+}
+
+/// 获取账号列表信息（包含 Token）
+fn get_accounts_with_tokens_info() -> Result<(Vec<AccountTokenInfo>, Option<String>), String> {
+    use crate::modules::account;
+
+    let accounts = account::list_accounts()?;
+    let current_id = account::get_current_account_id()?;
+
+    let account_infos: Vec<AccountTokenInfo> = accounts
+        .iter()
+        .map(|acc| {
+            let subscription_tier = acc
+                .quota
+                .as_ref()
+                .and_then(|quota| quota.subscription_tier.clone());
+            AccountTokenInfo {
+                id: acc.id.clone(),
+                email: acc.email.clone(),
+                name: acc.name.clone(),
+                is_current: current_id.as_ref() == Some(&acc.id),
+                disabled: acc.disabled,
+                has_fingerprint: acc.fingerprint_id.is_some(),
+                last_used: acc.last_used,
+                subscription_tier,
+                refresh_token: acc.token.refresh_token.clone(),
+                access_token: acc.token.access_token.clone(),
+                expires_at: acc.token.expiry_timestamp,
+                project_id: acc.token.project_id.clone(),
+            }
+        })
+        .collect();
+
+    Ok((account_infos, current_id))
+}
+
+/// 获取当前账号信息
+fn get_current_account_info() -> Result<Option<AccountInfo>, String> {
+    use crate::modules::account;
+
+    let current = account::get_current_account()?;
+    let current_id = account::get_current_account_id()?;
+
+    Ok(current.map(|acc| {
+        let subscription_tier = acc
+            .quota
+            .as_ref()
+            .and_then(|quota| quota.subscription_tier.clone());
+        AccountInfo {
+            id: acc.id.clone(),
+            email: acc.email.clone(),
+            name: acc.name.clone(),
+            is_current: current_id.as_ref() == Some(&acc.id),
+            disabled: acc.disabled,
+            has_fingerprint: acc.fingerprint_id.is_some(),
+            last_used: acc.last_used,
+            subscription_tier,
+        }
+    }))
+}
+
+/// 处理添加账号请求
+fn handle_add_account(
+    email: &str,
+    refresh_token: &str,
+    access_token: Option<&str>,
+    expires_at: Option<i64>,
+) -> Result<String, String> {
+    use crate::models::TokenData;
+    use crate::modules::account;
+
+    // 计算 expires_in（如果提供了 expires_at，计算距离现在的秒数）
+    let expires_in = expires_at
+        .map(|ts| ts - chrono::Utc::now().timestamp())
+        .filter(|&secs| secs > 0)
+        .unwrap_or(3600); // 默认 1 小时
+
+    // 使用 TokenData::new 构建
+    let token = TokenData::new(
+        access_token.unwrap_or("").to_string(),
+        refresh_token.to_string(),
+        expires_in,
+        Some(email.to_string()),
+        None,
+        None,
+    );
+
+    // 使用 upsert_account 添加或更新账号
+    account::upsert_account(email.to_string(), None, token)?;
+
+    crate::modules::logger::log_info("[WS] Account synced");
+    Ok(format!("Account synced: {}", email))
+}
+
+/// 处理删除账号请求（按邮箱）
+fn handle_delete_account_by_email(email: &str) -> Result<String, String> {
+    use crate::modules::account;
+
+    // 查找账号 ID
+    let accounts = account::list_accounts()?;
+    let target = accounts.iter().find(|a| a.email == email);
+
+    match target {
+        Some(acc) => {
+            account::delete_account(&acc.id)?;
+            crate::modules::logger::log_info("[WS] Account deleted");
+            Ok(format!("Account deleted: {}", email))
+        }
+        None => {
+            // 账号不存在不算错误，可能本来就没有
+            crate::modules::logger::log_info("[WS] Account does not exist, skipping delete");
+            Ok(format!("Account does not exist: {}", email))
+        }
+    }
+}
+
+/// 处理语言设置请求
+fn handle_set_language(language: &str, source: Option<&str>) -> Result<String, String> {
+    use crate::modules::config::{self, UserConfig};
+
+    if language.trim().is_empty() {
+        return Err("Language cannot be empty".to_string());
+    }
+
+    // 标准化语言代码为小写，确保格式一致
+    let normalized = language.to_lowercase();
+
+    let current = config::get_user_config();
+    if current.language == normalized {
+        return Ok(format!("Language is already {}", normalized));
+    }
+
+    let new_config = UserConfig {
+        ws_enabled: current.ws_enabled,
+        ws_port: current.ws_port,
+        language: normalized.clone(),
+        theme: current.theme,
+        auto_refresh_minutes: current.auto_refresh_minutes,
+        codex_auto_refresh_minutes: current.codex_auto_refresh_minutes,
+        ghcp_auto_refresh_minutes: current.ghcp_auto_refresh_minutes,
+        windsurf_auto_refresh_minutes: current.windsurf_auto_refresh_minutes,
+        kiro_auto_refresh_minutes: current.kiro_auto_refresh_minutes,
+        close_behavior: current.close_behavior,
+        opencode_app_path: current.opencode_app_path,
+        antigravity_app_path: current.antigravity_app_path,
+        codex_app_path: current.codex_app_path,
+        vscode_app_path: current.vscode_app_path,
+        windsurf_app_path: current.windsurf_app_path,
+        kiro_app_path: current.kiro_app_path,
+        opencode_sync_on_switch: current.opencode_sync_on_switch,
+        codex_launch_on_switch: current.codex_launch_on_switch,
+        auto_switch_enabled: current.auto_switch_enabled,
+        auto_switch_threshold: current.auto_switch_threshold,
+        quota_alert_enabled: current.quota_alert_enabled,
+        quota_alert_threshold: current.quota_alert_threshold,
+        codex_quota_alert_enabled: current.codex_quota_alert_enabled,
+        codex_quota_alert_threshold: current.codex_quota_alert_threshold,
+        ghcp_quota_alert_enabled: current.ghcp_quota_alert_enabled,
+        ghcp_quota_alert_threshold: current.ghcp_quota_alert_threshold,
+        windsurf_quota_alert_enabled: current.windsurf_quota_alert_enabled,
+        windsurf_quota_alert_threshold: current.windsurf_quota_alert_threshold,
+        kiro_quota_alert_enabled: current.kiro_quota_alert_enabled,
+        kiro_quota_alert_threshold: current.kiro_quota_alert_threshold,
+    };
+
+    config::save_user_config(&new_config)?;
+
+    broadcast_language_changed(&normalized, source.unwrap_or("ws"));
+
+    Ok(format!("Language updated to {}", normalized))
+}

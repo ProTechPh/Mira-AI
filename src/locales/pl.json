@@ -1,0 +1,1391 @@
+{
+  "common": {
+    "confirm": "Potwierdź",
+    "cancel": "Anuluj",
+    "save": "Zapisz",
+    "saving": "Zapisywanie...",
+    "delete": "Usuń",
+    "refresh": "Odśwież",
+    "loading": "Ładowanie...",
+    "success": "Sukces",
+    "failed": "Błąd",
+    "enabled": "Włączone",
+    "disabled": "Wyłączone",
+    "close": "Zamknij",
+    "open": "Otwórz",
+    "copy": "Kopiuj",
+    "add": "Dodaj",
+    "enable": "Włącz",
+    "disable": "Wyłącz",
+    "none": "Brak",
+    "detail": "Szczegóły",
+    "editable": "Edytowalne",
+    "preview": "Podgląd",
+    "shared": {
+      "addAccount": "Dodaj konto",
+      "columns": {
+        "actions": "Akcje",
+        "plan": "Plan",
+        "addOnPromptCredits": "Dodatkowe kredyty promptów",
+        "credits": "Kredyty",
+        "email": "E-mail",
+        "promptCredits": "Kredyty promptów"
+      },
+      "empty": {
+        "title": "Brak kont"
+      },
+      "export": "Eksportuj",
+      "filter": {
+        "all": "Wszystkie ({{count}})",
+        "enterprise": "PRZEDSIĘBIORSTWO (__MASKA_0__)",
+        "free": "GRATIS (__MASKA_0__)",
+        "pro": "PRO (__MASKA_0__)",
+        "business": "BIZNES (__MASKA_0__)",
+        "individual": "INDYWIDUALNE (__MASKA_0__)"
+      },
+      "filterLabel": "Filtr",
+      "import": {
+        "failedMsg": "Import nieudany: {{error}}",
+        "label": "Import",
+        "importing": "Importowanie lokalnego konta...",
+        "pickFile": "Wybierz plik JSON do importu",
+        "orJson": "Lub zaimportuj z pliku JSON"
+      },
+      "instances": {
+        "unsupported": {
+          "title": "Nieobsługiwane na tym systemie"
+        },
+        "quota": {
+          "chat": "Wiadomości na czacie",
+          "inline": "Wbudowane sugestie"
+        },
+        "subtitle": "Niezależna konfiguracja dla każdej instancji, równoległa praca z wieloma kontami.",
+        "title": "Multi-Instancja"
+      },
+      "noMatch": {
+        "desc": "Spróbuj zmienić wyszukiwanie lub filtry",
+        "title": "Brak pasujących kont"
+      },
+      "oauth": {
+        "failed": "Autoryzacja nieudana",
+        "hint": "Po autoryzacji to okno zaktualizuje się automatycznie",
+        "openBrowser": "Otwórz w przeglądarce",
+        "success": "Autoryzacja udana",
+        "meta": "Wygasa za: {{expires}}s; interwał odpytywania: {{interval}}s",
+        "preparing": "Przygotowywanie linku autoryzacji...",
+        "retry": "Wygeneruj ponownie dane autoryzacji",
+        "timeoutRetry": "Odśwież link autoryzacji",
+        "waiting": "Oczekiwanie na autoryzację..."
+      },
+      "refreshAll": "Odśwież wszystko",
+      "refreshQuota": "Odśwież limit",
+      "search": "Szukaj kont...",
+      "sort": {
+        "ascTooltip": "Rosnąco (kliknij, aby zmienić na malejąco)",
+        "createdAt": "Data utworzenia",
+        "descTooltip": "Malejąco (kliknij, aby zmienić na rosnąco)",
+        "toggleDirection": "Zmień kierunek sortowania",
+        "credits": "Przez pozostałe kredyty",
+        "planEnd": "Według czasu zakończenia cyklu"
+      },
+      "sortLabel": "Sortuj",
+      "token": {
+        "empty": "Wprowadź token lub JSON",
+        "import": "Importuj",
+        "importFailedMsg": "Import nieudany: {{error}}",
+        "importing": "Importowanie...",
+        "importSuccessMsg": "Zaimportowano {{count}} kont",
+        "placeholder": "Wklej JSON..."
+      },
+      "view": {
+        "grid": "Widok kart",
+        "list": "Widok listy"
+      },
+      "addModal": {
+        "import": "Import lokalny",
+        "oauth": "Logowanie OAuth",
+        "token": "Import JSON"
+      },
+      "overview": {
+        "title": "Przegląd kont"
+      },
+      "quota": {
+        "noData": "Brak danych limitu",
+        "resetDone": "Zresetowano",
+        "hourly": "Limit 5 godzin",
+        "weekly": "Limit tygodniowy"
+      },
+      "subtitle": "Zarządzaj kontami GitHub Copilot",
+      "time": {
+        "lessThanMinute": "<1 min",
+        "relativeDays": "{{days}} d",
+        "relativeDaysHours": "{{days}} d {{hours}} h",
+        "relativeHours": "{{hours}} h",
+        "relativeHoursMinutes": "{{hours}} h {{minutes}} min",
+        "relativeMinutes": "{{minutes}} min",
+        "relativeWithAbsolute": "{{relative}} ({{absolute}})"
+      },
+      "credits": {
+        "leftInline": "pozostało {{left}}",
+        "periodEndOnly": "Koniec cyklu: {{end}}",
+        "periodRange": "Cykl: {{start}} - {{end}}",
+        "planEndsIn": "Cykl resetuje się za {{days}} dni",
+        "planEndsUnknown": "Brak informacji o cyklu",
+        "usedLine": "Użyto {{used}} / {{total}}"
+      },
+      "flowNotice": {
+        "alternative": "Alternatywa: użyj izolacji wielu instancji (różne --user-data-dir). Zaloguj się raz na instancję, a potem uruchamiaj po instancji, aby szybko przełączać się do środowiska docelowego konta."
+      },
+      "injecting": "Wstrzykiwanie...",
+      "usage": {
+        "resetLine": "Limit resetuje się {{dateText}}.",
+        "resetUnknown": "Limit resetuje się -"
+      }
+    }
+  },
+  "nav": {
+    "overview": "Konto Antigravity",
+    "accounts": "Konta",
+    "wakeup": "Zadania wybudzania",
+    "fingerprints": "Odciski palca",
+    "settings": "Ustawienia",
+    "codex": "Konta Codex",
+    "dashboard": "Panel",
+    "instances": "Multi-Instancja",
+    "githubCopilot": "GitHub Copilot",
+    "windsurf": "Windsurf",
+    "morePlatforms": "Więcej platform"
+  },
+  "settings": {
+    "title": "Ustawienia aplikacji",
+    "subtitle": "Dostosuj działanie narzędzi Mira Tools.",
+    "tabs": {
+      "general": "Ogólne",
+      "network": "Sieć",
+      "about": "O aplikacji"
+    },
+    "general": {
+      "appearance": "Wygląd",
+      "language": "Język",
+      "languageDesc": "Wybierz język interfejsu",
+      "theme": "Motyw",
+      "themeDesc": "Przełącz między trybem jasnym a ciemnym",
+      "themeLight": "Jasny",
+      "themeDark": "Ciemny",
+      "themeSystem": "Systemowy",
+      "accountManagement": "Zarządzanie kontami",
+      "autoRefresh": "Automatyczne odświeżanie limitu Antigravity",
+      "codexAutoRefresh": "Automatyczne odświeżanie limitu Codex",
+      "autoRefreshDesc": "Częstotliwość aktualizacji w tle",
+      "codexAutoRefreshDesc": "Częstotliwość aktualizacji w tle",
+      "autoRefreshDisabled": "Wyłączone",
+      "autoRefreshCustom": "Niestandardowe...",
+      "every15min": "Co 15 minut",
+      "every30min": "Co 30 minut",
+      "every1hour": "Co godzinę",
+      "minutes": "min",
+      "refreshIntervalLimited": "Budzenie przy resetowaniu limitu jest włączone, dlatego minimalny interwał odświeżania wynosi 2 minuty.",
+      "storageTitle": "Katalogi i pamięć",
+      "dataDir": "Katalog danych",
+      "dataDirDesc": "Lokalizacja przechowywania kont i plików konfiguracji.",
+      "fpDir": "Magazyn Antigravity",
+      "fpDirDesc": "Lokalizacja plików danych Antigravity.",
+      "closeBehavior": "Zachowanie przy zamykaniu",
+      "closeBehaviorDesc": "Wybierz akcję przy zamykaniu okna",
+      "closeBehaviorAsk": "Zawsze pytaj",
+      "closeBehaviorMinimize": "Minimalizuj do zasobnika",
+      "closeBehaviorQuit": "Zamknij aplikację",
+      "opencodeAppPathDesc": "Pozostaw puste, aby użyć domyślnej ścieżki",
+      "opencodeTitle": "Integracja OpenCode",
+      "opencodeRestart": "Uruchom ponownie OpenCode przy przełączaniu Codex",
+      "opencodeRestartDesc": "Synchronizuj informacje o koncie Codex w OpenCode",
+      "opencodeAppPath": "Ścieżka uruchamiania OpenCode",
+      "opencodeAppPathPlaceholder": "Domyślna ścieżka",
+      "opencodePathReset": "Przywróć domyślne",
+      "opencodePathSelect": "Wybierz",
+      "codexTitle": "Uruchamianie Codex",
+      "codexAppPath": "Ścieżka aplikacji Codex",
+      "codexAppPathDesc": "Pozostaw puste, aby użyć domyślnej ścieżki",
+      "codexAppPathPlaceholder": "Domyślna ścieżka",
+      "codexPathSelect": "Wybierz",
+      "codexPathReset": "Przywróć domyślne",
+      "vscodeTitle": "Uruchamianie VS Code",
+      "vscodeAppPath": "Ścieżka aplikacji VS Code",
+      "vscodeAppPathDesc": "Pozostaw puste, aby użyć domyślnej ścieżki",
+      "vscodeAppPathPlaceholder": "Domyślna ścieżka",
+      "vscodePathSelect": "Wybierz",
+      "vscodePathReset": "Przywróć domyślne",
+      "antigravityAppPath": "Ścieżka aplikacji Antigravity",
+      "antigravityTitle": "Uruchamianie Antigravity",
+      "commonTitle": "Ogólne",
+      "antigravitySettingsTitle": "Ustawienia Antigravity",
+      "codexSettingsTitle": "Ustawienia Codex",
+      "githubCopilotSettingsTitle": "Ustawienia GitHub Copilot",
+      "ghcpAutoRefresh": "Automatyczne odświeżanie limitu GitHub Copilot",
+      "ghcpAutoRefreshDesc": "Częstotliwość aktualizacji w tle",
+      "windsurfSettingsTitle": "Ustawienia Windsurf",
+      "windsurfAutoRefresh": "Automatyczne odświeżanie limitu Windsurf",
+      "windsurfAutoRefreshDesc": "Częstotliwość aktualizacji w tle",
+      "windsurfAppPath": "Ścieżka aplikacji Windsurf",
+      "windsurfAppPathDesc": "Pozostaw puste, aby użyć domyślnej ścieżki",
+      "windsurfAppPathPlaceholder": "Domyślna ścieżka",
+      "windsurfPathSelect": "Wybierz",
+      "windsurfPathReset": "Przywróć domyślne",
+      "kiroSettingsTitle": "Ustawienia Kiro",
+      "kiroAutoRefresh": "Limit automatycznego odświeżania Kiro",
+      "kiroAutoRefreshDesc": "Częstotliwość aktualizacji w tle",
+      "kiroAppPath": "Ścieżka aplikacji Kiro",
+      "kiroAppPathDesc": "Pozostaw puste, aby użyć ścieżki domyślnej",
+      "kiroAppPathPlaceholder": "Domyślna ścieżka",
+      "kiroPathSelect": "Wybierać",
+      "kiroPathReset": "Przywróć ustawienia domyślne",
+      "codexLaunchOnSwitch": "Automatycznie uruchamiaj Codex App podczas przełączania Codex",
+      "codexLaunchOnSwitchDesc": "Po przełączeniu konta automatycznie uruchom lub uruchom ponownie Codex App"
+    },
+    "network": {
+      "apiTitle": "API kokpitu antygrawitacyjnego",
+      "wsService": "Usługa WebSocket",
+      "wsServiceDesc": "Zezwalaj na połączenie programom zewnętrznym (np. rozszerzenie VS Code)",
+      "preferredPort": "Preferowany port",
+      "preferredPortDesc": "Domyślnie {{port}}, wymagany restart po zmianie",
+      "currentPort": "Aktualny port",
+      "portNormal": "Usługa działa poprawnie",
+      "portFallback": "Port {{configured}} jest zajęty, użyto portu {{actual}}",
+      "restartRequired": "Zmieniono konfigurację, uruchom ponownie aplikację, aby zastosować zmiany",
+      "saveSuccess": "Ustawienia zapisane!",
+      "saveSuccessRestart": "Ustawienia zapisane! Uruchom ponownie aplikację, aby zmiany portu weszły w życie.",
+      "saveFailed": "Błąd zapisu: {{error}}"
+    },
+    "about": {
+      "appName": "Mira Tools",
+      "slogan": "Profesjonalne rozwiązanie do zarządzania kontami",
+      "author": "Autor",
+      "wechat": "WeChat",
+      "github": "Repozytorium GitHub",
+      "alipay": "Alipay",
+      "wechatpay": "Płatność WeChat",
+      "sponsor": "Sponsor",
+      "sponsorDesc": "Wspieraj rozwój",
+      "feedback": "Informacje zwrotne",
+      "feedbackDesc": "Zgłoś problemy/sugestie",
+      "supportDev": "Wesprzyj rozwój",
+      "checkUpdate": "Sprawdź aktualizacje",
+      "checking": "Sprawdzanie...",
+      "upToDate": "Aktualne",
+      "newVersion": "v{{version}} dostępna",
+      "download": "Pobierz",
+      "checkFailed": "Błąd sprawdzania aktualizacji"
+    },
+    "saveSettings": "Zapisz ustawienia"
+  },
+  "accounts": {
+    "title": "Zarządzanie kontami",
+    "subtitle": "Zarządzaj listą swoich kont Antigravity.",
+    "total": "Liczba kont: {{count}}",
+    "search": "Szukaj kont...",
+    "addAccount": "Dodaj konto",
+    "refreshAll": "Odśwież wszystko",
+    "export": "Eksportuj",
+    "import": "Importuj",
+    "switchLogin": "Zmień logowanie",
+    "refreshQuota": "Odśwież limity",
+    "copyToken": "Kopiuj token",
+    "deleteAccount": "Usuń konto",
+    "confirmDelete": "Czy na pewno chcesz usunąć konto {{email}}?",
+    "columns": {
+      "email": "E-mail",
+      "subscription": "Subskrypcja",
+      "quota": "Status limitów",
+      "fingerprint": "Odcisk palca",
+      "lastUsed": "Ostatnio użyte",
+      "actions": "Akcje"
+    },
+    "status": {
+      "current": "Aktualne",
+      "disabled": "Wyłączone",
+      "authInvalid": "Nieprawidłowe dane uwierzytelniające",
+      "refreshFailed": "Odświeżanie nie powiodło się",
+      "normal": "Normalne",
+      "forbidden": "403",
+      "forbidden_tooltip": "API zwróciło 403 Forbidden, konto nie ma dostępu do Gemini Code Assist",
+      "forbidden_msg": "Konto zabronione, pominięto automatyczne odświeżanie"
+    },
+    "tier": {
+      "pro": "PRO",
+      "ultra": "ULTRA",
+      "free": "FREE"
+    },
+    "empty": {
+      "title": "Brak kont",
+      "desc": "Kliknij „Dodaj”, aby rozpocząć",
+      "btn": "Dodaj konto"
+    },
+    "noMatch": {
+      "title": "Brak pasujących kont",
+      "desc": "Brak kont pasujących do obecnych filtrów"
+    },
+    "view": {
+      "compact": "Widok kompaktowy",
+      "list": "Widok listy",
+      "grid": "Widok kart"
+    },
+    "filterLabel": "Filtruj konta",
+    "filter": {
+      "all": "Wszystkie ({{count}})",
+      "pro": "PRO (__MASKA_0__)",
+      "ultra": "ULTRA (__MASKA_0__)",
+      "free": "GRATIS (__MASKA_0__)"
+    },
+    "sortLabel": "Sortuj",
+    "sort": {
+      "default": "Domyślne",
+      "overall": "Według ogólnego limitu",
+      "byGroup": "Według limitu {{group}}",
+      "byGroupReset": "Według czasu resetu {{group}}",
+      "createdAt": "Według daty utworzenia",
+      "descTooltip": "Malejąco, kliknij dla rosnąco",
+      "ascTooltip": "Rosnąco, kliknij dla malejąco",
+      "toggleDirection": "Zmień kierunek"
+    },
+    "actions": {
+      "viewDetails": "Pokaż szczegóły",
+      "viewError": "Zobacz błąd",
+      "fingerprint": "Odcisk",
+      "switch": "Przełącz konto",
+      "switchTo": "Przełącz na to konto",
+      "selectFingerprint": "Wybierz odcisk"
+    },
+    "tabs": {
+      "oauth": "OAuth",
+      "token": "Token odświeżania",
+      "import": "Import"
+    },
+    "oauth": {
+      "authorizing": "Autoryzacja OAuth...",
+      "success": "OAuth autoryzowane",
+      "failed": "Autoryzacja OAuth nie powiodła się: {{error}}",
+      "hint": "Zalecamy ukończenie Google OAuth w przeglądarce.",
+      "start": "Rozpocznij autoryzację OAuth",
+      "continue": "Zautoryzowano, kontynuuj",
+      "linkLabel": "Link autoryzacji",
+      "generatingLink": "Generowanie linku autoryzacji..."
+    },
+    "token": {
+      "desc": "Wklej refresh_token lub JSON kont do importu zbiorczego.",
+      "placeholder": "Obsługiwany format: [{\"email\":\"xxx\",\"refresh_token\":\"1//...\"}] lub wklej refresh_token bezpośrednio",
+      "importStart": "Rozpocznij import",
+      "invalid": "Nie znaleziono prawidłowego refresh_token",
+      "importProgress": "Importowanie {{current}}/{{total}}...",
+      "importSuccess": "Zaimportowano {{count}} kont",
+      "importPartial": "Zaimportowano {{success}} kont, nieudane {{fail}}",
+      "importFailed": "Import nie powiódł się, sprawdź refresh_token"
+    },
+    "confirmDeleteTag": "Usunąć tag \"{{tag}}\"? Ten tag zostanie usunięty z {{count}} kont.",
+    "defaultGroup": "Grupa domyślna",
+    "filterTags": "Filtruj tagi",
+    "filterTagsCount": "Tagi",
+    "noAvailableTags": "Brak dostępnych tagów",
+    "clearFilter": "Wyczyść filtr",
+    "editTags": "Edytuj tagi",
+    "groupByTag": "Grupuj według taga",
+    "untagged": "Bez taga",
+    "deleteTagAria": "Usuń tag {{tag}}",
+    "tagModal": {
+      "title": "Edytuj tagi",
+      "hint": "Maksymalnie {{max}} tagów. Każdy tag może mieć najwyżej {{maxLength}} znaków.",
+      "empty": "Brak dostępnych tagów",
+      "suggestionsTitle": "Filtruj tagi",
+      "suggestionsEmpty": "Brak dostępnych tagów",
+      "inputPlaceholder": "Wpisz tag (pozostało {{remaining}})",
+      "inputDisabledPlaceholder": "Osiągnięto limit tagów",
+      "add": "Dodaj",
+      "save": "Zapisz tagi",
+      "error": {
+        "empty": "Tag nie może być pusty",
+        "tooLong": "Tag nie może mieć więcej niż {{max}} znaków",
+        "duplicate": "Tag już istnieje",
+        "tooMany": "Możesz dodać maksymalnie {{max}} tagów"
+      }
+    }
+  },
+  "overview": {
+    "title": "Przegląd kont",
+    "subtitle": "Monitorowanie limitów modeli dla wszystkich kont w czasie rzeczywistym.",
+    "total": "Liczba kont: {{count}}",
+    "accountDisabled": "Konto wyłączone",
+    "noQuotaData": "Brak danych o limitach",
+    "currentAccount": "Aktualnie używane",
+    "switchTo": "Przełącz na to konto",
+    "switching": "Przełączanie...",
+    "fingerprint": "Odcisk palca",
+    "bound": "Powiązane",
+    "brandTitle": "Zarządzanie kontem Antigravity"
+  },
+  "fingerprints": {
+    "title": "Odciski palca urządzenia",
+    "subtitle": "Zarządzaj odciskami palca urządzeń powiązanymi z kontami.",
+    "toolbar": {
+      "generate": "Generuj nowy",
+      "capture": "Przechwyć aktualny",
+      "import": "Importuj",
+      "folder": "Folder",
+      "delete": "Usuń"
+    },
+    "table": {
+      "name": "Nazwa odcisku",
+      "machineId": "ID maszyny",
+      "accounts": "Powiązane konta",
+      "actions": "Akcje",
+      "accountCount": "{{count}} kont",
+      "apply": "Zastosuj",
+      "noData": "Brak danych odcisków",
+      "preview": "Podgląd",
+      "rename": "Zmień nazwę"
+    },
+    "modals": {
+      "generate": {
+        "title": "Generuj odcisk palca",
+        "btn": "Generuj"
+      },
+      "capture": {
+        "title": "Przechwyć odcisk palca",
+        "btn": "Przechwyć"
+      },
+      "rename": {
+        "title": "Zmień nazwę odcisku",
+        "label": "Nazwa odcisku"
+      },
+      "import": {
+        "title": "Importuj odciski palca",
+        "fromTools": "Importuj z Antigravity Tools",
+        "desc": "Importuj z katalogu ~/.antigravity_tools/",
+        "fromJsonBtn": "Import z JSON",
+        "jsonExample": "Przykład formatu:",
+        "jsonPlaceholder": "Odcisk roboczy",
+        "orPasteJson": "Lub wklej JSON"
+      },
+      "bound": {
+        "title": "Powiązane konta",
+        "add": "Dodaj konta",
+        "empty": "Brak powiązanych kont",
+        "emptyAll": "Wszystkie konta są już powiązane",
+        "select": "Wybierz konta do dodania",
+        "from": "Źródło: {{name}}",
+        "back": "Wstecz"
+      },
+      "detail": {
+        "title": "Szczegóły odcisku",
+        "created": "Utworzono {{time}}"
+      }
+    },
+    "messages": {
+      "deleteConfirm": "Usunąć ten odcisk palca? Powiązane z nim konta powrócą do oryginalnego odcisku.",
+      "batchDeleteConfirm": "Usunąć {{count}} odciski palca? Powiązane z nimi konta powrócą do oryginalnego odcisku.",
+      "generated": "Wygenerowano nowy odcisk palca",
+      "captured": "Przechwycono aktualny odcisk palca",
+      "renamed": "Zmieniono nazwę",
+      "deleted": "Usunięto odcisk palca",
+      "imported": "Zaimportowano {{count}} odciski palca",
+      "addedAccounts": "Dodano {{count}} kont",
+      "enterName": "Wprowadź nazwę odcisku palca",
+      "previewNotReady": "Podgląd nie jest gotowy, proszę czekać",
+      "duplicate": "Taki odcisk palca już istnieje: {{name}}",
+      "readOnly": "Tylko do odczytu",
+      "current": "Aktualny",
+      "addCount": "Dodano {{count}} kont",
+      "addFailed": "Dodawanie nieudane",
+      "adding": "Dodawanie...",
+      "applyFailed": "Zastosowanie nieudane",
+      "boundCount": "Powiązano {{count}} kont",
+      "captureFailed": "Przechwytywanie nieudane",
+      "count": "{{count}}",
+      "deleteFailed": "Usuwanie nieudane",
+      "fpLabel": "Odcisk:",
+      "generateFailed": "Generowanie nieudane",
+      "importFailed": "Import nieudany",
+      "importing": "Importowanie...",
+      "loadFailed": "Nie udało się wczytać listy odcisków",
+      "processing": "Przetwarzanie...",
+      "renameFailed": "Zmiana nazwy nieudana",
+      "serviceMachineIdEmpty": "Puste"
+    }
+  },
+  "modals": {
+    "addAccount": {
+      "title": "Dodaj konto",
+      "desc": "Dodaj swoje konto Antigravity przez Google OAuth",
+      "loginBtn": "Logowanie przez Google",
+      "waiting": "Oczekiwanie..."
+    },
+    "import": {
+      "title": "Import kont",
+      "desc": "Wybierz metodę importu",
+      "local": "Importuj konto lokalne",
+      "localDesc": "Importuj aktualnie zalogowane konto z klienta Antigravity",
+      "tools": "Importuj Antigravity Tools",
+      "toolsDesc": "Importuj z katalogu ~/.antigravity_tools/",
+      "jsonDivider": "lub wklej JSON",
+      "orJson": "lub wklej JSON",
+      "jsonPlaceholder": "Wklej treść JSON konta",
+      "jsonBtn": "Importuj z JSON",
+      "importing": "Importowanie...",
+      "importBtn": "Importuj",
+      "oauthAction": "Autoryzacja OAuth",
+      "fromExtension": "Import z wtyczki",
+      "syncBadge": "Synchronizuj konta wtyczki Antigravity Cockpit",
+      "fromLocalDB": "Import z lokalnej bazy danych",
+      "localDBDesc": "Odczytaj konta logowania z klienta Antigravity na tym urządzeniu",
+      "toolsDescMigrate": "Migracja kont z ~/.antigravity_tools/",
+      "importingTools": "Importowanie z Antigravity Tools...",
+      "importingLocal": "Importowanie lokalnego konta...",
+      "importingExtension": "Importowanie konta z wtyczki...",
+      "noAccountsFound": "Nie znaleziono kont do importu"
+    },
+    "fingerprint": {
+      "title": "Wybierz odcisk palca",
+      "desc": "Wybierz odcisk palca dla konta <1>{{email}}</1>",
+      "original": "Oryginalny odcisk palca",
+      "new": "Dodaj nowy odcisk palca",
+      "bind": "Potwierdź powiązanie",
+      "selectLabel": "Wybierz odcisk palca",
+      "boundCount": "konta"
+    },
+    "quota": {
+      "title": "Szczegóły limitów",
+      "noData": "Brak danych o limitach",
+      "close": "Zamknij",
+      "resetTime": "Czas resetu"
+    },
+    "errors": {
+      "title": "Szczegóły błędu",
+      "empty": "Brak szczegółów błędu",
+      "account": "Konto",
+      "code": "Kod błędu",
+      "time": "Wystąpiło"
+    }
+  },
+  "pagination": {
+    "info": "Wyświetlanie {{start}} - {{end}} z {{total}}",
+    "perPage": "{{count}} / strona",
+    "prev": "Poprzednia",
+    "next": "Następna",
+    "page": "Strona {{current}} / {{total}}"
+  },
+  "messages": {
+    "deleteConfirm": "Czy na pewno chcesz usunąć to konto?",
+    "batchDeleteConfirm": "Czy na pewno chcesz usunąć {{count}} wybrane konta?",
+    "switched": "Przełączono na {{email}}",
+    "switchFailed": "Błąd przełączania: {{error}}",
+    "importSuccess": "Pomyślnie zaimportowano {{count}} kont",
+    "importLocalSuccess": "Pomyślnie zaimportowano konto: {{email}}",
+    "importFailed": "Błąd importu: {{error}}",
+    "exportFailed": "Błąd eksportu: {{error}}",
+    "bindFailed": "Błąd powiązania: {{error}}",
+    "jsonRequired": "Wprowadź lub wklej treść JSON",
+    "example": "Przykład",
+    "actionRunning": "{{action}}...",
+    "actionSuccess": "{{action}} zakończone",
+    "actionFailed": "{{action}} niepowodzenie: {{error}}"
+  },
+  "wakeup": {
+    "title": "Zadania wybudzania",
+    "subtitle": "Zarządzaj wieloma automatycznymi zadaniami wybudzania z niezależnymi kontrolami.",
+    "globalToggle": "Globalny przełącznik wybudzania",
+    "newTask": "Nowe zadanie",
+    "runTest": "Test natychmiastowy",
+    "history": "Historia wywołań",
+    "gotoAddAccount": "Dodaj konta",
+    "emptyTitle": "Brak zadań wybudzania",
+    "emptyDesc": "Zadania będą automatycznie wybudzać zgodnie z regułami.",
+    "statusEnabled": "Włączone",
+    "statusDisabled": "Wyłączone",
+    "statusRunning": "W trakcie",
+    "edit": "Edytuj",
+    "defaultTaskName": "Zadanie wybudzania",
+    "newTaskName": "Nowe zadanie wybudzania",
+    "historyCount": "Historia wywołań ({{count}})",
+    "historyEmpty": "Brak historii",
+    "historyClear": "Wyczyść historię",
+    "historyPromptLabel": "Prompt: {{prompt}}",
+    "format": {
+      "noReply": "(Brak odpowiedzi)",
+      "durationMs": "__MASKA_0__ms",
+      "tokens": "tokeny={{prompt}}+{{completion}}={{total}}",
+      "traceId": "identyfikator śledzenia={{traceId}}",
+      "detailJoiner": ", ",
+      "message": "[[{{model}}]]: {{reply}}{{suffix}}",
+      "none": "--",
+      "today": "Dziś {{time}}",
+      "tomorrow": "Jutro {{time}}",
+      "weekdayWithTime": "{{day}} {{time}}",
+      "notSelected": "Nie wybrano",
+      "joiner": ", ",
+      "moreItems": "{{items}} ({{total}} pozycji)",
+      "quotaReset": "Automatyczne wybudzanie przy resecie limitu",
+      "crontab": "Crontab: {{expr}}",
+      "daily": "Codziennie {{times}}{{suffix}}",
+      "weekly": "Tygodniowo {{days}} {{times}}{{suffix}}",
+      "interval": "Co {{hours}}h ({{start}}-{{end}})",
+      "invalidCrontab": "Nieprawidłowy Crontab"
+    },
+    "weekdays": {
+      "sun": "Niedz.",
+      "mon": "Pon.",
+      "tue": "Wt.",
+      "wed": "Śr.",
+      "thu": "Czw.",
+      "fri": "Pt.",
+      "sat": "Sob."
+    },
+    "notice": {
+      "modelsFetchFailed": "Nie udało się pobrać modeli, sprawdź stan konta",
+      "featureDisabled": "Wybudzanie jest wyłączone",
+      "taskMissingModels": "Zadanie nie ma wybranego modelu",
+      "taskMissingAccounts": "Zadanie nie ma wybranego konta",
+      "taskFailed": "Zadanie \"{{name}}\" nie powiodło się dla {{count}} żądań",
+      "taskCompleted": "Zadanie \"{{name}}\" ukończone",
+      "testMissingModel": "Wybierz model do testu",
+      "testMissingAccount": "Wybierz konto do testu",
+      "testFailed": "Test nie powiódł się dla {{count}} żądań",
+      "testCompleted": "Test zakończony",
+      "nameRequired": "Wpisz nazwę zadania",
+      "accountRequired": "Wybierz co najmniej jedno konto",
+      "modelRequired": "Wybierz co najmniej jeden model",
+      "crontabRequired": "Wpisz wyrażenie crontab",
+      "taskSaved": "Zadanie \"{{name}}\" zapisane",
+      "featureOff": "Wybudzanie wyłączone",
+      "featureOn": "Wybudzanie włączone",
+      "refreshIntervalAdjusted": "Interwał odświeżania dostosowany: {{old}} → {{new}}"
+    },
+    "refreshInterval": {
+      "disabled": "Wyłączone",
+      "minutes": "minut"
+    },
+    "triggerSource": {
+      "scheduled": "Harmonogram",
+      "crontab": "Crontab",
+      "quotaReset": "Reset limitu",
+      "manual": "Test natychmiastowy",
+      "unknown": "Nieznane"
+    },
+    "taskCard": {
+      "accountsCount": "Konta {{count}}",
+      "modelsCount": "Modele {{count}}",
+      "accountsLabel": "Konta: {{preview}}",
+      "modelsLabel": "Modele: {{preview}}",
+      "lastRun": "Ostatnio {{time}}",
+      "nextRun": "Następnie {{time}}"
+    },
+    "dialogs": {
+      "enableTitle": "Włącz wybudzanie",
+      "enableDesc": "Włączenie wybudzania wyłączy funkcję wybudzania w wtyczce. Kontynuować?",
+      "deleteConfirm": "Usunąć zadanie \"{{name}}\"?",
+      "testTitle": "Test natychmiastowy",
+      "historyTitle": "Historia wywołań",
+      "taskTitleEdit": "Edytuj zadanie wybudzania",
+      "taskTitleNew": "Nowe zadanie wybudzania"
+    },
+    "form": {
+      "taskName": "Nazwa zadania",
+      "taskStatus": "Status zadania",
+      "triggerMode": "Tryb wyzwalania",
+      "triggerModeHint": "1. Harmonogram: uruchamiane o ustawionych godzinach.\\n2. Crontab: definiowane wyrażeniem.\\n3. Reset limitu: uruchamiane raz po zapełnieniu limitu.",
+      "modeScheduled": "📅 Harmonogram",
+      "modeCrontab": "🧩 Crontab",
+      "modeQuotaReset": "🔄 Reset limitu",
+      "modelSelect": "Wybór modelu",
+      "modelHint": "W tej samej grupie limitu wybierz jeden model. Wiele modeli uruchamia się kolejno.",
+      "modelsEmpty": "Brak polecanych modeli",
+      "accountSelect": "Wybór kont",
+      "accountHint": "Można wybrać wiele kont; będą używane kolejno.",
+      "accountsEmpty": "Brak kont",
+      "customPrompt": "Własny prompt",
+      "promptPlaceholder": "Domyślnie {{word}}",
+      "promptHint": "Pozostaw puste, aby użyć domyślnego promptu {{word}}.",
+      "maxTokens": "Maks. liczba tokenów",
+      "maxTokensHint": "Domyślnie 0 (bez limitu).",
+      "repeatMode": "Tryb powtarzania",
+      "repeatDaily": "Codziennie",
+      "repeatWeekly": "Co tydzień",
+      "repeatInterval": "Interwał",
+      "selectTime": "Wybierz czas",
+      "customTime": "Własny czas",
+      "selectWeekday": "Wybierz dzień tygodnia",
+      "quickWorkdays": "Dni robocze",
+      "quickWeekend": "Weekend",
+      "quickAll": "Wszystkie",
+      "intervalSetting": "Ustawienia interwału",
+      "intervalEvery": "Co",
+      "intervalHours": "godzin",
+      "intervalStart": "Start",
+      "intervalEnd": "Koniec",
+      "nextRuns": "Nadchodzące uruchomienia",
+      "nextRunsEmpty": "Wybierz godziny wyzwalania",
+      "crontab": "Wyrażenie Crontab",
+      "crontabPlaceholder": "np. 0 8,12,17 * * *",
+      "crontabValidate": "Sprawdź",
+      "crontabValidateHint": "Wyrażenie zostanie zweryfikowane przy zapisie",
+      "crontabPreviewEmpty": "Wpisz prawidłowe wyrażenie Crontab",
+      "timeWindowEnabled": "Włącz okno czasowe",
+      "timeWindowHint": "Po włączeniu reset limitu działa tylko w oknie; poza nim używane są stałe godziny.",
+      "timeWindow": "Okno resetu limitu",
+      "timeWindowFrom": "Od",
+      "timeWindowTo": "Do",
+      "fallbackTimes": "Zastępcze godziny",
+      "saveTask": "Zapisz zadanie"
+    },
+    "test": {
+      "modelsLabel": "Modele do wywołania",
+      "accountsLabel": "Konta testowe",
+      "accountsHint": "Wybierz kilka kont do testu.",
+      "start": "Rozpocznij test",
+      "testing": "Testowanie..."
+    }
+  },
+  "update_notification": {
+    "title": "Dostępna aktualizacja",
+    "message": "Aktualna wersja v{{current}}, dostępna jest nowa wersja.",
+    "action": "Pobierz teraz",
+    "whatsNew": "Co nowego"
+  },
+  "closeDialog": {
+    "title": "Zamknij okno",
+    "description": "Wybierz działanie podczas zamykania okna",
+    "minimize": "Minimalizuj do zasobnika",
+    "minimizeDesc": "Aplikacja będzie działać w tle",
+    "quit": "Zakończ aplikację",
+    "quitDesc": "Całkowicie zamyka aplikację",
+    "remember": "Zapamiętaj mój wybór i nie pytaj ponownie"
+  },
+  "group_settings": {
+    "title": "Zarządzanie grupami",
+    "group_list": "Lista grup",
+    "group_name_placeholder": "Nazwa grupy",
+    "save": "Zapisz grupy",
+    "other_group": "Inne modele"
+  },
+  "codex": {
+    "title": "Zarządzanie kontami Codex",
+    "subtitle": "Zarządzaj kontami OpenAI Codex",
+    "switch": "Przełącz",
+    "switched": "Przełączono na {{email}}",
+    "switchFailed": "Nie udało się przełączyć: {{error}}",
+    "current": "Bieżące",
+    "empty": {
+      "description": "Kliknij „Dodaj konto”, aby rozpocząć"
+    },
+    "addModal": {
+      "title": "Dodaj konto Codex",
+      "oauth": "Logowanie OAuth",
+      "token": "Import JSON",
+      "local": "Import lokalny"
+    },
+    "oauth": {
+      "desc": "Kliknij poniżej i zakończ autoryzację OpenAI w przeglądarce",
+      "preparing": "Przygotowywanie linku autoryzacji...",
+      "exchanging": "Wymiana tokenu...",
+      "portInUse": "Port {{port}} jest już zajęty. Zamknij aplikację, która go używa, i spróbuj ponownie.",
+      "portInUseTitle": "Port zajęty",
+      "portInUseConfirm": "Port {{port}} jest zajęty. Zamknąć proces używający tego portu?",
+      "portCloseFailed": "Nie udało się zamknąć portu: {{error}}",
+      "portStillInUse": "Port {{port}} nadal jest zajęty.",
+      "portInUseAction": "Zamknij port i spróbuj ponownie"
+    },
+    "token": {
+      "desc": "Wklej zawartość auth.json lub dane JSON konta",
+      "placeholder": "Wklej JSON..."
+    },
+    "local": {
+      "desc": "Importuj bieżące konto z ~/.codex/auth.json",
+      "import": "Pobierz konto lokalne"
+    },
+    "import": {
+      "importing": "Importowanie lokalnego konta...",
+      "successMsg": "Import zakończony sukcesem: {{email}}",
+      "localDesc": "Importuj konta Codex z lokalnie zalogowanych sesji."
+    },
+    "quota": {
+      "hourly": "Limit 5 godzin",
+      "weekly": "Limit tygodniowy",
+      "reset": "Resetuj"
+    },
+    "plan": {
+      "free": "FREE",
+      "plus": "PLUS",
+      "pro": "PRO",
+      "team": "TEAM",
+      "enterprise": "ENTERPRISE"
+    },
+    "time": {
+      "today": "Dzisiaj {{time}}",
+      "tomorrow": "Jutro {{time}}",
+      "dateTime": "{{date}} {{time}}"
+    },
+    "view": {
+      "compact": "Widok kompaktowy"
+    },
+    "filter": {
+      "plus": "PLUS (__MASKA_0__)",
+      "team": "ZESPÓŁ (__MASKA_0__)"
+    },
+    "sort": {
+      "weekly": "Limit tygodniowy",
+      "hourly": "Limit 5-godzinny",
+      "weeklyReset": "Czas tygodniowego resetu",
+      "hourlyReset": "Czas resetu 5-godzinnego"
+    },
+    "columns": {
+      "hourly": "Limit 5h",
+      "weekly": "Limit tyg."
+    },
+    "opencodeSwitch": "Przełącznik OpenCode",
+    "opencodeSwitchDesc": "Synchronizuj przełączenie konta Codex w OpenCode",
+    "opencodeSwitchFailed": "Nie udało się zaktualizować przełącznika OpenCode: {{error}}",
+    "filterTags": "Filtruj tagi",
+    "filterTagsCount": "Tagi",
+    "noAvailableTags": "Brak dostępnych tagów",
+    "clearFilter": "Wyczyść filtr",
+    "editTags": "Edytuj tagi",
+    "instances": {
+      "subtitle": "Niezależna konfiguracja dla każdej instancji, równoległa praca z wieloma kontami.",
+      "comingSoon": "Multi-Instancja Wkrótce",
+      "comingSoonDesc": "Uruchamiaj wiele instancji Codex.app z różnymi kontami jednocześnie.",
+      "unsupported": {
+        "desc": "Multi-instancja Codex jest obecnie dostępna tylko na macOS."
+      },
+      "quota": {
+        "hourly": "5 godz",
+        "weekly": "Tygodniowo"
+      },
+      "restartStrategy": {
+        "safe": {
+          "principle": "Wysyła sygnał SIGTERM do wszystkich procesów Codex, prosząc aplikację o zapisanie danych i zamknięcie się, a następnie uruchamia instancję docelową (wymusza zamknięcie w razie potrzeby).",
+          "commandMac": "macOS: kill -15 <pid> (wszystkie procesy Codex)",
+          "commandWin": "Windows: taskkill /F /PID <pid> (wszystkie procesy Codex)"
+        },
+        "force": {
+          "principle": "Identyfikuje procesy poprzez CODEX_HOME i zamyka je siłą (SIGKILL / taskkill /F), a następnie uruchamia instancję docelową.",
+          "commandMac": "macOS: pkill -9 -f \"CODEX_HOME=__MASKA_0__\"",
+          "commandWin": "Windows: taskkill /F /PID <pid> (dopasowanie do CODEX_HOME)"
+        }
+      }
+    },
+    "refreshSuccess": "Limit odświeżony",
+    "refreshFailed": "Odświeżenie limitu nie powiodło się: {{error}}",
+    "refreshAllSuccess": "Odświeżanie zakończone, {{count}} kont(a) pomyślnie",
+    "refreshAllPartialFailed": "Odświeżanie zakończone, {{success}} / {{total}} kont pomyślnie, część nieudana",
+    "quotaError": {
+      "badge": "Błąd limitu",
+      "generic": "Odświeżenie limitu nie powiodło się, spróbuj ponownie później",
+      "deactivatedWorkspace": "Obszar roboczy jest wyłączony, przełącz konto lub ponownie autoryzuj"
+    }
+  },
+  "dashboard": {
+    "title": "Panel kont",
+    "summary": {
+      "label": "Przegląd",
+      "title": "Zrzut kont",
+      "desc": "Antigravity i Codex w jednym miejscu"
+    },
+    "stats": {
+      "antigravity": "Konta Antigravity",
+      "codex": "Konta Codex",
+      "currentAntigravity": "Bieżący Antigravity",
+      "currentCodex": "Bieżący Codex",
+      "providers": "Dostawcy",
+      "totalAccounts": "Łącznie kont"
+    },
+    "panels": {
+      "antigravity": "Antigravity",
+      "codex": "Codex",
+      "githubCopilot": "GitHub Copilot",
+      "planDistribution": "Rozkład planów",
+      "current": "Bieżące konto",
+      "recommended": "Polecane konto",
+      "empty": "Brak kont",
+      "emptyDesc": "Dodaj konto, aby zobaczyć szczegóły"
+    },
+    "quota": {
+      "remaining": "Pozostały limit {{value}}%",
+      "codex": "5 godzin {{hourly}}% · Tygodniowo {{weekly}}%"
+    },
+    "emptyAccount": "Brak konta",
+    "sections": {
+      "antigravity": "Konta Antigravity",
+      "codex": "Konta Codex"
+    },
+    "actions": {
+      "refresh": "Odśwież karty",
+      "viewAll": "Wszystkie konta"
+    },
+    "badges": {
+      "recommended": "Polecane"
+    },
+    "totalAccounts": "Łączna liczba kont",
+    "current": "Bieżące konto",
+    "recommended": "Polecane konto",
+    "noAccount": "Brak konta",
+    "switch": "Przełącz",
+    "switchTo": "Przełącz na to konto",
+    "noRecommendation": "Brak lepszej rekomendacji",
+    "noData": "Brak danych",
+    "viewAllAccounts": "Pokaż wszystkie konta"
+  },
+  "error": {
+    "fileCorrupted": {
+      "title": "Błąd odczytu pliku",
+      "description": "Plik {{fileName}} jest uszkodzony i nie można go przetworzyć.",
+      "errorInfo": "Szczegóły błędu",
+      "filePath": "Lokalizacja pliku",
+      "helpText": "Otwórz folder, aby naprawić plik ręcznie lub go usunąć, a następnie uruchom ponownie aplikację.",
+      "openFolder": "Otwórz folder"
+    }
+  },
+  "instances": {
+    "title": "Wiele instancji",
+    "subtitle": "Izolowane profile do równoległej pracy wielu kont.",
+    "defaultName": "Instancja domyślna",
+    "search": "Szukaj instancji",
+    "actions": {
+      "create": "Nowa instancja",
+      "refresh": "Odśwież",
+      "startAll": "Uruchom wszystkie",
+      "restartAll": "Restartuj wszystkie",
+      "stopAll": "Zatrzymaj wszystkie",
+      "start": "Uruchom",
+      "stop": "Zatrzymaj",
+      "openFolder": "Otwórz folder",
+      "edit": "Edytuj",
+      "openRootDir": "Otwórz folder",
+      "selectPath": "Wybierz ścieżkę",
+      "openWindow": "Otwórz okno"
+    },
+    "bulkConfirm": {
+      "startAll": "Uruchomić wszystkie zatrzymane instancje?",
+      "restartAll": "Zrestartować wszystkie uruchomione instancje?",
+      "stopAll": "Zamknąć wszystkie instancje?"
+    },
+    "status": {
+      "running": "Uruchomiona",
+      "stopped": "Zatrzymana",
+      "restarting": "Restartowanie",
+      "starting": "Startowy"
+    },
+    "labels": {
+      "path": "Katalog",
+      "args": "Argumenty uruchamiania",
+      "argsEmpty": "Brak",
+      "bindAccount": "Powiązane konto",
+      "unbound": "Brak powiązania",
+      "quota": "Limit",
+      "lastLaunched": "Ostatnie uruchomienie",
+      "pendingInit": "Oczekuje na inicjalizację (najpierw uruchom raz)"
+    },
+    "columns": {
+      "instance": "Instancja",
+      "email": "Konto",
+      "quota": "Status limitu",
+      "actions": "Akcje"
+    },
+    "empty": {
+      "title": "Brak instancji",
+      "desc": "Utwórz izolowany katalog konfiguracji, aby szybko uruchamiać wiele instancji."
+    },
+    "form": {
+      "name": "Nazwa instancji",
+      "namePlaceholder": "np. Konto służbowe",
+      "path": "Katalog instancji",
+      "pathPlaceholder": "Wybierz katalog",
+      "pathReadOnly": "Ścieżki nie można zmienić podczas edycji",
+      "pathAutoHint": "Ścieżka aktualizuje się automatycznie przy zmianie nazwy (lub wybierz ręcznie)",
+      "copyLogin": "Kopiuj aktualny stan logowania",
+      "copyLoginDesc": "Kopiuj konfigurację i dane logowania z domyślnego katalogu",
+      "copySource": "Kopiuj z instancji źródłowej",
+      "copySourceDesc": "Kopiuj konfigurację i dane logowania z wybranej instancji",
+      "copySourcePlaceholder": "Wybierz instancję źródłową",
+      "copySourceRequired": "Proszę wybrać instancję źródłową",
+      "copySourceRunningHint": "Instancja źródłowa jest uruchomiona. Zaleca się jej wcześniejsze zamknięcie, aby uniknąć niezgodności danych.",
+      "bindInject": "Powiąż konto",
+      "followCurrent": "Podążaj za aktualnym kontem",
+      "selectAccount": "Wybierz konto",
+      "bindAccount": "Powiąż konto",
+      "unbound": "Brak powiązania",
+      "extraArgs": "Własne argumenty uruchamiania",
+      "extraArgsPlaceholder": "np. --disable-gpu --log-level=2",
+      "extraArgsDesc": "Oddzielaj argumenty spacjami, cudzysłowy są obsługiwane",
+      "nameRequired": "Proszę podać nazwę instancji",
+      "pathRequired": "Proszę wybrać katalog instancji",
+      "bindRequired": "Proszę wybrać konto do powiązania",
+      "initMode": "Tryb inicjalizacji",
+      "initModeCopy": "Kopiuj z instancji źródłowej (domyślne)",
+      "initModeEmpty": "Pusta instancja (bez kopiowania)",
+      "emptyInitHint": "Po wybraniu opcji bez kopiowania zostanie utworzony tylko pusty katalog. Przed powiązaniem konta uruchom instancję raz.",
+      "bindAfterInit": "Można powiązać po inicjalizacji",
+      "bindDisabledHint": "Dla pustej instancji uruchom ją raz, aby utworzyć dane, a następnie powiąż konto."
+    },
+    "quota": {
+      "unbound": "Konto niepowiązane",
+      "accountMissing": "Nie znaleziono konta",
+      "empty": "Brak limitu w pamięci podręcznej"
+    },
+    "messages": {
+      "created": "Utworzono instancję",
+      "updated": "Zaktualizowano instancję",
+      "deleted": "Usunięto instancję",
+      "started": "Uruchomiono instancję",
+      "stopped": "Zatrzymano instancję",
+      "startedAll": "Wszystkie zatrzymane instancje zostały uruchomione",
+      "restartedAll": "Restartowano uruchomione instancje",
+      "closedAll": "Wszystkie instancje zostały zatrzymane",
+      "allAlreadyRunning": "Wszystkie instancje są już uruchomione",
+      "noneRunning": "Nie znaleziono uruchomionych instancji",
+      "emptyCreated": "Utworzono pustą instancję. Przed powiązaniem konta uruchom ją raz."
+    },
+    "runningDialog": {
+      "title": "Instancja jest już uruchomiona",
+      "desc": "Ta instancja jest już uruchomiona. Możesz przejść do okna lub zrestartować ją zgodnie z aktualną strategią.",
+      "current": "Aktualna strategia: {{name}}",
+      "pathLabel": "Katalog instancji",
+      "go": "Przełącz teraz",
+      "restart": "Zamknij i restartuj"
+    },
+    "restartStrategy": {
+      "button": "Strategia restartu",
+      "title": "Strategia restartu",
+      "desc": "Wybierz metodę restartu instancji. Każda opcja wpływa na zakres i stabilność.",
+      "recommended": "Zalecane",
+      "labels": {
+        "principle": "Zasada techniczna",
+        "command": "Komenda",
+        "pros": "Zalety",
+        "cons": "Wady"
+      },
+      "safe": {
+        "title": "Bezpieczny restart (Zalecane)",
+        "principle": "Wysyła sygnał SIGTERM do wszystkich procesów Antigravity, prosząc aplikację o zapisanie danych i zamknięcie się, a następnie uruchamia instancję docelową (wymusza zamknięcie w razie potrzeby).",
+        "commandMac": "macOS/Linux: kill -15 <pid> (wszystkie procesy Antigravity)",
+        "commandWin": "Windows: taskkill /F /PID <pid> (wszystkie procesy Antigravity)",
+        "pros": "Najbardziej zbliżone do normalnego zamknięcia, mniejsze prawdopodobieństwo błędów, bezpieczniejsze dane.",
+        "cons": "Obsługuje tylko globalny restart wszystkich instancji."
+      },
+      "force": {
+        "title": "Wymuszony restart",
+        "principle": "Identyfikuje procesy poprzez --user-data-dir i zamyka je siłą (SIGKILL / taskkill /F), a następnie uruchamia instancję docelową.",
+        "commandMac": "macOS/Linux: pkill -9 -f \"--katalog-danych-użytkownika __MASKA_0__\"",
+        "commandWin": "Windows: taskkill /F /PID <pid> (dopasowanie do --user-data-dir)",
+        "pros": "Może precyzyjnie zrestartować pojedynczą instancję.",
+        "cons": "Może spowodować ostrzeżenie o „nieoczekiwanym zamknięciu”, ryzyko utraty niezapisanych danych."
+      }
+    },
+    "stop": {
+      "title": "Wymuś zatrzymanie instancji",
+      "message": "Wysyła sygnał zatrzymania (SIGTERM) do procesu instancji. Niezapisane dane mogą zostać utracone. Kontynuować?"
+    },
+    "delete": {
+      "title": "Usuń instancję",
+      "message": "Czy usunąć instancję {{name}}? Spowoduje to usunięcie konfiguracji i folderu instancji."
+    },
+    "modal": {
+      "createTitle": "Nowa instancja",
+      "editTitle": "Edytuj instancję"
+    },
+    "sort": {
+      "label": "Sortowanie",
+      "createdAt": "Według czasu utworzenia",
+      "lastLaunchedAt": "Według czasu uruchomienia",
+      "ascTooltip": "Obecnie: rosnąco, kliknij aby przełączyć na malejąco",
+      "descTooltip": "Obecnie: malejąco, kliknij aby przełączyć na rosnąco",
+      "toggleDirection": "Przełącz kierunek sortowania"
+    },
+    "initGuide": {
+      "title": "Instancja nie jest jeszcze zainicjalizowana",
+      "desc": "To jest pusta instancja. Obecnie utworzono tylko katalog, a dane instancji nie zostały jeszcze wygenerowane.",
+      "tip": "Najpierw uruchom instancję raz. Po zakończeniu inicjalizacji będzie można powiązać konto.",
+      "startNow": "Uruchom teraz"
+    }
+  },
+  "appPath": {
+    "missing": {
+      "title": "Nie znaleziono ścieżki aplikacji",
+      "desc": "Nie udało się znaleźć ścieżki aplikacji {{app}}. Ustaw ją teraz, aby kontynuować.",
+      "action": "Ustaw teraz"
+    }
+  },
+  "githubCopilot": {
+    "title": "Zarządzanie kontami GitHub Copilot",
+    "instances": {
+      "unsupported": {
+        "desc": "Multi-instancja GitHub Copilot jest obecnie dostępna tylko na macOS."
+      }
+    },
+    "empty": {
+      "description": "Kliknij „Dodaj konto”, aby rozpocząć"
+    },
+    "addModal": {
+      "title": "Dodaj konto GitHub Copilot"
+    },
+    "oauth": {
+      "desc": "Kliknij poniżej i dokończ autoryzację GitHub Copilot w przeglądarce."
+    },
+    "token": {
+      "desc": "Wklej token dostępu GitHub Copilot lub wyeksportowane dane JSON."
+    },
+    "import": {
+      "localDesc": "Importuj konta GitHub Copilot z lokalnie zalogowanych sesji."
+    },
+    "sort": {
+      "weekly": "Limit tygodniowy",
+      "hourly": "Limit 5-godzinny",
+      "weeklyReset": "Czas tygodniowego resetu",
+      "hourlyReset": "Czas resetu 5-godzinnego"
+    },
+    "columns": {
+      "hourly": "Limit 5h",
+      "weekly": "Limit tyg."
+    },
+    "flowNotice": {
+      "title": "Przewodnik po kontach GitHub Copilot (kliknij, aby rozwinąć/zwinąć)",
+      "desc": "Przełączanie konta wymaga odczytu lokalnego magazynu uwierzytelniania VS Code oraz użycia systemowej usługi poświadczeń do odszyfrowania i ponownego zapisu; dane są przetwarzane wyłącznie lokalnie.",
+      "reason": "Zakres uprawnień: odczyt bazy uwierzytelniania VS Code (state.vscdb) oraz użycie szyfrowania systemowego (Windows DPAPI / macOS Keychain / Linux Secret Service) do odszyfrowania i ponownego zapisu.",
+      "storage": "Zakres odczytu: przetwarzane są tylko dane związane z sesją logowania GitHub; wszystkie procesy są wykonywane lokalnie.",
+      "inject": "Przełączanie jednym kliknięciem: to narzędzie odczytuje lokalny materiał szyfrujący VS Code (DPAPI/Keychain/Secret Service), odszyfrowuje sesję uwierzytelniania w state.vscdb, podmienia token GitHub Copilot i ponownie szyfruje dane — wszystko lokalnie na Twoim urządzeniu."
+    },
+    "injectToVSCode": "Przełącz do VS Code",
+    "injectSuccess": "Token został pomyślnie wstrzyknięty do VS Code. VS Code jest uruchamiany.",
+    "injectRequireClose": "Przed wstrzyknięciem zamknij VS Code."
+  },
+  "quickSettings": {
+    "antigravity": {
+      "title": "Ustawienia Antigravity",
+      "appPath": "Ścieżka aplikacji"
+    },
+    "codex": {
+      "title": "Ustawienia Codex",
+      "appPath": "Ścieżka aplikacji"
+    },
+    "githubCopilot": {
+      "title": "Ustawienia GitHub Copilot",
+      "appPath": "Ścieżka VS Code"
+    },
+    "refreshInterval": "Automatyczne odświeżanie limitu",
+    "codexRefreshInterval": "Automatyczne odświeżanie limitu",
+    "ghcpRefreshInterval": "Automatyczne odświeżanie limitu",
+    "autoSwitch": {
+      "title": "Automatyczne przełączanie",
+      "enable": "Automatyczne przełączanie",
+      "threshold": "Próg przełączania",
+      "thresholdDesc": "Automatyczne przełączanie zostanie wyzwolone, gdy limit dowolnego modelu spadnie poniżej tego procentu",
+      "hint": "Automatycznie przełącza na konto z najwyższym limitem, gdy limit dowolnego modelu spadnie poniżej progu."
+    },
+    "quotaAlert": {
+      "title": "Alert limitu",
+      "enable": "Włącz alert limitu",
+      "threshold": "Próg alertu",
+      "thresholdDesc": "Wyzwól alert, gdy limit dowolnego modelu spadnie poniżej tego procentu",
+      "hint": "Gdy limit dowolnego modelu bieżącego konta spadnie poniżej progu, wyślij natywne powiadomienie i pokaż w aplikacji akcję szybkiego przełączenia konta."
+    },
+    "customInput": "Niestandardowy",
+    "apply": "Zastosuj",
+    "inputMinutes": "Wpisz minuty",
+    "inputPercent": "Wpisz procent",
+    "windsurf": {
+      "title": "Ustawienia Windsurf",
+      "appPath": "Ścieżka Windsurf"
+    },
+    "windsurfRefreshInterval": "Automatyczne odświeżanie limitu",
+    "kiro": {
+      "title": "Ustawienia Kiro",
+      "appPath": "Ścieżka Kiro"
+    },
+    "kiroRefreshInterval": "Limit automatycznego odświeżania"
+  },
+  "quotaAlert": {
+    "bannerText": "Alert limitu dla {{email}} (próg {{threshold}}%, minimum {{lowest}}%, modele: {{models}})",
+    "switchAction": "Szybkie przełączenie: {{email}}",
+    "switching": "Przełączanie...",
+    "switchFailed": "Szybkie przełączenie nie powiodło się: {{error}}",
+    "modal": {
+      "title": "Alert limitu",
+      "desc": "Limit bieżącego konta osiągnął próg alertu. Zajmij się tym jak najszybciej.",
+      "unknownModel": "Nieznany model",
+      "platform": "Platforma",
+      "account": "Bieżące konto",
+      "threshold": "Próg alertu",
+      "lowest": "Bieżące minimum",
+      "models": "Modele wyzwalające",
+      "recommended": "Zalecane przełączenie",
+      "noRecommendation": "Brak dostępnego konta do przełączenia",
+      "later": "Później",
+      "openSettings": "Dostosuj ustawienia alertu",
+      "switchNow": "Szybko przełącz na {{email}}",
+      "switchFailedTitle": "Przełączenie nie powiodło się",
+      "switchFailedBody": "Szybkie przełączenie nie powiodło się: {{error}}"
+    }
+  },
+  "privacy": {
+    "hideSensitive": "Ukryj e-maile",
+    "showSensitive": "Pokaż e-maile"
+  },
+  "windsurf": {
+    "title": "Zarządzanie kontami Windsurf",
+    "instances": {
+      "unsupported": {
+        "desc": "Multi-instancja Windsurf jest obecnie dostępna tylko na macOS."
+      }
+    },
+    "empty": {
+      "description": "Kliknij „Dodaj konto”, aby rozpocząć"
+    },
+    "addModal": {
+      "title": "Dodaj konto Windsurf",
+      "password": "E-mail i hasło"
+    },
+    "oauth": {
+      "desc": "Kliknij poniżej i dokończ autoryzację Windsurf w przeglądarce."
+    },
+    "token": {
+      "desc": "Wklej token dostępu Windsurf lub wyeksportowane dane JSON."
+    },
+    "import": {
+      "localDesc": "Importuj konta Windsurf z lokalnie zalogowanych sesji.",
+      "localClient": "Importuj z lokalnego Windsurf"
+    },
+    "credits": {
+      "title": "Plan",
+      "renewMonthly": "Kredyty odnawiają się co miesiąc",
+      "left": "Pozostało {{count}} kredytów",
+      "leftUnknown": "Pozostałe kredyty -",
+      "promptLeft": "Pozostało {{remaining}}/{{total}} kredytów promptów",
+      "promptLeftNoTotal": "Pozostało {{remaining}} kredytów promptów",
+      "promptLeftUnknown": "Pozostałe kredyty promptów -",
+      "addOnAvailable": "{{count}} dodatkowych kredytów dostępnych"
+    },
+    "columns": {
+      "plan": "Etykieta"
+    },
+    "injectToVSCode": "Przełącz do Windsurf",
+    "injectSuccess": "Przełączenie zakończone. Windsurf uruchamia się.",
+    "injectRequireClose": "Zamknij Windsurf przed przełączeniem.",
+    "flowNotice": {
+      "title": "Przewodnik po kontach Windsurf (kliknij, aby rozwinąć/zwinąć)",
+      "desc": "Przełączanie konta wymaga odczytu lokalnego magazynu uwierzytelniania Windsurf oraz użycia systemowej usługi poświadczeń do odszyfrowania i ponownego zapisu; dane są przetwarzane wyłącznie lokalnie.",
+      "inject": "Przełączanie jednym kliknięciem: to narzędzie odczytuje lokalny materiał szyfrujący Windsurf (DPAPI/Keychain/Secret Service), odszyfrowuje sesję uwierzytelniania w state.vscdb, podmienia token Windsurf i ponownie szyfruje dane — wszystko lokalnie na Twoim urządzeniu.",
+      "reason": "Zakres uprawnień: odczyt bazy uwierzytelniania Windsurf (state.vscdb) oraz użycie szyfrowania systemowego (Windows DPAPI / macOS Keychain / Linux Secret Service) do odszyfrowania i ponownego zapisu.",
+      "storage": "Zakres odczytu: przetwarzane są tylko dane związane z sesją logowania Windsurf; wszystkie procesy są wykonywane lokalnie."
+    },
+    "password": {
+      "desc": "Zaloguj się adresem e-mail i hasłem konta Windsurf, aby automatycznie pobrać klucz API i informacje o koncie.",
+      "emailPlaceholder": "Adres e-mail",
+      "passwordPlaceholder": "Hasło",
+      "login": "Zaloguj się",
+      "logging": "Logowanie...",
+      "empty": "Wprowadź e-mail i hasło",
+      "success": "Logowanie udane: {{login}}",
+      "failed": "Logowanie nieudane: {{error}}"
+    }
+  },
+  "platformLayout": {
+    "title": "Układ platform",
+    "sidebarSelected": "Wybrane na pasku bocznym {{count}}/{{max}}",
+    "reset": "Przywróć domyślne",
+    "tip": "Przeciągnij, aby zmienić kolejność. Na pasku bocznym można wyświetlić maksymalnie dwie platformy. Jeśli wybrana jest tylko jedna, zostanie wyświetlona tylko jedna.",
+    "sidebarToggle": "Pokaż na pasku bocznym",
+    "dashboardToggle": "Pokaż na pulpicie",
+    "trayToggle": "Pokaż w zasobniku",
+    "hiddenBadge": "Ukryte",
+    "openFromMore": "Zarządzaj układem platform",
+    "dragHandleLabel": "Przeciągnij, aby zmienić kolejność"
+  },
+  "breakout": {
+    "gameOver": "Koniec gry",
+    "gameOverRank": "Aktualna pozycja lokalna #{{rank}}",
+    "startGame": "Rozpocznij grę",
+    "startHint": "Kliknij start lub naciśnij Spację",
+    "rankTitle": "Lokalny ranking historyczny",
+    "rankCurrent": "Aktualny",
+    "rankNoData": "--",
+    "restart": "Zrestartuj",
+    "pause": "Pauza",
+    "resume": "Wznów",
+    "paused": "Wstrzymano",
+    "level": "Poziom {{level}}",
+    "levelScore": "Wynik poziomu {{score}}",
+    "levelCleared": "Poziom ukończony",
+    "nextLevel": "Następny poziom",
+    "history": "Historia",
+    "historyShort": "Historia",
+    "historyEmpty": "Brak zapisów",
+    "historyClear": "Wyczyść",
+    "historyScoreShort": "Wynik {{score}}",
+    "historyLevelShort": "Poziom __MASKA_0__",
+    "historyDurationShort": "Czas {{duration}}",
+    "historyReasonGameOver": "Koniec gry",
+    "historyReasonManualExit": "Ręczne wyjście",
+    "serveHint": "Naciśnij spację, aby wystrzelić piłkę",
+    "ranking": "Historia lokalna",
+    "rankingShort": "Lokalna",
+    "rankingEmpty": "Brak lokalnych zapisów",
+    "rankingClear": "Wyczyść lokalny ranking",
+    "rankingRankShort": "#{{rank}}"
+  },
+  "kiro": {
+    "account": {
+      "signedInWith": "Zalogowano się za pomocą {{provider}}",
+      "providerUnknown": "Nieznany",
+      "userId": "Identyfikator użytkownika"
+    },
+    "credits": {
+      "estimatedResetOn": "Szacowane użycie resetuje się {{date}}",
+      "bonusUsageLine": "{{used}} użyto / łącznie {{total}}",
+      "planUsageCoveredLine": "{{used}} używana / {{total}} uwzględniona w planie",
+      "expiryDays": "__MASKA_0__ dni",
+      "expiryUnknown": "—",
+      "resetNow": "Zresetuj wkrótce",
+      "resetInHours": "Resetuje się za {{hours}}h",
+      "resetInMinutes": "Resetuje się za {{minutes}}m"
+    },
+    "columns": {
+      "bonusCredits": "Kredyty bonusowe",
+      "estimatedUsage": "Szacowane użycie",
+      "expiry": "Wygaśnięcie",
+      "estUsage": "Szac. Stosowanie"
+    },
+    "plan": {
+      "free": "Kiro Free",
+      "individual": "Kiro Individual",
+      "pro": "Kiro Pro",
+      "business": "Kiro Business",
+      "enterprise": "Kiro Enterprise",
+      "unknown": "Nieznany"
+    },
+    "flowNotice": {
+      "title": "Przewodnik konta Kiro (kliknij, aby rozwinąć/zwinąć)",
+      "desc": "Przełączanie konta odczytuje i zapisuje lokalne pliki uwierzytelniania Kiro oraz ustawienia instancji na tym urządzeniu; logowanie OAuth i odświeżanie limitów wywołują oficjalne API Kiro.",
+      "reason": "Przetwarzane ścieżki obejmują ~/.aws/sso/cache/kiro-auth-token.json, plik profile.json instancji oraz wpis kiro.kiroAgent w state.vscdb.",
+      "storage": "Przetwarzane dane obejmują informacje o sesji i limitach Kiro; żądania do oficjalnych API Kiro wysyłają wymagane pola uwierzytelniające (np. code, refreshToken, accessToken i profileArn)."
+    },
+    "title": "Zarządzanie kontem Kiro",
+    "instances": {
+      "unsupported": {
+        "descPlatform": "Multiinstancja Kiro jest dostępna tylko na systemach macOS, Windows i Linux."
+      }
+    },
+    "empty": {
+      "description": "Kliknij „Dodaj konto”, aby rozpocząć zarządzanie swoimi kontami Kiro"
+    },
+    "addModal": {
+      "title": "Dodaj konto Kiro"
+    },
+    "oauth": {
+      "desc": "Kliknij poniższy przycisk i dokończ autoryzację Kiro w swojej przeglądarce."
+    },
+    "token": {
+      "desc": "Wklej token dostępu Kiro lub wyeksportowane dane JSON."
+    },
+    "import": {
+      "localDesc": "Zaimportuj dane konta Kiro z lokalnego klienta Kiro lub pliku JSON.",
+      "localClient": "Importuj z lokalnego Kiro"
+    },
+    "injectToVSCode": "Przełącz się na Kiro"
+  }
+}
