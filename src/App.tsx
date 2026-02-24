@@ -44,6 +44,12 @@ const KiroAccountsPage = lazy(() =>
 const KiroProxyPage = lazy(() =>
   import('./pages/KiroProxyPage').then((module) => ({ default: module.KiroProxyPage })),
 );
+const AntigravityProxyPage = lazy(() =>
+  import('./pages/AntigravityProxyPage').then((module) => ({ default: module.AntigravityProxyPage })),
+);
+const ProxyPage = lazy(() =>
+  import('./pages/ProxyPage').then((module) => ({ default: module.ProxyPage })),
+);
 const FingerprintsPage = lazy(() =>
   import('./pages/FingerprintsPage').then((module) => ({ default: module.FingerprintsPage })),
 );
@@ -448,42 +454,42 @@ function App() {
       const hasRecommendation = Boolean(payload.recommended_account_id && payload.recommended_email);
       const modelsText = payload.low_models.length > 0
         ? payload.low_models.join(', ')
-        : t('quotaAlert.modal.unknownModel', '未知模型');
+        : t('quotaAlert.modal.unknownModel', 'Unknown model');
 
       showModal({
-        title: t('quotaAlert.modal.title', '配额预警'),
+        title: t('quotaAlert.modal.title', 'Quota Alert'),
         description: t(
           'quotaAlert.modal.desc',
-          '当前账号配额已达到预警阈值，请尽快处理。'
+          'The current account quota has reached the alert threshold. Please handle it soon.'
         ),
         width: 'md',
         closeOnOverlay: false,
         content: (
           <div className="quota-alert-modal-content">
             <div className="quota-alert-modal-row">
-              <span>{t('quotaAlert.modal.platform', '平台')}</span>
+              <span>{t('quotaAlert.modal.platform', 'Platform')}</span>
               <strong>{platformLabel}</strong>
             </div>
             <div className="quota-alert-modal-row">
-              <span>{t('quotaAlert.modal.account', '当前账号')}</span>
+              <span>{t('quotaAlert.modal.account', 'Current account')}</span>
               <strong>{payload.current_email}</strong>
             </div>
             <div className="quota-alert-modal-row">
-              <span>{t('quotaAlert.modal.threshold', '预警阈值')}</span>
+              <span>{t('quotaAlert.modal.threshold', 'Alert threshold')}</span>
               <strong>{payload.threshold}%</strong>
             </div>
             <div className="quota-alert-modal-row">
-              <span>{t('quotaAlert.modal.lowest', '当前最低')}</span>
+              <span>{t('quotaAlert.modal.lowest', 'Current lowest')}</span>
               <strong>{payload.lowest_percentage}%</strong>
             </div>
             <div className="quota-alert-modal-row quota-alert-modal-row--stack">
-              <span>{t('quotaAlert.modal.models', '触发模型')}</span>
+              <span>{t('quotaAlert.modal.models', 'Triggered models')}</span>
               <strong>{modelsText}</strong>
             </div>
             <div className="quota-alert-modal-row">
-              <span>{t('quotaAlert.modal.recommended', '建议切换')}</span>
+              <span>{t('quotaAlert.modal.recommended', 'Recommended switch')}</span>
               <strong>
-                {payload.recommended_email || t('quotaAlert.modal.noRecommendation', '暂无可切换账号')}
+                {payload.recommended_email || t('quotaAlert.modal.noRecommendation', 'No switch candidate available')}
               </strong>
             </div>
           </div>
@@ -491,12 +497,12 @@ function App() {
         actions: [
           {
             id: 'quota-alert-later',
-            label: t('quotaAlert.modal.later', '稍后处理'),
+            label: t('quotaAlert.modal.later', 'Later'),
             variant: 'secondary',
           },
           {
             id: 'quota-alert-open-settings',
-            label: t('quotaAlert.modal.openSettings', '调整预警设置'),
+            label: t('quotaAlert.modal.openSettings', 'Adjust alert settings'),
             variant: 'secondary',
             autoClose: false,
             onClick: () => {
@@ -506,7 +512,7 @@ function App() {
           ...(hasRecommendation
             ? [{
                 id: 'quota-alert-switch',
-                label: t('quotaAlert.modal.switchNow', '快捷切号到 {{email}}', {
+                label: t('quotaAlert.modal.switchNow', 'Quick switch to {{email}}', {
                   email: payload.recommended_email as string,
                 }),
                 variant: 'primary' as const,
@@ -533,8 +539,8 @@ function App() {
                     closeModal();
                   } catch (error) {
                     showModal({
-                      title: t('quotaAlert.modal.switchFailedTitle', '切号失败'),
-                      description: t('quotaAlert.modal.switchFailedBody', '快捷切号失败：{{error}}', {
+                      title: t('quotaAlert.modal.switchFailedTitle', 'Switch failed'),
+                      description: t('quotaAlert.modal.switchFailedBody', 'Quick switch failed: {{error}}', {
                         error: String(error),
                       }),
                       width: 'sm',
@@ -1042,7 +1048,9 @@ function App() {
           {page === 'github-copilot' && <GitHubCopilotAccountsPage />}
           {page === 'windsurf' && <WindsurfAccountsPage />}
           {page === 'kiro' && <KiroAccountsPage />}
+          {page === 'proxy' && <ProxyPage />}
           {page === 'kiro-proxy' && <KiroProxyPage />}
+          {page === 'antigravity-proxy' && <AntigravityProxyPage />}
           {page === 'instances' && <InstancesPage onNavigate={setPage} />}
           {page === 'fingerprints' && <FingerprintsPage onNavigate={setPage} />}
           {page === 'wakeup' && <WakeupTasksPage onNavigate={setPage} />}

@@ -7,22 +7,42 @@
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)。
 
 ---
+## [0.8.19] - 2026-02-24
+
+### 新增
+- **Proxy 统一分类入口**：Antigravity Proxy 与 Kiro Proxy 现已合并到侧边栏单一 `Proxy` 导航入口，并支持页面内切换。
+
+### 变更
+- **Proxy 模型缓存策略增强**：补强 TTL 处理，新增 stale cache 回退与缓存触发回写（touch/backoff），减少上游模型接口的重复请求。
+- **侧边栏视觉细节优化**：优化悬浮侧边栏图标间距/对齐，并将激活态样式统一为蓝色渐变强调。
+
+### 修复
+- **Kiro 无效 Bearer Token 刷新循环**：针对持续 `403 invalid bearer token` 场景限制刷新重试次数，并将不可用账号从 Kiro Proxy 账号池路由中排除。
+- **加载态与通知文案回退修复**：页面 loading 回退改为居中显示，并移除配额预警通知中的硬编码中文 fallback 文案。
+
+---
 ## [0.8.18] - 2026-02-24
 
 ### 新增
 - **Kiro API Proxy 独立模块与页面**：新增原生 Rust `kiro_proxy` 服务，支持服务生命周期命令、OpenAI/Claude 兼容代理路由、管理端点、API Key 鉴权与用量统计、模型刷新命令，并提供独立 Proxy 页面进行完整控制。
 - **Kiro OAuth 登录源与高级项扩展**：新增 `Google`、`GitHub`、`BuilderId/AWSIdC`、`Enterprise (IAM Identity Center)` 登录源，补充 AWS 专用区域与企业 Start URL 输入，并支持可选无痕窗口打开授权。
+- **Antigravity Core API Proxy 模块与管理页**：新增原生 Rust `antigravity_proxy`，提供 OpenAI 兼容核心端点（`GET /v1/models`、`POST /v1/chat/completions` 流式/非流式），并配套完整 Tauri 命令与独立管理页面。
+- **Proxy 统一导航入口**：侧边栏新增单一 `Proxy` 分类入口，在页面内可切换 `Antigravity Proxy` 与 `Kiro Proxy`。
 
 ### 变更
 - **Kiro 模型来源统一为 Kiro API**：移除代理模型列表中的硬编码/别名回退，模型统一通过上游 `ListAvailableModels` 获取并配合缓存刷新控制。
 - **Proxy 运行态与配置交互优化**：优化 Kiro Proxy 页面布局与控件对齐；服务运行时禁用无效 Start 操作；修复运行状态/在线时长展示；移除 Live Events 面板；为配置项补充行内说明提示。
 - **添加账号 OAuth 触发行为调整**：打开 Add Account 不再自动发起 OAuth，改为在弹窗中明确选择后再触发。
 - **Kiro Token 生命周期策略对齐系统实现**：移除 Kiro-account-manager 风格的远程 refresh 回退链路，改为依赖系统内 Kiro OAuth/token 流程。
+- **双 Proxy 模型缓存策略增强**：补强模型缓存 TTL 处理，新增上游/鉴权失败时的 stale cache 回退与缓存时间戳触发回写，减少持续重复拉取模型。
+- **侧边栏视觉一致性优化**：调整悬浮侧边栏图标间距与对齐，并将激活态改为蓝色渐变强调，避免深色主题下出现白色块状激活效果。
 
 ### 修复
 - **Kiro 模型请求重复触发**：增加 single-flight + 短窗口复用，避免 `ListAvailableModels` 并发场景重复请求上游。
 - **配额/用量获取回退能力**：优化 Kiro 配额与运行态用量拉取，在部分可选身份字段缺失时，AWS 相关用量解析仍可继续。
 - **OAuth 成功后误打 cancel 日志**：修复 OAuth 成功后流程状态清理边界问题，避免成功后出现误导性的 `cancel` 日志。
+- **Kiro 无效 Bearer Token 重试循环**：修复上游持续返回 `403 The bearer token included in the request is invalid` 时的模型拉取刷新循环；刷新尝试次数受限，且无效账号会在 Proxy 账号池中自动跳过。
+- **加载态与通知文案本地化细节**：全局页面 loading 回退位置改为居中显示，并移除配额预警通知中的硬编码中文 fallback，遵循当前语言环境。
 
 ### 移除
 - **Kiro Subscription API 接入移除**：本次范围内移除 `listAvailableSubscriptions` 与 `CreateSubscriptionToken` 的集成面。

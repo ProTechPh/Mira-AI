@@ -152,6 +152,8 @@
     "codex": "Codex Accounts",
     "githubCopilot": "GitHub Copilot",
     "windsurf": "Windsurf",
+    "proxy": "Proxy",
+    "antigravityProxy": "Antigravity Proxy",
     "kiroProxy": "Kiro Proxy",
     "dashboard": "Dashboard",
     "morePlatforms": "More Platforms",
@@ -283,6 +285,92 @@
       "mappingsSaved": "Model mappings saved",
       "subscriptionsFetched": "Subscriptions fetched",
       "subscriptionTokenFetched": "Subscription token fetched",
+      "statsReset": "Stats reset"
+    }
+  },
+  "antigravityProxy": {
+    "title": "Antigravity API Proxy",
+    "subtitle": "OpenAI-compatible Antigravity proxy service",
+    "actions": {
+      "start": "Start",
+      "stop": "Stop",
+      "restart": "Restart",
+      "saveConfig": "Save Config",
+      "syncAccounts": "Sync Accounts",
+      "refreshModels": "Refresh Models",
+      "resetStats": "Reset Stats"
+    },
+    "status": {
+      "title": "Runtime Status",
+      "state": "State",
+      "running": "Running",
+      "stopped": "Stopped",
+      "uptime": "Uptime",
+      "totalRequests": "Requests",
+      "tokens": "Tokens"
+    },
+    "config": {
+      "title": "Proxy Config",
+      "enabled": "Enabled",
+      "autoStart": "Auto start",
+      "authEnabled": "Enable API key auth",
+      "multiAccount": "Enable multi-account routing",
+      "logRequests": "Log requests",
+      "host": "Host",
+      "port": "Port",
+      "apiKey": "API Key",
+      "maxRetries": "Max retries",
+      "retryDelayMs": "Retry delay (ms)",
+      "modelCacheTtlSec": "Model cache TTL (sec)",
+      "tokenRefreshBeforeExpirySec": "Token refresh before expiry (sec)"
+    },
+    "accounts": {
+      "title": "Account Pool",
+      "email": "Email",
+      "requests": "Requests",
+      "errors": "Errors",
+      "cooldown": "Cooldown",
+      "empty": "No Antigravity accounts found"
+    },
+    "models": {
+      "title": "Models",
+      "id": "Model ID",
+      "name": "Name",
+      "source": "Source",
+      "empty": "No models loaded"
+    },
+    "logs": {
+      "title": "Request Logs",
+      "clear": "Clear",
+      "time": "Time",
+      "path": "Path",
+      "model": "Model",
+      "account": "Account",
+      "tokens": "Tokens",
+      "latency": "Latency",
+      "status": "Status",
+      "empty": "No request logs"
+    },
+    "stats": {
+      "title": "Stats",
+      "total": "Total",
+      "success": "Success",
+      "failed": "Failed",
+      "inputTokens": "Input Tokens",
+      "outputTokens": "Output Tokens"
+    },
+    "endpoints": {
+      "title": "Endpoint Docs",
+      "base": "Base URL"
+    },
+    "messages": {
+      "started": "Proxy started",
+      "stopped": "Proxy stopped",
+      "restarted": "Proxy restarted",
+      "configSaved": "Config saved",
+      "accountsSynced": "Accounts synced",
+      "modelsRefreshed": "Models refreshed",
+      "logsCleared": "Logs cleared",
       "statsReset": "Stats reset"
     }
   },

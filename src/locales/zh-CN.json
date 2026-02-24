@@ -153,6 +153,8 @@
     "codex": "Codex 账号",
     "githubCopilot": "GitHub Copilot",
     "windsurf": "Windsurf",
+    "proxy": "代理",
+    "antigravityProxy": "Antigravity 代理",
     "kiroProxy": "Kiro 代理",
     "morePlatforms": "更多平台",
     "instances": "多开实例"
@@ -283,6 +285,92 @@
       "mappingsSaved": "模型映射已保存",
       "subscriptionsFetched": "订阅列表已拉取",
       "subscriptionTokenFetched": "订阅 Token 已获取",
+      "statsReset": "统计已重置"
+    }
+  },
+  "antigravityProxy": {
+    "title": "Antigravity API 代理",
+    "subtitle": "兼容 OpenAI 的 Antigravity 代理服务",
+    "actions": {
+      "start": "启动",
+      "stop": "停止",
+      "restart": "重启",
+      "saveConfig": "保存配置",
+      "syncAccounts": "同步账号",
+      "refreshModels": "刷新模型",
+      "resetStats": "重置统计"
+    },
+    "status": {
+      "title": "运行状态",
+      "state": "状态",
+      "running": "运行中",
+      "stopped": "已停止",
+      "uptime": "运行时长",
+      "totalRequests": "请求数",
+      "tokens": "Token 数"
+    },
+    "config": {
+      "title": "代理配置",
+      "enabled": "启用代理",
+      "autoStart": "自动启动",
+      "authEnabled": "启用 API Key 鉴权",
+      "multiAccount": "启用多账号轮询",
+      "logRequests": "记录请求日志",
+      "host": "主机",
+      "port": "端口",
+      "apiKey": "API Key",
+      "maxRetries": "最大重试次数",
+      "retryDelayMs": "重试间隔（毫秒）",
+      "modelCacheTtlSec": "模型缓存 TTL（秒）",
+      "tokenRefreshBeforeExpirySec": "提前刷新 Token（秒）"
+    },
+    "accounts": {
+      "title": "账号池",
+      "email": "邮箱",
+      "requests": "请求数",
+      "errors": "错误数",
+      "cooldown": "冷却",
+      "empty": "未发现 Antigravity 账号"
+    },
+    "models": {
+      "title": "模型列表",
+      "id": "模型 ID",
+      "name": "名称",
+      "source": "来源",
+      "empty": "暂无模型数据"
+    },
+    "logs": {
+      "title": "请求日志",
+      "clear": "清空",
+      "time": "时间",
+      "path": "路径",
+      "model": "模型",
+      "account": "账号",
+      "tokens": "Token",
+      "latency": "延迟",
+      "status": "状态",
+      "empty": "暂无请求日志"
+    },
+    "stats": {
+      "title": "统计信息",
+      "total": "总请求",
+      "success": "成功",
+      "failed": "失败",
+      "inputTokens": "输入 Token",
+      "outputTokens": "输出 Token"
+    },
+    "endpoints": {
+      "title": "端点说明",
+      "base": "基础地址"
+    },
+    "messages": {
+      "started": "代理已启动",
+      "stopped": "代理已停止",
+      "restarted": "代理已重启",
+      "configSaved": "配置已保存",
+      "accountsSynced": "账号已同步",
+      "modelsRefreshed": "模型已刷新",
+      "logsCleared": "日志已清空",
       "statsReset": "统计已重置"
     }
   },

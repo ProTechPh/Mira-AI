@@ -133,6 +133,9 @@ pub struct UserConfig {
     /// Kiro API 代理配置
     #[serde(default)]
     pub kiro_proxy: KiroProxyConfig,
+    /// Antigravity API 代理配置
+    #[serde(default)]
+    pub antigravity_proxy: AntigravityProxyConfig,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -265,7 +268,42 @@ pub struct KiroProxyConfig {
     pub model_mappings: Vec<KiroProxyModelMappingRule>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct AntigravityProxyConfig {
+    #[serde(default)]
+    pub enabled: bool,
+    #[serde(default)]
+    pub auto_start: bool,
+    #[serde(default = "default_antigravity_proxy_host")]
+    pub host: String,
+    #[serde(default = "default_antigravity_proxy_port")]
+    pub port: u16,
+    #[serde(default)]
+    pub auth_enabled: bool,
+    #[serde(default)]
+    pub api_key: Option<String>,
+    #[serde(default = "default_true")]
+    pub enable_multi_account: bool,
+    #[serde(default)]
+    pub selected_account_ids: Vec<String>,
+    #[serde(default = "default_true")]
+    pub log_requests: bool,
+    #[serde(default = "default_antigravity_proxy_max_retries")]
+    pub max_retries: u32,
+    #[serde(default = "default_antigravity_proxy_retry_delay_ms")]
+    pub retry_delay_ms: u64,
+    #[serde(default = "default_antigravity_proxy_model_cache_ttl_sec")]
+    pub model_cache_ttl_sec: u64,
+    #[serde(default = "default_antigravity_proxy_token_refresh_before_expiry_sec")]
+    pub token_refresh_before_expiry_sec: u64,
+}
+
 fn default_proxy_host() -> String {
+    "127.0.0.1".to_string()
+}
+
+fn default_antigravity_proxy_host() -> String {
     "127.0.0.1".to_string()
 }
 
@@ -273,12 +311,24 @@ fn default_proxy_port() -> u16 {
     5580
 }
 
+fn default_antigravity_proxy_port() -> u16 {
+    5581
+}
+
 fn default_proxy_max_retries() -> u32 {
     3
 }
 
+fn default_antigravity_proxy_max_retries() -> u32 {
+    2
+}
+
 fn default_proxy_retry_delay_ms() -> u64 {
     1000
+}
+
+fn default_antigravity_proxy_retry_delay_ms() -> u64 {
+    800
 }
 
 fn default_thinking_output_format() -> String {
@@ -289,7 +339,15 @@ fn default_proxy_model_cache_ttl_sec() -> u64 {
     300
 }
 
+fn default_antigravity_proxy_model_cache_ttl_sec() -> u64 {
+    300
+}
+
 fn default_proxy_token_refresh_before_expiry_sec() -> u64 {
+    300
+}
+
+fn default_antigravity_proxy_token_refresh_before_expiry_sec() -> u64 {
     300
 }
 
@@ -331,6 +389,27 @@ impl Default for KiroProxyConfig {
             token_refresh_before_expiry_sec: default_proxy_token_refresh_before_expiry_sec(),
             auto_switch_on_quota_exhausted: false,
             model_mappings: Vec::new(),
+        }
+    }
+}
+
+impl Default for AntigravityProxyConfig {
+    fn default() -> Self {
+        Self {
+            enabled: false,
+            auto_start: false,
+            host: default_antigravity_proxy_host(),
+            port: default_antigravity_proxy_port(),
+            auth_enabled: false,
+            api_key: None,
+            enable_multi_account: true,
+            selected_account_ids: Vec::new(),
+            log_requests: true,
+            max_retries: default_antigravity_proxy_max_retries(),
+            retry_delay_ms: default_antigravity_proxy_retry_delay_ms(),
+            model_cache_ttl_sec: default_antigravity_proxy_model_cache_ttl_sec(),
+            token_refresh_before_expiry_sec:
+                default_antigravity_proxy_token_refresh_before_expiry_sec(),
         }
     }
 }
@@ -543,6 +622,7 @@ impl Default for UserConfig {
             kiro_quota_alert_enabled: default_kiro_quota_alert_enabled(),
             kiro_quota_alert_threshold: default_kiro_quota_alert_threshold(),
             kiro_proxy: KiroProxyConfig::default(),
+            antigravity_proxy: AntigravityProxyConfig::default(),
         }
     }
 }
@@ -684,6 +764,13 @@ pub fn load_user_config() -> Result<UserConfig, String> {
             obj.insert(
                 "kiro_proxy".to_string(),
                 serde_json::to_value(KiroProxyConfig::default())
+                    .unwrap_or_else(|_| json!({})),
+            );
+        }
+        if !obj.contains_key("antigravity_proxy") {
+            obj.insert(
+                "antigravity_proxy".to_string(),
+                serde_json::to_value(AntigravityProxyConfig::default())
                     .unwrap_or_else(|_| json!({})),
             );
         }

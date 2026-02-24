@@ -181,6 +181,7 @@ pub fn save_network_config(ws_enabled: bool, ws_port: u16) -> Result<bool, Strin
         kiro_quota_alert_enabled: current.kiro_quota_alert_enabled,
         kiro_quota_alert_threshold: current.kiro_quota_alert_threshold,
         kiro_proxy: current.kiro_proxy,
+        antigravity_proxy: current.antigravity_proxy,
     };
 
     config::save_user_config(&new_config)?;
@@ -332,6 +333,7 @@ pub fn save_general_config(
         kiro_quota_alert_threshold: kiro_quota_alert_threshold
             .unwrap_or(current.kiro_quota_alert_threshold),
         kiro_proxy: current.kiro_proxy,
+        antigravity_proxy: current.antigravity_proxy,
     };
 
     config::save_user_config(&new_config)?;

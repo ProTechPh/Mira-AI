@@ -238,8 +238,10 @@ impl KiroProxyService {
     pub async fn refresh_models(&self) -> Result<Vec<ProxyModelView>, String> {
         // Single-flight guard: avoid duplicate upstream ListAvailableModels requests.
         let _refresh_guard = self.model_refresh_lock.lock().await;
+        let stale_cache: Option<ModelCacheState>;
         {
             let state = self.state.read().await;
+            stale_cache = state.model_cache.clone();
             if let Some(cache) = state.model_cache.as_ref() {
                 let cache_source_ok = cache
                     .models
@@ -266,6 +268,10 @@ impl KiroProxyService {
         };
 
         if accounts.is_empty() {
+            if let Some(cache) = stale_cache.as_ref() {
+                self.touch_model_cache(cache.models.clone()).await;
+                return Ok(cache.models.clone());
+            }
             return Err("未找到可用 Kiro 账号".to_string());
         }
 
@@ -274,6 +280,7 @@ impl KiroProxyService {
         let mut last_error: Option<String> = None;
 
         for mut account in accounts {
+            let mut refreshed_once = false;
             for attempt in 0..config.max_retries.max(1) {
                 match kiro_api::list_available_models(&account).await {
                     Ok(mut dynamic) => {
@@ -286,9 +293,12 @@ impl KiroProxyService {
                         last_error = Some(err.clone());
                         let status = parse_upstream_status(&err).unwrap_or(500);
                         if status == 401 || status == 403 {
-                            if let Ok(updated) = self.refresh_account_token(&account.id).await {
-                                account = updated;
-                                continue;
+                            if !refreshed_once {
+                                if let Ok(updated) = self.refresh_account_token(&account.id).await {
+                                    account = updated;
+                                    refreshed_once = true;
+                                    continue;
+                                }
                             }
                             self.mark_account_error(&account.id, false).await;
                             break;
@@ -313,6 +323,10 @@ impl KiroProxyService {
         }
 
         if !had_success || models.is_empty() {
+            if let Some(cache) = stale_cache.as_ref() {
+                self.touch_model_cache(cache.models.clone()).await;
+                return Ok(cache.models.clone());
+            }
             return Err(last_error.unwrap_or_else(|| "获取模型列表失败".to_string()));
         }
 
@@ -611,6 +625,18 @@ impl KiroProxyService {
         user.kiro_proxy = config_patch;
         config::save_user_config(&user)?;
         Ok(should_restart)
+    }
+
+    async fn touch_model_cache(&self, models: Vec<ProxyModelView>) {
+        let cache = ModelCacheState {
+            updated_at: chrono::Utc::now().timestamp(),
+            models,
+        };
+        {
+            let mut state = self.state.write().await;
+            state.model_cache = Some(cache.clone());
+        }
+        let _ = save_model_cache(&cache);
     }
 
     pub async fn model_mapping_for(

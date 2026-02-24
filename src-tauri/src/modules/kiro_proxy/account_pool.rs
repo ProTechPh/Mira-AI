@@ -40,6 +40,9 @@ impl AccountPool {
             if account.access_token.trim().is_empty() {
                 continue;
             }
+            if is_unusable_account(&account) {
+                continue;
+            }
 
             order.push(account.id.clone());
             let previous = self.accounts.get(&account.id);
@@ -163,6 +166,39 @@ impl AccountPool {
     pub fn all_accounts(&self) -> Vec<PoolAccount> {
         self.accounts.values().cloned().collect()
     }
+}
+
+fn normalize_status_value(value: Option<&str>) -> Option<String> {
+    value.and_then(|raw| {
+        let trimmed = raw.trim();
+        if trimmed.is_empty() {
+            None
+        } else {
+            Some(trimmed.to_ascii_lowercase())
+        }
+    })
+}
+
+fn is_unusable_status(value: Option<&str>) -> bool {
+    matches!(
+        normalize_status_value(value).as_deref(),
+        Some("banned") | Some("ban") | Some("forbidden") | Some("disabled")
+    )
+}
+
+fn is_unusable_reason(value: Option<&str>) -> bool {
+    let Some(reason) = normalize_status_value(value) else {
+        return false;
+    };
+    reason.contains("bearer token included in the request is invalid")
+        || reason.contains("invalid bearer token")
+        || reason.contains("forbidden")
+        || reason.contains("disabled")
+        || reason.contains("banned")
+}
+
+fn is_unusable_account(account: &KiroAccount) -> bool {
+    is_unusable_status(account.status.as_deref()) || is_unusable_reason(account.status_reason.as_deref())
 }
 
 pub fn extract_profile_arn(account: &KiroAccount) -> Option<String> {

@@ -183,12 +183,12 @@ export function SideNav({
 
       <div className="nav-footer">
         <button
-          className={`nav-item ${page === 'kiro-proxy' ? 'active' : ''}`}
-          onClick={() => setPage('kiro-proxy')}
-          title={t('nav.kiroProxy', 'Kiro Proxy')}
+          className={`nav-item ${page === 'proxy' || page === 'kiro-proxy' || page === 'antigravity-proxy' ? 'active' : ''}`}
+          onClick={() => setPage('proxy')}
+          title={t('nav.proxy', 'Proxy')}
         >
           <Server size={20} />
-          <span className="tooltip">{t('nav.kiroProxy', 'Kiro Proxy')}</span>
+          <span className="tooltip">{t('nav.proxy', 'Proxy')}</span>
         </button>
         <button
           className={`nav-item ${page === 'settings' ? 'active' : ''}`}
