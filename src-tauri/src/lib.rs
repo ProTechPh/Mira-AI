@@ -88,6 +88,16 @@ pub fn run() {
                 service.maybe_auto_start().await;
             });
 
+            // 初始化并按配置自动启动 Antigravity Proxy
+            tauri::async_runtime::spawn(async {
+                let service = modules::antigravity_proxy::shared_service().await;
+                if let Err(err) = service.init().await {
+                    logger::log_warn(&format!("[Antigravity Proxy] init failed: {}", err));
+                    return;
+                }
+                service.maybe_auto_start().await;
+            });
+
             Ok(())
         })
         .on_window_event(|window, event| {
@@ -298,6 +308,20 @@ pub fn run() {
             commands::kiro_proxy::kiro_proxy_update_api_key,
             commands::kiro_proxy::kiro_proxy_delete_api_key,
             commands::kiro_proxy::kiro_proxy_reset_api_key_usage,
+            // Antigravity Proxy Commands
+            commands::antigravity_proxy::antigravity_proxy_start,
+            commands::antigravity_proxy::antigravity_proxy_stop,
+            commands::antigravity_proxy::antigravity_proxy_get_status,
+            commands::antigravity_proxy::antigravity_proxy_get_config,
+            commands::antigravity_proxy::antigravity_proxy_update_config,
+            commands::antigravity_proxy::antigravity_proxy_sync_accounts,
+            commands::antigravity_proxy::antigravity_proxy_get_accounts,
+            commands::antigravity_proxy::antigravity_proxy_refresh_models,
+            commands::antigravity_proxy::antigravity_proxy_get_models,
+            commands::antigravity_proxy::antigravity_proxy_get_logs,
+            commands::antigravity_proxy::antigravity_proxy_clear_logs,
+            commands::antigravity_proxy::antigravity_proxy_reset_stats,
+            commands::antigravity_proxy::antigravity_proxy_get_stats,
             // Windsurf Instance Commands
             commands::windsurf_instance::windsurf_get_instance_defaults,
             commands::windsurf_instance::windsurf_list_instances,

@@ -39,7 +39,7 @@
   flex: 1;
 }
 
-.nav-item {
+.sidebar .nav-item {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -55,12 +55,12 @@
   text-align: left;
 }
 
-.nav-item:hover {
+.sidebar .nav-item:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
 }
 
-.nav-item.active {
+.sidebar .nav-item.active {
   background: rgba(29, 78, 216, 0.08); /* Primary light */
   color: var(--primary);
   font-weight: 600;

@@ -83,8 +83,9 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
   justify-content: flex-start;
+  align-items: center;
   position: relative;
 }
 
@@ -116,13 +117,13 @@
 }
 
 .nav-item.active {
-  background: var(--text-primary);
+  background: var(--gradient-primary);
   color: white;
-  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.2);
+  box-shadow: 0 10px 20px rgba(29, 78, 216, 0.35);
 }
 
 .nav-footer {
-  margin-top: 24px;
+  margin-top: auto;
   display: flex;
   flex-direction: column;
   align-items: center;

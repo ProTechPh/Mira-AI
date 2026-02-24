@@ -7,22 +7,42 @@ All notable changes to  will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
+## [0.8.19] - 2026-02-24
+
+### Added
+- **Unified Proxy category in sidebar**: Antigravity Proxy and Kiro Proxy are now grouped under one `Proxy` navigation entry with an in-page switcher.
+
+### Changed
+- **Model cache behavior improved for proxy pages**: Added stronger TTL handling, stale-cache fallback, and cache touch/backoff behavior to reduce repeated upstream model fetches.
+- **Sidebar polish updates**: Improved floating sidebar icon spacing/alignment and updated active-state styling to blue gradient accent.
+
+### Fixed
+- **Kiro model refresh loop on invalid bearer token**: Bounded refresh attempts for persistent `403 invalid bearer token` responses and excluded unusable accounts from Kiro proxy account-pool routing.
+- **Loading and notification locale fallback**: Centered page loading fallback UI and removed hardcoded Chinese fallback strings in quota-alert notifications.
+
+---
 ## [0.8.18] - 2026-02-24
 
 ### Added
 - **Kiro API Proxy dedicated module and page**: Added native Rust `kiro_proxy` service with lifecycle commands, OpenAI/Claude-compatible proxy routes, admin endpoints, API key auth/metering, model refresh commands, and a dedicated frontend Proxy page with full controls.
 - **Expanded Kiro OAuth providers and controls**: Added provider options for `Google`, `GitHub`, `BuilderId/AWSIdC`, and `Enterprise (IAM Identity Center)`, including AWS-specific region and enterprise start URL fields plus optional incognito launch.
+- **Antigravity Core API Proxy module and admin page**: Added native Rust `antigravity_proxy` with OpenAI-compatible core endpoints (`GET /v1/models`, `POST /v1/chat/completions` stream/non-stream), full Tauri command surface, and a dedicated admin UI.
+- **Unified Proxy navigation entry**: Added a single sidebar `Proxy` category with in-page switcher between `Antigravity Proxy` and `Kiro Proxy`.
 
 ### Changed
 - **Kiro model source now comes from Kiro API only**: Removed hardcoded/alias-based model fallback in proxy listing flow and aligned model retrieval to upstream `ListAvailableModels` with cache refresh controls.
 - **Proxy runtime and config UX improvements**: Refined Kiro Proxy page layout, improved control alignment, disabled invalid start actions while running, fixed runtime status/uptime presentation, removed live-events panel, and added inline helper hints for config fields.
 - **OAuth account-add flow behavior**: Opening Add Account no longer auto-triggers OAuth immediately; provider selection now happens explicitly in the modal flow.
 - **Kiro token lifecycle alignment**: Removed Kiro-account-manager style remote refresh fallback path so token refresh relies on the in-system Kiro OAuth/token handling path.
+- **Model caching behavior hardened for both proxies**: Added stronger model-cache TTL handling, stale-cache fallback on upstream/model-auth failures, and cache timestamp touch/backoff to reduce repeated upstream model fetches.
+- **Sidebar visual consistency updates**: Refined floating sidebar spacing/alignment and updated active icon styling to a blue gradient accent (instead of white blocks in dark UI).
 
 ### Fixed
 - **Duplicate Kiro model fetch requests**: Added single-flight/short-window reuse behavior to prevent duplicated simultaneous `ListAvailableModels` upstream calls.
 - **Quota/usage detection fallback behavior**: Improved Kiro quota/runtime usage fetch so AWS-related usage resolution can continue even when specific optional identity fields are missing.
 - **OAuth completion logging edge case**: Fixed post-success flow state handling that could emit a misleading `cancel` log after a successful OAuth completion.
+- **Kiro invalid bearer-token retry loop**: Fixed repeated model-fetch refresh loops when upstream returns persistent `403 The bearer token included in the request is invalid`; refresh attempts are now bounded and unusable accounts are skipped in proxy account pool selection.
+- **Loading and notification localization polish**: Centered global page loading fallback and removed hardcoded Chinese fallback strings in quota-alert notifications to respect current locale defaults.
 
 ### Removed
 - **Kiro Subscription APIs from proxy integration**: Removed `listAvailableSubscriptions` and `CreateSubscriptionToken` integration surfaces from this release scope.

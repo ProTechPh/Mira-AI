@@ -869,11 +869,6 @@
   color: #64748b;
 }
 
-.loading-state {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
 /* Dark Mode */
 [data-theme="dark"] .instances-list {
   background: rgba(8, 11, 19, 0.98);

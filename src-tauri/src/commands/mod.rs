@@ -1,4 +1,5 @@
 pub mod account;
+pub mod antigravity_proxy;
 pub mod codex;
 pub mod codex_instance;
 pub mod device;

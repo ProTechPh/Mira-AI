@@ -17,3 +17,18 @@
   }
 }
 
+.loading-state {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.main-wrapper > .loading-state {
+  flex: 1;
+  min-height: 320px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
