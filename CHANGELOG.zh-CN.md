@@ -7,6 +7,17 @@
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)。
 
 ---
+## [0.8.20] - 2026-02-24
+
+### 变更
+- **Release 工作流 macOS 打包策略调整**：发布矩阵中 `aarch64-apple-darwin` 与 `x86_64-apple-darwin` 仅产出 `.app`（`--bundles app`），DMG 统一由 `universal-apple-darwin` 任务生成。
+- **CI 兼容性版本固定**：将 Rust `tauri` crate 固定为 `=2.9.5`，与当前 JS 侧 Tauri 依赖保持主次版本兼容，避免发布构建阶段的版本不匹配报错。
+
+### 修复
+- **macOS x64 CI 的 DMG 打包失败**：通过避免非 universal 目标生成 DMG，修复 `bundle_dmg.sh` 在单架构任务中的失败问题。
+- **Tag 发布构建版本不匹配校验失败**：修复 GitHub Actions 中 lockfile 重建后出现的 Tauri 版本不一致问题（`tauri 2.10.x` vs `@tauri-apps/api 2.9.x`）。
+
+---
 ## [0.8.19] - 2026-02-24
 
 ### 新增

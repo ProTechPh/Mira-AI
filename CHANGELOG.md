@@ -7,6 +7,17 @@ All notable changes to  will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
+## [0.8.20] - 2026-02-24
+
+### Changed
+- **Release workflow macOS bundling strategy**: Updated release matrix so `aarch64-apple-darwin` and `x86_64-apple-darwin` build `.app` only (`--bundles app`), while DMG packaging remains on `universal-apple-darwin`.
+- **Rust Tauri compatibility pin for CI**: Pinned Rust `tauri` crate to `=2.9.5` to keep major/minor compatibility with installed JS Tauri packages and prevent CI package mismatch failures during release builds.
+
+### Fixed
+- **macOS x64 DMG bundling failure in CI**: Prevented `bundle_dmg.sh` failure on non-universal macOS target jobs by avoiding per-arch DMG generation.
+- **Tag-release build mismatch check failures**: Resolved release-time Tauri version mismatch (`tauri 2.10.x` vs `@tauri-apps/api 2.9.x`) caused by lockfile regeneration in GitHub Actions.
+
+---
 ## [0.8.19] - 2026-02-24
 
 ### Added
