@@ -670,6 +670,11 @@ export function getKiroAccountLoginProvider(account: KiroAccount): string | null
   const lower = provider.toLowerCase();
   if (lower === 'google') return 'Google';
   if (lower === 'github') return 'GitHub';
+  if (lower === 'builderid') return 'BuilderId';
+  if (lower === 'enterprise') return 'Enterprise';
+  if (lower === 'awsidc') return 'AWSIdC';
+  if (lower === 'iam_sso' || lower === 'iamsso') return 'IAM SSO';
+  if (lower === 'internal') return 'Internal';
   if (lower === 'social') return 'Social';
   return provider;
 }

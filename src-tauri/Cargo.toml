@@ -1,6 +1,6 @@
 [package]
 name = "mira-tools"
-version = "0.8.17"
+version = "0.8.18"
 description = "Mira Tools"
 authors = ["ProTechPh"]
 license = "CC-BY-NC-SA-4.0"
@@ -25,14 +25,17 @@ serde_json = "1"
 uuid = { version = "1.10", features = ["v4", "serde"] }
 chrono = "0.4"
 dirs = "5.0"
-reqwest = { version = "0.12", features = ["json", "gzip"] }
+reqwest = { version = "0.12", features = ["json", "gzip", "stream"] }
+axum = { version = "0.7", features = ["http1", "json"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "time"] }
 tracing-appender = "0.2"
 tracing-log = "0.2"
 rusqlite = { version = "0.32", features = ["bundled"] }
+bytes = "1"
 base64 = "0.22"
 tokio = { version = "1", features = ["full"] }
+tokio-stream = "0.1"
 thiserror = "2"
 anyhow = "1.0"
 sha2 = "0.10"

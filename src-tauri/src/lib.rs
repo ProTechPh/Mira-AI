@@ -78,6 +78,16 @@ pub fn run() {
                 logger::log_error(&format!("[Tray] Failed to create system tray: {}", e));
             }
 
+            // 初始化并按配置自动启动 Kiro Proxy
+            tauri::async_runtime::spawn(async {
+                let service = modules::kiro_proxy::shared_service().await;
+                if let Err(err) = service.init().await {
+                    logger::log_warn(&format!("[Kiro Proxy] init failed: {}", err));
+                    return;
+                }
+                service.maybe_auto_start().await;
+            });
+
             Ok(())
         })
         .on_window_event(|window, event| {
@@ -169,6 +179,7 @@ pub fn run() {
             commands::system::set_wakeup_override,
             commands::system::handle_window_close,
             commands::system::open_folder,
+            commands::system::open_url_in_browser,
             commands::system::delete_corrupted_file,
             // Wakeup Commands
             commands::wakeup::trigger_wakeup,
@@ -268,6 +279,25 @@ pub fn run() {
             commands::kiro::update_kiro_account_tags,
             commands::kiro::get_kiro_accounts_index_path,
             commands::kiro::inject_kiro_to_vscode,
+            // Kiro Proxy Commands
+            commands::kiro_proxy::kiro_proxy_start,
+            commands::kiro_proxy::kiro_proxy_stop,
+            commands::kiro_proxy::kiro_proxy_get_status,
+            commands::kiro_proxy::kiro_proxy_get_config,
+            commands::kiro_proxy::kiro_proxy_update_config,
+            commands::kiro_proxy::kiro_proxy_sync_accounts,
+            commands::kiro_proxy::kiro_proxy_get_accounts,
+            commands::kiro_proxy::kiro_proxy_refresh_models,
+            commands::kiro_proxy::kiro_proxy_get_models,
+            commands::kiro_proxy::kiro_proxy_get_logs,
+            commands::kiro_proxy::kiro_proxy_clear_logs,
+            commands::kiro_proxy::kiro_proxy_reset_stats,
+            commands::kiro_proxy::kiro_proxy_get_stats,
+            commands::kiro_proxy::kiro_proxy_get_api_keys,
+            commands::kiro_proxy::kiro_proxy_add_api_key,
+            commands::kiro_proxy::kiro_proxy_update_api_key,
+            commands::kiro_proxy::kiro_proxy_delete_api_key,
+            commands::kiro_proxy::kiro_proxy_reset_api_key_usage,
             // Windsurf Instance Commands
             commands::windsurf_instance::windsurf_get_instance_defaults,
             commands::windsurf_instance::windsurf_list_instances,

@@ -5,18 +5,20 @@ use sha2::{Digest, Sha256};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
-use crate::models::kiro::{KiroAccount, KiroOAuthCompletePayload, KiroOAuthStartResponse};
+use crate::models::kiro::{
+    KiroAccount, KiroOAuthCompletePayload, KiroOAuthStartOptions, KiroOAuthStartResponse,
+};
 use crate::modules::{kiro_account, logger};
 
 const KIRO_AUTH_PORTAL_URL: &str = "https://app.kiro.dev/signin";
 const KIRO_TOKEN_ENDPOINT: &str = "https://prod.us-east-1.auth.desktop.kiro.dev/oauth/token";
-const KIRO_REFRESH_ENDPOINT: &str = "https://prod.us-east-1.auth.desktop.kiro.dev/refreshToken";
 const KIRO_RUNTIME_DEFAULT_ENDPOINT: &str = "https://q.us-east-1.amazonaws.com";
 const KIRO_ACCOUNT_STATUS_NORMAL: &str = "normal";
 const KIRO_ACCOUNT_STATUS_BANNED: &str = "banned";
 const KIRO_ACCOUNT_STATUS_ERROR: &str = "error";
 const OAUTH_TIMEOUT_SECONDS: u64 = 600;
 const OAUTH_POLL_INTERVAL_MS: u64 = 250;
+const BUILDER_ID_START_URL: &str = "https://view.awsapps.com/start";
 const CALLBACK_PORT_CANDIDATES: [u16; 10] = [
     3128, 4649, 6588, 8008, 9091, 49153, 50153, 51153, 52153, 53153,
 ];
@@ -36,6 +38,7 @@ struct OAuthCallbackData {
 
 #[derive(Clone)]
 struct PendingOAuthState {
+    flow: OAuthFlow,
     login_id: String,
     expires_at: i64,
     verification_uri: String,
@@ -44,7 +47,19 @@ struct PendingOAuthState {
     callback_port: u16,
     state_token: String,
     code_verifier: String,
+    region: Option<String>,
+    client_id: Option<String>,
+    client_secret: Option<String>,
+    device_code: Option<String>,
+    interval_seconds: u64,
     callback_result: Option<Result<OAuthCallbackData, String>>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum OAuthFlow {
+    Portal,
+    BuilderId,
+    IamSso,
 }
 
 lazy_static::lazy_static! {
@@ -353,6 +368,7 @@ fn build_portal_auth_url(
     code_challenge: &str,
     redirect_uri: &str,
     from_amazon_internal: bool,
+    login_option: Option<&str>,
 ) -> String {
     let mut url = format!(
         "{}?state={}&code_challenge={}&code_challenge_method=S256&redirect_uri={}&redirect_from=KiroIDE",
@@ -363,6 +379,10 @@ fn build_portal_auth_url(
     );
     if from_amazon_internal {
         url.push_str("&from_amazon_internal=true");
+    }
+    if let Some(login_option) = login_option.and_then(|v| normalize_non_empty(Some(v))) {
+        url.push_str("&login_option=");
+        url.push_str(urlencoding::encode(login_option.as_str()).as_ref());
     }
     url
 }
@@ -391,13 +411,6 @@ fn set_callback_result_for_login(
     }
 }
 
-fn extract_profile_arn_from_account(account: &KiroAccount) -> Option<String> {
-    extract_profile_arn(
-        account.kiro_auth_token_raw.as_ref(),
-        account.kiro_profile_raw.as_ref(),
-    )
-}
-
 fn extract_profile_arn_from_payload(payload: &KiroOAuthCompletePayload) -> Option<String> {
     extract_profile_arn(
         payload.kiro_auth_token_raw.as_ref(),
@@ -409,6 +422,8 @@ fn provider_from_login_option(login_option: &str) -> Option<String> {
     match login_option.trim().to_ascii_lowercase().as_str() {
         "google" => Some("Google".to_string()),
         "github" => Some("Github".to_string()),
+        "builderid" | "awsidc" => Some("BuilderId".to_string()),
+        "enterprise" | "iam_sso" | "iamsso" => Some("Enterprise".to_string()),
         _ => None,
     }
 }
@@ -556,6 +571,206 @@ async fn exchange_code_for_token(
     );
     inject_callback_context_into_token(&mut token, callback);
     Ok(token)
+}
+
+fn normalize_provider_option(value: Option<String>) -> String {
+    value
+        .and_then(|v| normalize_non_empty(Some(v.as_str())))
+        .unwrap_or_else(|| "google".to_string())
+        .to_ascii_lowercase()
+}
+
+fn normalize_region_option(value: Option<String>) -> String {
+    value
+        .and_then(|v| normalize_non_empty(Some(v.as_str())))
+        .unwrap_or_else(|| "us-east-1".to_string())
+        .to_ascii_lowercase()
+}
+
+fn oauth_scopes() -> Vec<&'static str> {
+    vec![
+        "codewhisperer:completions",
+        "codewhisperer:analysis",
+        "codewhisperer:conversations",
+        "codewhisperer:transformations",
+        "codewhisperer:taskassist",
+    ]
+}
+
+async fn register_oidc_client(
+    region: &str,
+    grant_types: &[&str],
+    issuer_url: &str,
+    redirect_uris: Option<Vec<String>>,
+) -> Result<(String, String), String> {
+    let endpoint = format!("https://oidc.{}.amazonaws.com/client/register", region);
+    let mut payload = json!({
+        "clientName": "Mira Tools",
+        "clientType": "public",
+        "scopes": oauth_scopes(),
+        "grantTypes": grant_types,
+        "issuerUrl": issuer_url,
+    });
+    if let Some(redirect_uris) = redirect_uris {
+        payload["redirectUris"] = serde_json::Value::Array(
+            redirect_uris
+                .into_iter()
+                .map(serde_json::Value::String)
+                .collect(),
+        );
+    }
+
+    let response = reqwest::Client::new()
+        .post(endpoint)
+        .header("Content-Type", "application/json")
+        .json(&payload)
+        .send()
+        .await
+        .map_err(|e| format!("OIDC client register failed: {}", e))?;
+    let status = response.status();
+    let body = response.text().await.unwrap_or_default();
+    if !status.is_success() {
+        return Err(format!(
+            "OIDC client register failed: status={}, body={}",
+            status.as_u16(),
+            body
+        ));
+    }
+    let parsed = serde_json::from_str::<Value>(&body)
+        .map_err(|e| format!("Failed to parse OIDC client register response: {}", e))?;
+    let client_id = pick_string(Some(&parsed), &[&["clientId"]])
+        .ok_or_else(|| "OIDC client register missing clientId".to_string())?;
+    let client_secret = pick_string(Some(&parsed), &[&["clientSecret"]])
+        .ok_or_else(|| "OIDC client register missing clientSecret".to_string())?;
+    Ok((client_id, client_secret))
+}
+
+async fn start_oidc_device_authorization(
+    region: &str,
+    client_id: &str,
+    client_secret: &str,
+    start_url: &str,
+) -> Result<(String, String, String, u64, u64), String> {
+    let endpoint = format!("https://oidc.{}.amazonaws.com/device_authorization", region);
+    let response = reqwest::Client::new()
+        .post(endpoint)
+        .header("Content-Type", "application/json")
+        .json(&json!({
+            "clientId": client_id,
+            "clientSecret": client_secret,
+            "startUrl": start_url
+        }))
+        .send()
+        .await
+        .map_err(|e| format!("OIDC device authorization failed: {}", e))?;
+    let status = response.status();
+    let body = response.text().await.unwrap_or_default();
+    if !status.is_success() {
+        return Err(format!(
+            "OIDC device authorization failed: status={}, body={}",
+            status.as_u16(),
+            body
+        ));
+    }
+    let parsed = serde_json::from_str::<Value>(&body)
+        .map_err(|e| format!("Failed to parse OIDC device authorization response: {}", e))?;
+    let device_code = pick_string(Some(&parsed), &[&["deviceCode"]])
+        .ok_or_else(|| "OIDC response missing deviceCode".to_string())?;
+    let user_code = pick_string(Some(&parsed), &[&["userCode"]]).unwrap_or_default();
+    let verification_uri_complete =
+        pick_string(Some(&parsed), &[&["verificationUriComplete"], &["verificationUri"]])
+            .ok_or_else(|| "OIDC response missing verificationUri".to_string())?;
+    let interval = pick_string(Some(&parsed), &[&["interval"]])
+        .and_then(|v| v.parse::<u64>().ok())
+        .unwrap_or(5);
+    let expires_in = pick_string(Some(&parsed), &[&["expiresIn"]])
+        .and_then(|v| v.parse::<u64>().ok())
+        .unwrap_or(OAUTH_TIMEOUT_SECONDS);
+
+    Ok((
+        device_code,
+        user_code,
+        verification_uri_complete.clone(),
+        interval,
+        expires_in,
+    ))
+}
+
+async fn exchange_oidc_device_token(
+    region: &str,
+    client_id: &str,
+    client_secret: &str,
+    device_code: &str,
+) -> Result<Option<Value>, String> {
+    let endpoint = format!("https://oidc.{}.amazonaws.com/token", region);
+    let response = reqwest::Client::new()
+        .post(endpoint)
+        .header("Content-Type", "application/json")
+        .json(&json!({
+            "clientId": client_id,
+            "clientSecret": client_secret,
+            "grantType": "urn:ietf:params:oauth:grant-type:device_code",
+            "deviceCode": device_code
+        }))
+        .send()
+        .await
+        .map_err(|e| format!("OIDC token exchange failed: {}", e))?;
+    let status = response.status();
+    let body = response.text().await.unwrap_or_default();
+    if status.is_success() {
+        let parsed = serde_json::from_str::<Value>(&body)
+            .map_err(|e| format!("Failed to parse OIDC token response: {}", e))?;
+        return Ok(Some(parsed));
+    }
+    let parsed = serde_json::from_str::<Value>(&body).unwrap_or_default();
+    let error_name = pick_string(Some(&parsed), &[&["error"], &["code"]]).unwrap_or_default();
+    if error_name.eq_ignore_ascii_case("authorization_pending") {
+        return Ok(None);
+    }
+    if error_name.eq_ignore_ascii_case("slow_down") {
+        return Ok(None);
+    }
+    Err(format!(
+        "OIDC token exchange failed: status={}, body={}",
+        status.as_u16(),
+        body
+    ))
+}
+
+async fn exchange_oidc_authorization_code(
+    region: &str,
+    client_id: &str,
+    client_secret: &str,
+    redirect_uri: &str,
+    code: &str,
+    code_verifier: &str,
+) -> Result<Value, String> {
+    let endpoint = format!("https://oidc.{}.amazonaws.com/token", region);
+    let response = reqwest::Client::new()
+        .post(endpoint)
+        .header("Content-Type", "application/json")
+        .json(&json!({
+            "clientId": client_id,
+            "clientSecret": client_secret,
+            "grantType": "authorization_code",
+            "redirectUri": redirect_uri,
+            "code": code,
+            "codeVerifier": code_verifier
+        }))
+        .send()
+        .await
+        .map_err(|e| format!("OIDC authorization_code exchange failed: {}", e))?;
+    let status = response.status();
+    let body = response.text().await.unwrap_or_default();
+    if !status.is_success() {
+        return Err(format!(
+            "OIDC authorization_code exchange failed: status={}, body={}",
+            status.as_u16(),
+            body
+        ));
+    }
+    serde_json::from_str::<Value>(&body)
+        .map_err(|e| format!("Failed to parse OIDC authorization_code response: {}", e))
 }
 
 async fn start_callback_server(
@@ -1251,46 +1466,25 @@ pub fn build_payload_from_local_files() -> Result<KiroOAuthCompletePayload, Stri
     build_payload_from_snapshot(auth_token, profile, usage)
 }
 
-async fn refresh_token_via_remote(refresh_token: &str) -> Result<Value, String> {
-    let response = reqwest::Client::new()
-        .post(KIRO_REFRESH_ENDPOINT)
-        .header("Content-Type", "application/json")
-        .json(&json!({
-            "refreshToken": refresh_token
-        }))
-        .send()
-        .await
-        .map_err(|e| format!("Failed to request Kiro refreshToken: {}", e))?;
-
-    let status = response.status();
-    let body = response
-        .text()
-        .await
-        .unwrap_or_else(|_| "<no-body>".to_string());
-
-    if !status.is_success() {
-        return Err(format!(
-            "Kiro refreshToken returned error: status={}, body={}",
-            status, body
-        ));
-    }
-
-    serde_json::from_str::<Value>(&body)
-        .map_err(|e| format!("Failed to parse Kiro refreshToken response: {}", e))
-}
-
 async fn fetch_usage_limits_via_runtime(
     access_token: &str,
-    profile_arn: &str,
+    profile_arn: Option<&str>,
+    idc_region: Option<&str>,
     is_email_required: bool,
 ) -> Result<Value, String> {
-    let region = parse_profile_arn_region(profile_arn);
-    let endpoint = runtime_endpoint_for_region(region.as_deref());
+    let region = profile_arn
+        .and_then(parse_profile_arn_region)
+        .or_else(|| idc_region.and_then(|v| normalize_non_empty(Some(v))))
+        .unwrap_or_else(|| "us-east-1".to_string());
+    let endpoint = runtime_endpoint_for_region(Some(region.as_str()));
     let mut url = format!(
-        "{}/getUsageLimits?origin=AI_EDITOR&profileArn={}&resourceType=AGENTIC_REQUEST",
+        "{}/getUsageLimits?origin=AI_EDITOR&resourceType=AGENTIC_REQUEST",
         endpoint.trim_end_matches('/'),
-        urlencoding::encode(profile_arn),
     );
+    if let Some(profile_arn) = profile_arn.and_then(|v| normalize_non_empty(Some(v))) {
+        url.push_str("&profileArn=");
+        url.push_str(urlencoding::encode(profile_arn.as_str()).as_ref());
+    }
     if is_email_required {
         url.push_str("&isEmailRequired=true");
     }
@@ -1322,129 +1516,6 @@ async fn fetch_usage_limits_via_runtime(
 
     serde_json::from_str::<Value>(&body)
         .map_err(|e| format!("Failed to parse Kiro runtime usage response: {}", e))
-}
-
-fn merge_refreshed_auth_token_into_payload(
-    payload: &mut KiroOAuthCompletePayload,
-    auth_token: Value,
-) {
-    if let Some(value) = pick_string(
-        Some(&auth_token),
-        &[
-            &["accessToken"],
-            &["access_token"],
-            &["token"],
-            &["idToken"],
-            &["id_token"],
-            &["accessTokenJwt"],
-        ],
-    )
-    .and_then(|v| normalize_non_empty(Some(v.as_str())))
-    {
-        payload.access_token = value;
-    }
-    if let Some(value) = pick_string(
-        Some(&auth_token),
-        &[&["refreshToken"], &["refresh_token"], &["refreshTokenJwt"]],
-    )
-    .and_then(|v| normalize_non_empty(Some(v.as_str())))
-    {
-        payload.refresh_token = Some(value);
-    }
-    if let Some(value) = pick_string(
-        Some(&auth_token),
-        &[&["tokenType"], &["token_type"], &["authType"]],
-    )
-    .and_then(|v| normalize_non_empty(Some(v.as_str())))
-    {
-        payload.token_type = Some(value);
-    }
-    if let Some(expires_at) = parse_timestamp(
-        get_path_value(&auth_token, &["expiresAt"])
-            .or_else(|| get_path_value(&auth_token, &["expires_at"]))
-            .or_else(|| get_path_value(&auth_token, &["expiry"]))
-            .or_else(|| get_path_value(&auth_token, &["expiration"])),
-    ) {
-        payload.expires_at = Some(expires_at);
-    } else if let Some(expires_in) =
-        pick_number(Some(&auth_token), &[&["expiresIn"], &["expires_in"]])
-    {
-        let now = now_timestamp();
-        payload.expires_at = Some(now + expires_in.round() as i64);
-    }
-
-    if let Some(value) = pick_string(
-        Some(&auth_token),
-        &[&["provider"], &["loginProvider"], &["login_option"]],
-    )
-    .and_then(|v| normalize_non_empty(Some(v.as_str())))
-    {
-        payload.login_provider = Some(provider_from_login_option(&value).unwrap_or(value));
-    }
-    if let Some(value) = pick_string(
-        Some(&auth_token),
-        &[&["idc_region"], &["idcRegion"], &["region"]],
-    )
-    .and_then(|v| normalize_non_empty(Some(v.as_str())))
-    {
-        payload.idc_region = Some(value);
-    }
-    if let Some(value) = pick_string(
-        Some(&auth_token),
-        &[&["issuer_url"], &["issuerUrl"], &["issuer"]],
-    )
-    .and_then(|v| normalize_non_empty(Some(v.as_str())))
-    {
-        payload.issuer_url = Some(value);
-    }
-    if let Some(value) = pick_string(Some(&auth_token), &[&["client_id"], &["clientId"]])
-        .and_then(|v| normalize_non_empty(Some(v.as_str())))
-    {
-        payload.client_id = Some(value);
-    }
-    if let Some(value) = pick_string(Some(&auth_token), &[&["scopes"], &["scope"]])
-        .and_then(|v| normalize_non_empty(Some(v.as_str())))
-    {
-        payload.scopes = Some(value);
-    }
-    if let Some(value) = pick_string(Some(&auth_token), &[&["login_hint"], &["loginHint"]])
-        .and_then(|v| normalize_non_empty(Some(v.as_str())))
-    {
-        payload.login_hint = Some(value);
-    }
-
-    let mut merged_auth = payload
-        .kiro_auth_token_raw
-        .clone()
-        .unwrap_or_else(|| json!({}));
-    if !merged_auth.is_object() {
-        merged_auth = json!({});
-    }
-    if let (Some(target), Some(source)) = (merged_auth.as_object_mut(), auth_token.as_object()) {
-        for (key, value) in source {
-            target.insert(key.clone(), value.clone());
-        }
-    }
-    payload.kiro_auth_token_raw = Some(merged_auth);
-
-    if let Some(profile_arn) = pick_string(
-        Some(&auth_token),
-        &[&["profileArn"], &["profile_arn"], &["arn"]],
-    ) {
-        let profile_value = normalize_non_empty(Some(profile_arn.as_str())).unwrap_or(profile_arn);
-        let mut profile_raw = payload
-            .kiro_profile_raw
-            .clone()
-            .unwrap_or_else(|| json!({}));
-        if !profile_raw.is_object() {
-            profile_raw = json!({});
-        }
-        if let Some(obj) = profile_raw.as_object_mut() {
-            obj.entry("arn".to_string())
-                .or_insert_with(|| Value::String(profile_value));
-        }
-        payload.kiro_profile_raw = Some(profile_raw);
-    }
 }
 
 fn apply_runtime_usage_to_payload(payload: &mut KiroOAuthCompletePayload, usage: Value) {
@@ -1532,13 +1603,12 @@ fn apply_runtime_usage_to_payload(payload: &mut KiroOAuthCompletePayload, usage:
 pub async fn enrich_payload_with_runtime_usage(
     mut payload: KiroOAuthCompletePayload,
 ) -> KiroOAuthCompletePayload {
-    let Some(initial_profile_arn) = extract_profile_arn_from_payload(&payload) else {
-        return payload;
-    };
+    let profile_arn = extract_profile_arn_from_payload(&payload);
 
     let first_try = fetch_usage_limits_via_runtime(
         payload.access_token.as_str(),
-        initial_profile_arn.as_str(),
+        profile_arn.as_deref(),
+        payload.idc_region.as_deref(),
         true,
     )
     .await;
@@ -1556,50 +1626,7 @@ pub async fn enrich_payload_with_runtime_usage(
             }
             set_payload_status(&mut payload, KIRO_ACCOUNT_STATUS_ERROR, Some(err.clone()));
             logger::log_warn(&format!(
-                "[Kiro Refresh] First runtime usage request failed, trying refresh token: {}",
-                err
-            ));
-        }
-    }
-
-    let Some(refresh_token) = payload
-        .refresh_token
-        .as_deref()
-        .and_then(|value| normalize_non_empty(Some(value)))
-    else {
-        return payload;
-    };
-
-    match refresh_token_via_remote(&refresh_token).await {
-        Ok(auth_token) => {
-            merge_refreshed_auth_token_into_payload(&mut payload, auth_token);
-        }
-        Err(err) => {
-            set_payload_status(&mut payload, KIRO_ACCOUNT_STATUS_ERROR, Some(err.clone()));
-            logger::log_warn(&format!(
-                "[Kiro Refresh] Refresh token failed, skipping runtime usage backfill: {}",
-                err
-            ));
-            return payload;
-        }
-    }
-
-    let profile_arn = extract_profile_arn_from_payload(&payload).unwrap_or(initial_profile_arn);
-    match fetch_usage_limits_via_runtime(payload.access_token.as_str(), profile_arn.as_str(), true)
-        .await
-    {
-        Ok(usage) => {
-            apply_runtime_usage_to_payload(&mut payload, usage);
-            set_payload_status(&mut payload, KIRO_ACCOUNT_STATUS_NORMAL, None);
-        }
-        Err(err) => {
-            if let Some(reason) = parse_banned_reason_from_error(&err) {
-                set_payload_status(&mut payload, KIRO_ACCOUNT_STATUS_BANNED, Some(reason));
-            } else {
-                set_payload_status(&mut payload, KIRO_ACCOUNT_STATUS_ERROR, Some(err.clone()));
-            }
-            logger::log_warn(&format!(
-                "[Kiro Refresh] Second runtime usage request failed: {}",
+                "[Kiro Refresh] Runtime usage request failed (system-managed refresh only): {}",
                 err
             ));
         }
@@ -1608,184 +1635,14 @@ pub async fn enrich_payload_with_runtime_usage(
     payload
 }
 
-fn merge_account_context_into_auth_token(auth_token: &mut Value, account: &KiroAccount) {
-    if !auth_token.is_object() {
-        *auth_token = json!({});
-    }
-    let Some(target) = auth_token.as_object_mut() else {
-        return;
-    };
-
-    if let Some(source) = account
-        .kiro_auth_token_raw
-        .as_ref()
-        .and_then(|value| value.as_object())
-    {
-        for (key, value) in source {
-            target.entry(key.clone()).or_insert_with(|| value.clone());
-        }
-    }
-
-    if !account.access_token.trim().is_empty() {
-        target
-            .entry("accessToken".to_string())
-            .or_insert_with(|| Value::String(account.access_token.clone()));
-    }
-    if let Some(value) = account
-        .refresh_token
-        .as_deref()
-        .and_then(|v| normalize_non_empty(Some(v)))
-    {
-        target
-            .entry("refreshToken".to_string())
-            .or_insert_with(|| Value::String(value));
-    }
-    if let Some(value) = account
-        .token_type
-        .as_deref()
-        .and_then(|v| normalize_non_empty(Some(v)))
-    {
-        target
-            .entry("tokenType".to_string())
-            .or_insert_with(|| Value::String(value));
-    }
-    if let Some(value) = account
-        .login_provider
-        .as_deref()
-        .and_then(|v| normalize_non_empty(Some(v)))
-    {
-        target
-            .entry("provider".to_string())
-            .or_insert_with(|| Value::String(value.clone()));
-        target
-            .entry("loginProvider".to_string())
-            .or_insert_with(|| Value::String(value));
-    }
-    if let Some(value) = account
-        .idc_region
-        .as_deref()
-        .and_then(|v| normalize_non_empty(Some(v)))
-    {
-        target
-            .entry("idc_region".to_string())
-            .or_insert_with(|| Value::String(value.clone()));
-        target
-            .entry("idcRegion".to_string())
-            .or_insert_with(|| Value::String(value));
-    }
-    if let Some(value) = account
-        .issuer_url
-        .as_deref()
-        .and_then(|v| normalize_non_empty(Some(v)))
-    {
-        target
-            .entry("issuer_url".to_string())
-            .or_insert_with(|| Value::String(value.clone()));
-        target
-            .entry("issuerUrl".to_string())
-            .or_insert_with(|| Value::String(value));
-    }
-    if let Some(value) = account
-        .client_id
-        .as_deref()
-        .and_then(|v| normalize_non_empty(Some(v)))
-    {
-        target
-            .entry("client_id".to_string())
-            .or_insert_with(|| Value::String(value.clone()));
-        target
-            .entry("clientId".to_string())
-            .or_insert_with(|| Value::String(value));
-    }
-    if let Some(value) = account
-        .scopes
-        .as_deref()
-        .and_then(|v| normalize_non_empty(Some(v)))
-    {
-        target
-            .entry("scopes".to_string())
-            .or_insert_with(|| Value::String(value.clone()));
-        target
-            .entry("scope".to_string())
-            .or_insert_with(|| Value::String(value));
-    }
-    if let Some(value) = account
-        .login_hint
-        .as_deref()
-        .and_then(|v| normalize_non_empty(Some(v)))
-    {
-        target
-            .entry("login_hint".to_string())
-            .or_insert_with(|| Value::String(value.clone()));
-        target
-            .entry("loginHint".to_string())
-            .or_insert_with(|| Value::String(value));
-    }
-    if !account.email.trim().is_empty() {
-        target
-            .entry("email".to_string())
-            .or_insert_with(|| Value::String(account.email.clone()));
-    }
-    if let Some(value) = account
-        .user_id
-        .as_deref()
-        .and_then(|v| normalize_non_empty(Some(v)))
-    {
-        target
-            .entry("userId".to_string())
-            .or_insert_with(|| Value::String(value.clone()));
-        target
-            .entry("user_id".to_string())
-            .or_insert_with(|| Value::String(value));
-    }
-    if let Some(profile_arn) = extract_profile_arn_from_account(account) {
-        target
-            .entry("profileArn".to_string())
-            .or_insert_with(|| Value::String(profile_arn));
-    }
-}
-
-fn pick_profile_and_usage_for_refresh(
-    account: &KiroAccount,
-    _auth_token: &Value,
-) -> (Option<Value>, Option<Value>) {
-    // 刷新逻辑仅依赖当前账号 JSON，不再读取 Kiro 本地快照文件。
-    (
-        account.kiro_profile_raw.clone(),
-        account.kiro_usage_raw.clone(),
-    )
-}
-
 pub async fn refresh_payload_for_account(
     account: &KiroAccount,
 ) -> Result<KiroOAuthCompletePayload, String> {
-    // 刷新仅依赖账号 JSON 里的 refresh token + runtime usage 查询。
-    if let Some(refresh_token) = account
-        .refresh_token
-        .as_deref()
-        .and_then(|value| normalize_non_empty(Some(value)))
-    {
-        match refresh_token_via_remote(&refresh_token).await {
-            Ok(mut auth_token) => {
-                merge_account_context_into_auth_token(&mut auth_token, account);
-                let (profile, usage) = pick_profile_and_usage_for_refresh(account, &auth_token);
-                let payload = build_payload_from_snapshot(auth_token, profile, usage)?;
-                return Ok(enrich_payload_with_runtime_usage(payload).await);
-            }
-            Err(err) => {
-                logger::log_warn(&format!(
-                    "[Kiro Refresh] refreshToken request failed, falling back to existing account snapshot: {}",
-                    err
-                ));
-            }
-        }
-    }
-
-    // 最后回退：返回当前账号已有快照，避免刷新操作直接失败。
+    // 不执行远程 refreshToken：交给系统/Kiro 客户端维护 token。
     Ok(enrich_payload_with_runtime_usage(payload_from_account(account)).await)
 }
 
-pub async fn start_login() -> Result<KiroOAuthStartResponse, String> {
+pub async fn start_login(options: Option<KiroOAuthStartOptions>) -> Result<KiroOAuthStartResponse, String> {
     if let Ok(mut guard) = PENDING_OAUTH_STATE.lock() {
         if let Some(state) = guard.as_ref() {
             if state.expires_at > now_timestamp() && state.callback_result.is_none() {
@@ -1795,12 +1652,165 @@ pub async fn start_login() -> Result<KiroOAuthStartResponse, String> {
                     verification_uri: state.verification_uri.clone(),
                     verification_uri_complete: Some(state.verification_uri_complete.clone()),
                     expires_in: (state.expires_at - now_timestamp()).max(0) as u64,
-                    interval_seconds: 1,
-                    callback_url: Some(state.callback_url.clone()),
+                    interval_seconds: state.interval_seconds.max(1),
+                    callback_url: normalize_non_empty(Some(state.callback_url.as_str())),
                 });
             }
             *guard = None;
         }
+    }
+
+    let options = options.unwrap_or_default();
+    let provider = normalize_provider_option(options.provider);
+    let region = normalize_region_option(options.region);
+    let selected_start_url = options
+        .start_url
+        .and_then(|value| normalize_non_empty(Some(value.as_str())));
+
+    if matches!(
+        provider.as_str(),
+        "builderid" | "awsidc" | "internal"
+    ) {
+        let start_url = BUILDER_ID_START_URL.to_string();
+        let (client_id, client_secret) = register_oidc_client(
+            &region,
+            &["urn:ietf:params:oauth:grant-type:device_code", "refresh_token"],
+            &start_url,
+            None,
+        )
+        .await?;
+        let (device_code, user_code, verification_uri_complete, interval_seconds, expires_in) =
+            start_oidc_device_authorization(
+                &region,
+                &client_id,
+                &client_secret,
+                &start_url,
+            )
+            .await?;
+
+        let pending = PendingOAuthState {
+            flow: OAuthFlow::BuilderId,
+            login_id: generate_token(),
+            expires_at: now_timestamp() + expires_in as i64,
+            verification_uri: verification_uri_complete.clone(),
+            verification_uri_complete: verification_uri_complete.clone(),
+            callback_url: String::new(),
+            callback_port: 0,
+            state_token: String::new(),
+            code_verifier: String::new(),
+            region: Some(region),
+            client_id: Some(client_id),
+            client_secret: Some(client_secret),
+            device_code: Some(device_code),
+            interval_seconds,
+            callback_result: None,
+        };
+
+        if let Ok(mut guard) = PENDING_OAUTH_STATE.lock() {
+            *guard = Some(pending.clone());
+        }
+
+        return Ok(KiroOAuthStartResponse {
+            login_id: pending.login_id,
+            user_code,
+            verification_uri: pending.verification_uri.clone(),
+            verification_uri_complete: Some(pending.verification_uri_complete),
+            expires_in,
+            interval_seconds: interval_seconds.max(1),
+            callback_url: None,
+        });
+    }
+
+    if matches!(
+        provider.as_str(),
+        "enterprise" | "iam_sso" | "iamsso"
+    ) {
+        let start_url = selected_start_url.unwrap_or_else(|| BUILDER_ID_START_URL.to_string());
+        if !start_url.to_ascii_lowercase().starts_with("https://") {
+            return Err("SSO Start URL must start with https://".to_string());
+        }
+
+        let callback_port = find_available_callback_port()?;
+        let callback_url = format!("http://localhost:{}", callback_port);
+        let state_token = generate_token();
+        let code_verifier = generate_token();
+        let code_challenge = generate_code_challenge(&code_verifier);
+
+        let redirect_uri = format!("{}/oauth/callback", callback_url.trim_end_matches('/'));
+        let (client_id, client_secret) = register_oidc_client(
+            &region,
+            &["authorization_code", "refresh_token"],
+            &start_url,
+            Some(vec![redirect_uri.clone()]),
+        )
+        .await?;
+
+        let authorize_query = url::form_urlencoded::Serializer::new(String::new())
+            .append_pair("response_type", "code")
+            .append_pair("client_id", client_id.as_str())
+            .append_pair("redirect_uri", redirect_uri.as_str())
+            .append_pair("scopes", oauth_scopes().join(",").as_str())
+            .append_pair("state", state_token.as_str())
+            .append_pair("code_challenge", code_challenge.as_str())
+            .append_pair("code_challenge_method", "S256")
+            .finish();
+        let verification_uri_complete =
+            format!("https://oidc.{}.amazonaws.com/authorize?{}", region, authorize_query);
+
+        let pending = PendingOAuthState {
+            flow: OAuthFlow::IamSso,
+            login_id: generate_token(),
+            expires_at: now_timestamp() + OAUTH_TIMEOUT_SECONDS as i64,
+            verification_uri: verification_uri_complete.clone(),
+            verification_uri_complete: verification_uri_complete.clone(),
+            callback_url: callback_url.clone(),
+            callback_port,
+            state_token: state_token.clone(),
+            code_verifier,
+            region: Some(region),
+            client_id: Some(client_id),
+            client_secret: Some(client_secret),
+            device_code: None,
+            interval_seconds: 1,
+            callback_result: None,
+        };
+
+        if let Ok(mut guard) = PENDING_OAUTH_STATE.lock() {
+            *guard = Some(pending.clone());
+        }
+
+        let expected_login_id = pending.login_id.clone();
+        let expected_state = pending.state_token.clone();
+        let callback_port = pending.callback_port;
+        tokio::spawn(async move {
+            if let Err(err) = start_callback_server(
+                callback_port,
+                expected_login_id.clone(),
+                expected_state.clone(),
+            )
+            .await
+            {
+                logger::log_error(&format!(
+                    "[Kiro OAuth][IAM SSO] callback service error: login_id={}, error={}",
+                    expected_login_id, err
+                ));
+                set_callback_result_for_login(
+                    &expected_login_id,
+                    &expected_state,
+                    Err(format!("Local callback service error: {}", err)),
+                );
+            }
+        });
+
+        return Ok(KiroOAuthStartResponse {
+            login_id: pending.login_id,
+            user_code: String::new(),
+            verification_uri: pending.verification_uri.clone(),
+            verification_uri_complete: Some(pending.verification_uri_complete),
+            expires_in: OAUTH_TIMEOUT_SECONDS,
+            interval_seconds: 1,
+            callback_url: Some(callback_url),
+        });
     }
 
     let callback_port = find_available_callback_port()?;
@@ -1808,14 +1818,21 @@ pub async fn start_login() -> Result<KiroOAuthStartResponse, String> {
     let state_token = generate_token();
     let code_verifier = generate_token();
     let code_challenge = generate_code_challenge(&code_verifier);
+    let portal_login_option = match provider.as_str() {
+        "github" => Some("github"),
+        "google" => Some("google"),
+        _ => None,
+    };
     let verification_uri_complete = build_portal_auth_url(
         &state_token,
         &code_challenge,
         &callback_url,
         is_mwinit_tool_available(),
+        portal_login_option,
     );
 
     let pending = PendingOAuthState {
+        flow: OAuthFlow::Portal,
         login_id: generate_token(),
         expires_at: now_timestamp() + OAUTH_TIMEOUT_SECONDS as i64,
         verification_uri: KIRO_AUTH_PORTAL_URL.to_string(),
@@ -1824,6 +1841,11 @@ pub async fn start_login() -> Result<KiroOAuthStartResponse, String> {
         callback_port,
         state_token: state_token.clone(),
         code_verifier,
+        region: None,
+        client_id: None,
+        client_secret: None,
+        device_code: None,
+        interval_seconds: 1,
         callback_result: None,
     };
 
@@ -1888,27 +1910,123 @@ pub async fn complete_login(login_id: &str) -> Result<KiroOAuthCompletePayload, 
             return Err("Timed out waiting for Kiro login, please start authorization again".to_string());
         }
 
+        if state.flow == OAuthFlow::BuilderId {
+            let region = state
+                .region
+                .clone()
+                .unwrap_or_else(|| "us-east-1".to_string());
+            let client_id = state
+                .client_id
+                .clone()
+                .ok_or_else(|| "Missing OIDC clientId".to_string())?;
+            let client_secret = state
+                .client_secret
+                .clone()
+                .ok_or_else(|| "Missing OIDC clientSecret".to_string())?;
+            let device_code = state
+                .device_code
+                .clone()
+                .ok_or_else(|| "Missing OIDC deviceCode".to_string())?;
+
+            if let Some(mut token) =
+                exchange_oidc_device_token(&region, &client_id, &client_secret, &device_code).await?
+            {
+                if !token.is_object() {
+                    token = json!({});
+                }
+                if let Some(obj) = token.as_object_mut() {
+                    obj.entry("provider".to_string())
+                        .or_insert_with(|| Value::String("BuilderId".to_string()));
+                    obj.entry("loginProvider".to_string())
+                        .or_insert_with(|| Value::String("BuilderId".to_string()));
+                    obj.entry("authMethod".to_string())
+                        .or_insert_with(|| Value::String("IdC".to_string()));
+                    obj.entry("login_option".to_string())
+                        .or_insert_with(|| Value::String("builderid".to_string()));
+                    obj.entry("idc_region".to_string())
+                        .or_insert_with(|| Value::String(region.clone()));
+                    obj.entry("clientId".to_string())
+                        .or_insert_with(|| Value::String(client_id.clone()));
+                }
+                let _ = cancel_login(Some(login_id));
+                let payload = build_payload_from_snapshot(token, None, None)?;
+                return Ok(enrich_payload_with_runtime_usage(payload).await);
+            }
+
+            tokio::time::sleep(tokio::time::Duration::from_secs(
+                state.interval_seconds.max(1),
+            ))
+            .await;
+            continue;
+        }
+
         if let Some(result) = state.callback_result.clone() {
             let _ = cancel_login(Some(login_id));
             let callback = result?;
 
-            let login_option = callback.login_option.trim().to_ascii_lowercase();
-            if callback.code.is_none() {
-                let reason = match login_option.as_str() {
-                    "builderid" | "awsidc" | "internal" => {
-                        "Current login method requires Kiro client follow-up auth flow and is not supported for direct import. Please use Google/GitHub login."
-                    }
-                    "external_idp" => {
-                        "Current login method is External IdP and no authorization code was returned. Automatic import is not supported."
-                    }
-                    _ => "Callback missing authorization code, cannot complete login.",
-                };
-                return Err(reason.to_string());
-            }
-
-            let redirect_uri = build_token_exchange_redirect_uri(&state.callback_url, &callback);
-            let auth_token =
-                exchange_code_for_token(&callback, &state.code_verifier, &redirect_uri).await?;
+            let auth_token = if state.flow == OAuthFlow::IamSso {
+                let region = state
+                    .region
+                    .clone()
+                    .unwrap_or_else(|| "us-east-1".to_string());
+                let client_id = state
+                    .client_id
+                    .clone()
+                    .ok_or_else(|| "Missing OIDC clientId".to_string())?;
+                let client_secret = state
+                    .client_secret
+                    .clone()
+                    .ok_or_else(|| "Missing OIDC clientSecret".to_string())?;
+                let code = callback
+                    .code
+                    .as_deref()
+                    .and_then(|value| normalize_non_empty(Some(value)))
+                    .ok_or_else(|| "Callback missing authorization code".to_string())?;
+                let redirect_uri = build_token_exchange_redirect_uri(&state.callback_url, &callback);
+                let mut token = exchange_oidc_authorization_code(
+                    &region,
+                    &client_id,
+                    &client_secret,
+                    &redirect_uri,
+                    &code,
+                    &state.code_verifier,
+                )
+                .await?;
+                if !token.is_object() {
+                    token = json!({});
+                }
+                if let Some(obj) = token.as_object_mut() {
+                    obj.entry("provider".to_string())
+                        .or_insert_with(|| Value::String("Enterprise".to_string()));
+                    obj.entry("loginProvider".to_string())
+                        .or_insert_with(|| Value::String("Enterprise".to_string()));
+                    obj.entry("authMethod".to_string())
+                        .or_insert_with(|| Value::String("IdC".to_string()));
+                    obj.entry("login_option".to_string())
+                        .or_insert_with(|| Value::String("enterprise".to_string()));
+                    obj.entry("idc_region".to_string())
+                        .or_insert_with(|| Value::String(region.clone()));
+                    obj.entry("clientId".to_string())
+                        .or_insert_with(|| Value::String(client_id.clone()));
+                }
+                token
+            } else {
+                let login_option = callback.login_option.trim().to_ascii_lowercase();
+                if callback.code.is_none() {
+                    let reason = match login_option.as_str() {
+                        "builderid" | "awsidc" | "internal" => {
+                            "Current login method requires Kiro client follow-up auth flow and is not supported for direct import. Please use BuilderId/Enterprise flow."
+                        }
+                        "external_idp" => {
+                            "Current login method is External IdP and no authorization code was returned. Automatic import is not supported."
+                        }
+                        _ => "Callback missing authorization code, cannot complete login.",
+                    };
+                    return Err(reason.to_string());
+                }
+                let redirect_uri = build_token_exchange_redirect_uri(&state.callback_url, &callback);
+                exchange_code_for_token(&callback, &state.code_verifier, &redirect_uri).await?
+            };
             let payload = build_payload_from_snapshot(auth_token, None, None)?;
             return Ok(enrich_payload_with_runtime_usage(payload).await);
         }

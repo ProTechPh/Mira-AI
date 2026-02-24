@@ -1160,6 +1160,76 @@
   gap: 16px;
 }
 
+.ghcp-add-modal .oauth-config-grid {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.ghcp-add-modal .oauth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ghcp-add-modal .oauth-region-row {
+  display: grid;
+  grid-template-columns: 1fr 140px;
+  gap: 8px;
+}
+
+.ghcp-add-modal .oauth-field-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.ghcp-add-modal .oauth-incognito-toggle label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.ghcp-add-modal .oauth-incognito-toggle input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+}
+
+.ghcp-add-modal .filter-select {
+  position: relative;
+  width: 100%;
+}
+
+.ghcp-add-modal .filter-select select {
+  width: 100%;
+  height: 40px;
+  padding: 0 36px 0 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-size: 14px;
+  appearance: none;
+  cursor: pointer;
+}
+
+.ghcp-add-modal .filter-select::after {
+  content: '';
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid var(--text-muted);
+  border-bottom: 2px solid var(--text-muted);
+  transform: translateY(-60%) rotate(45deg);
+  pointer-events: none;
+}
+
 .ghcp-add-modal .section-desc {
   font-size: 14px;
   color: var(--text-secondary);
@@ -1229,6 +1299,18 @@
   color: var(--text-primary);
   resize: vertical;
   min-height: 120px;
+}
+
+.ghcp-add-modal .token-input.oauth-singleline-input {
+  min-height: 40px;
+  max-height: 40px;
+  resize: none;
+  font-family: inherit;
+}
+
+.ghcp-add-modal .token-input.oauth-region-custom-input {
+  padding: 0 12px;
+  font-size: 13px;
 }
 
 .ghcp-add-modal .token-input:focus {

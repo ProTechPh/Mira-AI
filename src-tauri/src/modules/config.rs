@@ -3,6 +3,7 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
 use std::sync::{OnceLock, RwLock};
@@ -129,6 +130,209 @@ pub struct UserConfig {
     /// Kiro 配额预警阈值（百分比）
     #[serde(default = "default_kiro_quota_alert_threshold")]
     pub kiro_quota_alert_threshold: i32,
+    /// Kiro API 代理配置
+    #[serde(default)]
+    pub kiro_proxy: KiroProxyConfig,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct KiroProxyApiKeyUsageDaily {
+    #[serde(default)]
+    pub requests: u64,
+    #[serde(default)]
+    pub input_tokens: u64,
+    #[serde(default)]
+    pub output_tokens: u64,
+    #[serde(default)]
+    pub credits: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct KiroProxyApiKeyUsageModel {
+    #[serde(default)]
+    pub requests: u64,
+    #[serde(default)]
+    pub input_tokens: u64,
+    #[serde(default)]
+    pub output_tokens: u64,
+    #[serde(default)]
+    pub credits: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct KiroProxyApiKeyUsage {
+    #[serde(default)]
+    pub total_requests: u64,
+    #[serde(default)]
+    pub total_input_tokens: u64,
+    #[serde(default)]
+    pub total_output_tokens: u64,
+    #[serde(default)]
+    pub total_credits: f64,
+    #[serde(default)]
+    pub daily: HashMap<String, KiroProxyApiKeyUsageDaily>,
+    #[serde(default)]
+    pub by_model: HashMap<String, KiroProxyApiKeyUsageModel>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct KiroProxyApiKey {
+    pub id: String,
+    pub name: String,
+    pub key: String,
+    #[serde(default = "default_true")]
+    pub enabled: bool,
+    #[serde(default = "default_timestamp_now")]
+    pub created_at: i64,
+    #[serde(default)]
+    pub last_used_at: Option<i64>,
+    #[serde(default)]
+    pub credits_limit: Option<f64>,
+    #[serde(default)]
+    pub usage: KiroProxyApiKeyUsage,
+    #[serde(default)]
+    pub usage_history: Vec<crate::modules::kiro_proxy::types::ProxyUsageRecord>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct KiroProxyModelMappingRule {
+    pub id: String,
+    pub name: String,
+    #[serde(default = "default_true")]
+    pub enabled: bool,
+    #[serde(
+        rename = "type",
+        alias = "mappingType",
+        default = "default_model_mapping_type"
+    )]
+    pub mapping_type: String,
+    pub source_model: String,
+    #[serde(default)]
+    pub target_models: Vec<String>,
+    #[serde(default)]
+    pub weights: Vec<f64>,
+    #[serde(default = "default_model_mapping_priority")]
+    pub priority: i32,
+    #[serde(default)]
+    pub api_key_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct KiroProxyConfig {
+    #[serde(default)]
+    pub enabled: bool,
+    #[serde(default)]
+    pub auto_start: bool,
+    #[serde(default = "default_proxy_host")]
+    pub host: String,
+    #[serde(default = "default_proxy_port")]
+    pub port: u16,
+    #[serde(default)]
+    pub api_key: Option<String>,
+    #[serde(default)]
+    pub api_keys: Vec<KiroProxyApiKey>,
+    #[serde(default = "default_true")]
+    pub enable_multi_account: bool,
+    #[serde(default)]
+    pub selected_account_ids: Vec<String>,
+    #[serde(default = "default_true")]
+    pub log_requests: bool,
+    #[serde(default = "default_proxy_max_retries")]
+    pub max_retries: u32,
+    #[serde(default = "default_proxy_retry_delay_ms")]
+    pub retry_delay_ms: u64,
+    #[serde(default = "default_thinking_output_format")]
+    pub thinking_output_format: String,
+    #[serde(default)]
+    pub auto_continue_rounds: u32,
+    #[serde(default)]
+    pub disable_tools: bool,
+    #[serde(default)]
+    pub preferred_endpoint: Option<String>,
+    #[serde(default = "default_proxy_model_cache_ttl_sec")]
+    pub model_cache_ttl_sec: u64,
+    #[serde(default = "default_proxy_token_refresh_before_expiry_sec")]
+    pub token_refresh_before_expiry_sec: u64,
+    #[serde(default)]
+    pub auto_switch_on_quota_exhausted: bool,
+    #[serde(default)]
+    pub model_mappings: Vec<KiroProxyModelMappingRule>,
+}
+
+fn default_proxy_host() -> String {
+    "127.0.0.1".to_string()
+}
+
+fn default_proxy_port() -> u16 {
+    5580
+}
+
+fn default_proxy_max_retries() -> u32 {
+    3
+}
+
+fn default_proxy_retry_delay_ms() -> u64 {
+    1000
+}
+
+fn default_thinking_output_format() -> String {
+    "reasoning_content".to_string()
+}
+
+fn default_proxy_model_cache_ttl_sec() -> u64 {
+    300
+}
+
+fn default_proxy_token_refresh_before_expiry_sec() -> u64 {
+    300
+}
+
+fn default_true() -> bool {
+    true
+}
+
+fn default_timestamp_now() -> i64 {
+    chrono::Utc::now().timestamp()
+}
+
+fn default_model_mapping_type() -> String {
+    "replace".to_string()
+}
+
+fn default_model_mapping_priority() -> i32 {
+    100
+}
+
+impl Default for KiroProxyConfig {
+    fn default() -> Self {
+        Self {
+            enabled: false,
+            auto_start: false,
+            host: default_proxy_host(),
+            port: default_proxy_port(),
+            api_key: None,
+            api_keys: Vec::new(),
+            enable_multi_account: true,
+            selected_account_ids: Vec::new(),
+            log_requests: true,
+            max_retries: default_proxy_max_retries(),
+            retry_delay_ms: default_proxy_retry_delay_ms(),
+            thinking_output_format: default_thinking_output_format(),
+            auto_continue_rounds: 0,
+            disable_tools: false,
+            preferred_endpoint: None,
+            model_cache_ttl_sec: default_proxy_model_cache_ttl_sec(),
+            token_refresh_before_expiry_sec: default_proxy_token_refresh_before_expiry_sec(),
+            auto_switch_on_quota_exhausted: false,
+            model_mappings: Vec::new(),
+        }
+    }
 }
 
 /// 窗口关闭行为
@@ -338,6 +542,7 @@ impl Default for UserConfig {
             windsurf_quota_alert_threshold: default_windsurf_quota_alert_threshold(),
             kiro_quota_alert_enabled: default_kiro_quota_alert_enabled(),
             kiro_quota_alert_threshold: default_kiro_quota_alert_threshold(),
+            kiro_proxy: KiroProxyConfig::default(),
         }
     }
 }
@@ -472,6 +677,14 @@ pub fn load_user_config() -> Result<UserConfig, String> {
             obj.insert(
                 "kiro_quota_alert_threshold".to_string(),
                 json!(legacy_threshold),
+            );
+        }
+
+        if !obj.contains_key("kiro_proxy") {
+            obj.insert(
+                "kiro_proxy".to_string(),
+                serde_json::to_value(KiroProxyConfig::default())
+                    .unwrap_or_else(|_| json!({})),
             );
         }
     }

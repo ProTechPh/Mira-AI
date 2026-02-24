@@ -787,6 +787,7 @@ fn handle_set_language(language: &str, source: Option<&str>) -> Result<String, S
         windsurf_quota_alert_threshold: current.windsurf_quota_alert_threshold,
         kiro_quota_alert_enabled: current.kiro_quota_alert_enabled,
         kiro_quota_alert_threshold: current.kiro_quota_alert_threshold,
+        kiro_proxy: current.kiro_proxy,
     };
 
     config::save_user_config(&new_config)?;

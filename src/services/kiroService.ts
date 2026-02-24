@@ -11,6 +11,12 @@ export interface KiroOAuthLoginStartResponse {
   callbackUrl?: string | null;
 }
 
+export interface KiroOAuthStartOptions {
+  provider?: 'google' | 'github' | 'builderid' | 'awsidc' | 'enterprise';
+  region?: string;
+  startUrl?: string;
+}
+
 /** 列出所有 Kiro 账号 */
 export async function listKiroAccounts(): Promise<KiroAccount[]> {
   return await invoke('list_kiro_accounts');
@@ -52,8 +58,10 @@ export async function refreshAllKiroTokens(): Promise<number> {
 }
 
 /** Kiro OAuth：开始登录（浏览器授权 + 本地回调） */
-export async function startKiroOAuthLogin(): Promise<KiroOAuthLoginStartResponse> {
-  return await invoke('kiro_oauth_login_start');
+export async function startKiroOAuthLogin(
+  options?: KiroOAuthStartOptions,
+): Promise<KiroOAuthLoginStartResponse> {
+  return await invoke('kiro_oauth_login_start', { options: options ?? null });
 }
 
 /** Kiro OAuth：完成登录（等待本地回调，直到成功/失败/超时） */

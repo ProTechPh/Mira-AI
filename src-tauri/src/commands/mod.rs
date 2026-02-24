@@ -8,6 +8,7 @@ pub mod group;
 pub mod import;
 pub mod instance;
 pub mod kiro;
+pub mod kiro_proxy;
 pub mod kiro_instance;
 pub mod oauth;
 pub mod system;

@@ -7,6 +7,27 @@ All notable changes to  will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
+## [0.8.18] - 2026-02-24
+
+### Added
+- **Kiro API Proxy dedicated module and page**: Added native Rust `kiro_proxy` service with lifecycle commands, OpenAI/Claude-compatible proxy routes, admin endpoints, API key auth/metering, model refresh commands, and a dedicated frontend Proxy page with full controls.
+- **Expanded Kiro OAuth providers and controls**: Added provider options for `Google`, `GitHub`, `BuilderId/AWSIdC`, and `Enterprise (IAM Identity Center)`, including AWS-specific region and enterprise start URL fields plus optional incognito launch.
+
+### Changed
+- **Kiro model source now comes from Kiro API only**: Removed hardcoded/alias-based model fallback in proxy listing flow and aligned model retrieval to upstream `ListAvailableModels` with cache refresh controls.
+- **Proxy runtime and config UX improvements**: Refined Kiro Proxy page layout, improved control alignment, disabled invalid start actions while running, fixed runtime status/uptime presentation, removed live-events panel, and added inline helper hints for config fields.
+- **OAuth account-add flow behavior**: Opening Add Account no longer auto-triggers OAuth immediately; provider selection now happens explicitly in the modal flow.
+- **Kiro token lifecycle alignment**: Removed Kiro-account-manager style remote refresh fallback path so token refresh relies on the in-system Kiro OAuth/token handling path.
+
+### Fixed
+- **Duplicate Kiro model fetch requests**: Added single-flight/short-window reuse behavior to prevent duplicated simultaneous `ListAvailableModels` upstream calls.
+- **Quota/usage detection fallback behavior**: Improved Kiro quota/runtime usage fetch so AWS-related usage resolution can continue even when specific optional identity fields are missing.
+- **OAuth completion logging edge case**: Fixed post-success flow state handling that could emit a misleading `cancel` log after a successful OAuth completion.
+
+### Removed
+- **Kiro Subscription APIs from proxy integration**: Removed `listAvailableSubscriptions` and `CreateSubscriptionToken` integration surfaces from this release scope.
+
+---
 ## [0.8.12] - 2026-02-22
 
 ### Added

@@ -247,6 +247,51 @@ fn account_profile_arn(account: &KiroAccount) -> Option<String> {
         .or_else(|| pick_profile_arn(account.kiro_auth_token_raw.as_ref()))
 }
 
+fn pick_machine_id(root: Option<&Value>) -> Option<String> {
+    fn pick_from_object(obj: &serde_json::Map<String, Value>) -> Option<String> {
+        for key in [
+            "machineId",
+            "machine_id",
+            "deviceId",
+            "device_id",
+            "clientDeviceId",
+        ] {
+            if let Some(value) = obj.get(key).and_then(|v| v.as_str()) {
+                let trimmed = value.trim();
+                if !trimmed.is_empty() {
+                    return Some(trimmed.to_string());
+                }
+            }
+        }
+        None
+    }
+
+    let root = root?;
+    let obj = root.as_object()?;
+
+    pick_from_object(obj)
+        .or_else(|| {
+            obj.get("deviceContext")
+                .and_then(|v| v.as_object())
+                .and_then(pick_from_object)
+        })
+        .or_else(|| {
+            obj.get("profile")
+                .and_then(|v| v.as_object())
+                .and_then(pick_from_object)
+        })
+        .or_else(|| {
+            obj.get("account")
+                .and_then(|v| v.as_object())
+                .and_then(pick_from_object)
+        })
+}
+
+fn payload_machine_id(payload: &KiroOAuthCompletePayload) -> Option<String> {
+    pick_machine_id(payload.kiro_profile_raw.as_ref())
+        .or_else(|| pick_machine_id(payload.kiro_auth_token_raw.as_ref()))
+}
+
 fn account_matches_payload_identity(
     existing_profile_arn: Option<&String>,
     existing_user: Option<&String>,
@@ -576,6 +621,7 @@ pub fn list_accounts() -> Vec<KiroAccount> {
 }
 
 fn apply_payload(account: &mut KiroAccount, payload: KiroOAuthCompletePayload) {
+    let incoming_machine_id = payload_machine_id(&payload);
     let incoming_email = payload.email.trim().to_string();
     if !incoming_email.is_empty() {
         account.email = incoming_email;
@@ -584,6 +630,9 @@ fn apply_payload(account: &mut KiroAccount, payload: KiroOAuthCompletePayload) {
     }
     account.user_id = payload.user_id;
     account.login_provider = payload.login_provider;
+    if incoming_machine_id.is_some() {
+        account.machine_id = incoming_machine_id;
+    }
     account.access_token = payload.access_token;
     account.refresh_token = payload.refresh_token;
     account.token_type = payload.token_type;
@@ -661,6 +710,7 @@ pub fn upsert_account(payload: KiroOAuthCompletePayload) -> Result<KiroAccount, 
         email: payload.email.clone(),
         user_id: payload.user_id.clone(),
         login_provider: payload.login_provider.clone(),
+        machine_id: payload_machine_id(&payload),
         tags,
         access_token: payload.access_token.clone(),
         refresh_token: payload.refresh_token.clone(),
