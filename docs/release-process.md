@@ -29,11 +29,11 @@ npm run release:preflight
 node scripts/release/preflight.cjs --skip-locales --skip-typecheck --skip-build --skip-cargo
 ```
 
-## 3. 打包产物（macOS / Homebrew 推荐）
+## 3. 打包产物（macOS 推荐）
 
-当前推荐使用 `universal` 安装包（同时兼容 Apple Silicon / Intel），并在上传 GitHub Release 后同步更新 Homebrew cask。
+当前推荐使用 `universal` 安装包（同时兼容 Apple Silicon / Intel）。Homebrew cask 改为手动维护，不再由 release workflow 自动更新。
 
-推荐一键脚本（会执行 `universal.dmg` 构建、上传 GitHub Release 资产、更新 `Casks/mira-tools.rb`）：
+推荐一键脚本（会执行 `universal.dmg` 构建并上传 GitHub Release 资产）：
 
 ```bash
 npm run release:github-and-cask
@@ -63,7 +63,7 @@ rustup target add x86_64-apple-darwin
 npm run release:checksums
 ```
 
-如果本次发布使用 `universal` 产物（Homebrew 场景，默认如此），建议显式指定 `universal` bundle 目录，确保 `*_universal.dmg` 被写入校验文件：
+如果本次发布使用 `universal` 产物，建议显式指定 `universal` bundle 目录，确保 `*_universal.dmg` 被写入校验文件：
 
 ```bash
 node scripts/release/gen_checksums.cjs \
@@ -84,15 +84,15 @@ node scripts/release/gen_checksums.cjs \
 
 每次发布建议至少包含：
 
-1. 下载文件列表（按平台；macOS/Homebrew 场景建议包含 `*_universal.dmg`）
+1. 下载文件列表（按平台；macOS 场景建议包含 `*_universal.dmg`）
 2. `SHA256SUMS.txt`
 3. 更新日志（中英文）
 4. VirusTotal 链接（可选但推荐）
 5. 已知误报说明（如有）
 
-补充说明（Homebrew 自维护 Tap）：
+补充说明（Homebrew 手动维护）：
 
-1. 先上传 GitHub Release 资产，再推送 `Casks/mira-tools.rb` 更新，避免 cask 链接短暂 404。
+1. 先上传 GitHub Release 资产，再手动更新 `Casks/mira-tools.rb`，避免 cask 链接短暂 404。
 2. `Casks/mira-tools.rb` 中的 `version`、`sha256` 必须与 Release 中实际 `*_universal.dmg` 一致。
 
 ## 6. VirusTotal 单引擎误报处理
@@ -107,7 +107,7 @@ node scripts/release/gen_checksums.cjs \
 ## 7. Git 发布建议（与你当前规则对齐）
 
 1. 修改更新日志（`CHANGELOG.md` / `CHANGELOG.zh-CN.md`）。
-2. 若使用 Homebrew 自维护 Tap，先运行 `npm run release:github-and-cask`（或 `--skip-build` 变体）并确认 `Casks/mira-tools.rb` 已更新。
+2. 若使用 Homebrew，自行手动更新 `Casks/mira-tools.rb`，并确认 `version`、`sha256` 与 Release 中 `*_universal.dmg` 一致。
 3. 发布前若涉及“发布 + 推远端 + 打标签”，先运行：
 
 ```bash
