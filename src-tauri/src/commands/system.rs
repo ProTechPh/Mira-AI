@@ -180,6 +180,7 @@ pub fn save_network_config(ws_enabled: bool, ws_port: u16) -> Result<bool, Strin
         windsurf_quota_alert_threshold: current.windsurf_quota_alert_threshold,
         kiro_quota_alert_enabled: current.kiro_quota_alert_enabled,
         kiro_quota_alert_threshold: current.kiro_quota_alert_threshold,
+        kiro_proxy: current.kiro_proxy,
     };
 
     config::save_user_config(&new_config)?;
@@ -330,6 +331,7 @@ pub fn save_general_config(
             .unwrap_or(current.kiro_quota_alert_enabled),
         kiro_quota_alert_threshold: kiro_quota_alert_threshold
             .unwrap_or(current.kiro_quota_alert_threshold),
+        kiro_proxy: current.kiro_proxy,
     };
 
     config::save_user_config(&new_config)?;
@@ -513,4 +515,105 @@ pub async fn delete_corrupted_file(path: String) -> Result<(), String> {
     ));
 
     Ok(())
+}
+
+/// 在系统浏览器中打开 URL，可选无痕模式
+#[tauri::command]
+pub fn open_url_in_browser(url: String, incognito: Option<bool>) -> Result<(), String> {
+    let incognito = incognito.unwrap_or(false);
+    let trimmed = url.trim();
+    if trimmed.is_empty() {
+        return Err("URL 不能为空".to_string());
+    }
+
+    #[cfg(target_os = "windows")]
+    {
+        if incognito {
+            let attempts: Vec<Vec<String>> = vec![
+                vec!["/C", "start", "", "msedge", "-inprivate", trimmed]
+                    .into_iter()
+                    .map(String::from)
+                    .collect(),
+                vec!["/C", "start", "", "chrome", "--incognito", trimmed]
+                    .into_iter()
+                    .map(String::from)
+                    .collect(),
+                vec!["/C", "start", "", "firefox", "-private-window", trimmed]
+                    .into_iter()
+                    .map(String::from)
+                    .collect(),
+                vec!["/C", "start", "", trimmed]
+                    .into_iter()
+                    .map(String::from)
+                    .collect(),
+            ];
+
+            for args in attempts {
+                if std::process::Command::new("cmd")
+                    .args(args.iter().map(|s| s.as_str()))
+                    .spawn()
+                    .is_ok()
+                {
+                    return Ok(());
+                }
+            }
+            return Err("打开浏览器失败".to_string());
+        }
+
+        std::process::Command::new("cmd")
+            .args(["/C", "start", "", trimmed])
+            .spawn()
+            .map_err(|e| format!("打开浏览器失败: {}", e))?;
+        return Ok(());
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+        if incognito {
+            if std::process::Command::new("open")
+                .args(["-na", "Google Chrome", "--args", "--incognito", trimmed])
+                .spawn()
+                .is_ok()
+            {
+                return Ok(());
+            }
+            if std::process::Command::new("open")
+                .args(["-a", "Firefox", "--args", "-private-window", trimmed])
+                .spawn()
+                .is_ok()
+            {
+                return Ok(());
+            }
+        }
+
+        std::process::Command::new("open")
+            .arg(trimmed)
+            .spawn()
+            .map_err(|e| format!("打开浏览器失败: {}", e))?;
+        return Ok(());
+    }
+
+    #[cfg(target_os = "linux")]
+    {
+        if incognito {
+            let attempts: Vec<Vec<&str>> = vec![
+                vec!["google-chrome", "--incognito", trimmed],
+                vec!["chromium", "--incognito", trimmed],
+                vec!["firefox", "-private-window", trimmed],
+            ];
+            for cmd in attempts {
+                if let Some((bin, args)) = cmd.split_first() {
+                    if std::process::Command::new(bin).args(args).spawn().is_ok() {
+                        return Ok(());
+                    }
+                }
+            }
+        }
+
+        std::process::Command::new("xdg-open")
+            .arg(trimmed)
+            .spawn()
+            .map_err(|e| format!("打开浏览器失败: {}", e))?;
+        return Ok(());
+    }
 }

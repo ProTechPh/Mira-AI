@@ -42,7 +42,7 @@
   flex-direction: column;
   align-items: center;
   padding: 32px 0;
-  gap: 32px; /* 减小留白 (was 40px) */
+  gap: 24px;
   z-index: 1000;
   animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
   user-select: none;
@@ -55,7 +55,7 @@
 }
 
 .nav-brand {
-  margin-bottom: 0px; 
+  margin-bottom: 4px;
 }
 
 .brand-logo {
@@ -82,9 +82,9 @@
 .nav-items {
   display: flex;
   flex-direction: column;
-  gap: 28px; /* 增加菜单间距 (was 20px) */
-  flex: 1;
-  justify-content: center;
+  gap: 24px;
+  flex: 0 0 auto;
+  justify-content: flex-start;
   position: relative;
 }
 
@@ -122,7 +122,11 @@
 }
 
 .nav-footer {
-  margin-top: auto;
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
 }
 
 .side-nav-more-popover {

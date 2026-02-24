@@ -153,8 +153,138 @@
     "codex": "Codex 账号",
     "githubCopilot": "GitHub Copilot",
     "windsurf": "Windsurf",
+    "kiroProxy": "Kiro 代理",
     "morePlatforms": "更多平台",
     "instances": "多开实例"
+  },
+  "kiroProxy": {
+    "title": "Kiro API 代理",
+    "subtitle": "兼容 OpenAI 与 Claude 的 Kiro 代理服务",
+    "actions": {
+      "start": "启动",
+      "stop": "停止",
+      "restart": "重启",
+      "syncAccounts": "同步账号",
+      "refreshModels": "刷新模型",
+      "resetStats": "重置统计"
+    },
+    "status": {
+      "title": "运行状态",
+      "running": "运行中",
+      "stopped": "已停止",
+      "uptime": "运行时长",
+      "totalRequests": "请求数",
+      "tokens": "Token 数",
+      "credits": "Credits"
+    },
+    "config": {
+      "title": "代理配置",
+      "enabled": "启用代理",
+      "autoStart": "自动启动",
+      "logRequests": "记录请求日志",
+      "disableTools": "禁用工具",
+      "endpointAuto": "自动选择端点",
+      "legacyApiKey": "旧版单 API Key",
+      "autoSwitchQuota": "配额耗尽时自动切换"
+    },
+    "accounts": {
+      "title": "账号池",
+      "multi": "启用多账号轮询",
+      "inPool": "已纳入",
+      "excluded": "已排除",
+      "cooldown": "冷却",
+      "empty": "未发现 Kiro 账号"
+    },
+    "models": {
+      "title": "模型列表",
+      "id": "模型 ID",
+      "name": "名称",
+      "source": "来源",
+      "empty": "暂无模型数据"
+    },
+    "apiKeys": {
+      "title": "API Keys",
+      "name": "Key 名称",
+      "value": "API Key",
+      "add": "添加",
+      "preview": "预览",
+      "usage": "用量",
+      "limit": "Credits 上限",
+      "empty": "暂无 API Key",
+      "rename": "重命名",
+      "renamePrompt": "输入新的 API Key 名称",
+      "setLimit": "设置上限",
+      "limitPrompt": "输入 Credits 上限（数字）",
+      "resetUsage": "重置用量"
+    },
+    "mappings": {
+      "title": "模型映射",
+      "empty": "暂无映射规则",
+      "name": "规则名称",
+      "source": "源模型（支持 *）",
+      "targets": "目标模型，逗号分隔",
+      "weights": "权重，逗号分隔",
+      "priority": "优先级",
+      "scopedKeys": "API Key ID，逗号分隔"
+    },
+    "logs": {
+      "title": "请求日志",
+      "clear": "清空",
+      "time": "时间",
+      "path": "路径",
+      "model": "模型",
+      "account": "账号",
+      "tokens": "Token",
+      "credits": "Credits",
+      "latency": "延迟",
+      "status": "状态",
+      "empty": "暂无请求日志"
+    },
+    "stats": {
+      "title": "统计信息",
+      "total": "总请求",
+      "success": "成功",
+      "failed": "失败",
+      "inputTokens": "输入 Token",
+      "outputTokens": "输出 Token",
+      "credits": "Credits"
+    },
+    "endpoints": {
+      "title": "端点说明",
+      "base": "基础地址"
+    },
+    "subscriptions": {
+      "title": "Kiro 订阅接口",
+      "autoAccount": "自动选择账号",
+      "type": "订阅类型（可选）",
+      "fetch": "拉取订阅",
+      "token": "创建 Token",
+      "empty": "暂无数据",
+      "autoFetchHint": "订阅信息会在页面加载和账号切换时自动刷新。"
+    },
+    "events": {
+      "title": "实时事件",
+      "time": "时间",
+      "type": "类型",
+      "payload": "载荷",
+      "empty": "暂无实时事件"
+    },
+    "messages": {
+      "started": "代理已启动",
+      "stopped": "代理已停止",
+      "restarted": "代理已重启",
+      "configSaved": "配置已保存",
+      "accountsSynced": "账号已同步",
+      "modelsRefreshed": "模型已刷新",
+      "apiKeyAdded": "API Key 已添加",
+      "apiKeyUpdated": "API Key 已更新",
+      "apiKeyDeleted": "API Key 已删除",
+      "apiKeyUsageReset": "API Key 用量已重置",
+      "mappingsSaved": "模型映射已保存",
+      "subscriptionsFetched": "订阅列表已拉取",
+      "subscriptionTokenFetched": "订阅 Token 已获取",
+      "statsReset": "统计已重置"
+    }
   },
   "breakout": {
     "gameOver": "本局结束",

@@ -152,9 +152,139 @@
     "codex": "Codex Accounts",
     "githubCopilot": "GitHub Copilot",
     "windsurf": "Windsurf",
+    "kiroProxy": "Kiro Proxy",
     "dashboard": "Dashboard",
     "morePlatforms": "More Platforms",
     "instances": "Multi-Instance"
+  },
+  "kiroProxy": {
+    "title": "Kiro API Proxy",
+    "subtitle": "OpenAI + Claude compatible Kiro proxy service",
+    "actions": {
+      "start": "Start",
+      "stop": "Stop",
+      "restart": "Restart",
+      "syncAccounts": "Sync Accounts",
+      "refreshModels": "Refresh Models",
+      "resetStats": "Reset Stats"
+    },
+    "status": {
+      "title": "Runtime Status",
+      "running": "Running",
+      "stopped": "Stopped",
+      "uptime": "Uptime",
+      "totalRequests": "Requests",
+      "tokens": "Tokens",
+      "credits": "Credits"
+    },
+    "config": {
+      "title": "Proxy Config",
+      "enabled": "Enabled",
+      "autoStart": "Auto start",
+      "logRequests": "Log requests",
+      "disableTools": "Disable tools",
+      "endpointAuto": "Auto endpoint",
+      "legacyApiKey": "Legacy single API key",
+      "autoSwitchQuota": "Auto switch on quota exhausted"
+    },
+    "accounts": {
+      "title": "Account Pool",
+      "multi": "Enable multi-account routing",
+      "inPool": "In pool",
+      "excluded": "Excluded",
+      "cooldown": "Cooldown",
+      "empty": "No Kiro accounts found"
+    },
+    "models": {
+      "title": "Models",
+      "id": "Model ID",
+      "name": "Name",
+      "source": "Source",
+      "empty": "No models loaded"
+    },
+    "apiKeys": {
+      "title": "API Keys",
+      "name": "Key Name",
+      "value": "API Key",
+      "add": "Add",
+      "preview": "Preview",
+      "usage": "Usage",
+      "limit": "Credits Limit",
+      "empty": "No API keys",
+      "rename": "Rename",
+      "renamePrompt": "New API key name",
+      "setLimit": "Set Limit",
+      "limitPrompt": "Credits limit (number)",
+      "resetUsage": "Reset Usage"
+    },
+    "mappings": {
+      "title": "Model Mapping",
+      "empty": "No mapping rules",
+      "name": "Rule Name",
+      "source": "Source model (supports *)",
+      "targets": "Target models, comma separated",
+      "weights": "Weights, comma separated",
+      "priority": "Priority",
+      "scopedKeys": "API key IDs, comma separated"
+    },
+    "logs": {
+      "title": "Request Logs",
+      "clear": "Clear",
+      "time": "Time",
+      "path": "Path",
+      "model": "Model",
+      "account": "Account",
+      "tokens": "Tokens",
+      "credits": "Credits",
+      "latency": "Latency",
+      "status": "Status",
+      "empty": "No request logs"
+    },
+    "stats": {
+      "title": "Stats",
+      "total": "Total",
+      "success": "Success",
+      "failed": "Failed",
+      "inputTokens": "Input Tokens",
+      "outputTokens": "Output Tokens",
+      "credits": "Credits"
+    },
+    "endpoints": {
+      "title": "Endpoint Docs",
+      "base": "Base URL"
+    },
+    "subscriptions": {
+      "title": "Kiro Subscription APIs",
+      "autoAccount": "Auto-select account",
+      "type": "Subscription type (optional)",
+      "fetch": "Fetch Subscriptions",
+      "token": "Create Token",
+      "empty": "No data yet",
+      "autoFetchHint": "Subscriptions auto-refresh on load and account change."
+    },
+    "events": {
+      "title": "Live Events",
+      "time": "Time",
+      "type": "Type",
+      "payload": "Payload",
+      "empty": "No live events"
+    },
+    "messages": {
+      "started": "Proxy started",
+      "stopped": "Proxy stopped",
+      "restarted": "Proxy restarted",
+      "configSaved": "Config saved",
+      "accountsSynced": "Accounts synced",
+      "modelsRefreshed": "Models refreshed",
+      "apiKeyAdded": "API key added",
+      "apiKeyUpdated": "API key updated",
+      "apiKeyDeleted": "API key deleted",
+      "apiKeyUsageReset": "API key usage reset",
+      "mappingsSaved": "Model mappings saved",
+      "subscriptionsFetched": "Subscriptions fetched",
+      "subscriptionTokenFetched": "Subscription token fetched",
+      "statsReset": "Stats reset"
+    }
   },
   "breakout": {
     "gameOver": "Game Over",

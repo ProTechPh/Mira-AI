@@ -9,6 +9,8 @@ pub struct KiroAccount {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub login_provider: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub machine_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tags: Option<Vec<String>>,
 
     // 敏感字段：前端仅用于切号/刷新，不应打印到日志。
@@ -107,6 +109,17 @@ pub struct KiroOAuthStartResponse {
     pub interval_seconds: u64,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub callback_url: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct KiroOAuthStartOptions {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub provider: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub region: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub start_url: Option<String>,
 }
 
 #[derive(Debug, Clone)]

@@ -42,7 +42,6 @@ import {
 } from '../types/kiro';
 
 import { save } from '@tauri-apps/plugin-dialog';
-import { openUrl } from '@tauri-apps/plugin-opener';
 import { invoke } from '@tauri-apps/api/core';
 import { KiroOverviewTabsHeader, KiroTab } from '../components/KiroOverviewTabsHeader';
 import { KiroInstancesContent } from './KiroInstancesPage';
@@ -56,6 +55,53 @@ import {
 const WINDSURF_FLOW_NOTICE_COLLAPSED_KEY = 'agtools.kiro.flow_notice_collapsed';
 const WINDSURF_CURRENT_ACCOUNT_ID_KEY = 'agtools.kiro.current_account_id';
 const KIRO_KNOWN_PLAN_FILTERS = ['FREE', 'INDIVIDUAL', 'PRO', 'BUSINESS', 'ENTERPRISE'] as const;
+const BUILDER_ID_START_URL = 'https://view.awsapps.com/start';
+const KIRO_OAUTH_REGION_GROUPS = [
+  {
+    label: 'US',
+    options: [
+      ['us-east-1', 'us-east-1 (N. Virginia)'],
+      ['us-east-2', 'us-east-2 (Ohio)'],
+      ['us-west-1', 'us-west-1 (N. California)'],
+      ['us-west-2', 'us-west-2 (Oregon)'],
+    ],
+  },
+  {
+    label: 'Europe',
+    options: [
+      ['eu-west-1', 'eu-west-1 (Ireland)'],
+      ['eu-west-2', 'eu-west-2 (London)'],
+      ['eu-west-3', 'eu-west-3 (Paris)'],
+      ['eu-central-1', 'eu-central-1 (Frankfurt)'],
+      ['eu-north-1', 'eu-north-1 (Stockholm)'],
+      ['eu-south-1', 'eu-south-1 (Milan)'],
+    ],
+  },
+  {
+    label: 'Asia Pacific',
+    options: [
+      ['ap-northeast-1', 'ap-northeast-1 (Tokyo)'],
+      ['ap-northeast-2', 'ap-northeast-2 (Seoul)'],
+      ['ap-northeast-3', 'ap-northeast-3 (Osaka)'],
+      ['ap-southeast-1', 'ap-southeast-1 (Singapore)'],
+      ['ap-southeast-2', 'ap-southeast-2 (Sydney)'],
+      ['ap-south-1', 'ap-south-1 (Mumbai)'],
+      ['ap-east-1', 'ap-east-1 (Hong Kong)'],
+    ],
+  },
+  {
+    label: 'Other',
+    options: [
+      ['ca-central-1', 'ca-central-1 (Canada)'],
+      ['sa-east-1', 'sa-east-1 (Sao Paulo)'],
+      ['me-south-1', 'me-south-1 (Bahrain)'],
+      ['af-south-1', 'af-south-1 (Cape Town)'],
+    ],
+  },
+] as const;
+const KIRO_OAUTH_KNOWN_REGIONS: string[] = KIRO_OAUTH_REGION_GROUPS.flatMap((group) =>
+  group.options.map(([value]) => value),
+);
 
 export function KiroAccountsPage() {
   const { t, i18n } = useTranslation();
@@ -103,6 +149,10 @@ export function KiroAccountsPage() {
   const [oauthCompleteError, setOauthCompleteError] = useState<string | null>(null);
   const [oauthPolling, setOauthPolling] = useState(false);
   const [oauthTimedOut, setOauthTimedOut] = useState(false);
+  const [oauthProvider, setOauthProvider] = useState<'google' | 'github' | 'builderid' | 'awsidc' | 'enterprise'>('google');
+  const [oauthRegion, setOauthRegion] = useState('us-east-1');
+  const [oauthStartUrl, setOauthStartUrl] = useState(BUILDER_ID_START_URL);
+  const [oauthIncognito, setOauthIncognito] = useState(true);
   const [tokenInput, setTokenInput] = useState('');
   const [importing, setImporting] = useState(false);
   const [message, setMessage] = useState<{ text: string; tone?: 'error' } | null>(null);
@@ -212,6 +262,9 @@ export function KiroAccountsPage() {
     oauthLog('Authorization completed and saved successfully', {
       loginId: oauthLoginIdRef.current,
     });
+    oauthLoginIdRef.current = null;
+    oauthActiveRef.current = false;
+    oauthCompletingRef.current = false;
     await fetchAccounts();
     setAddStatus('success');
     setAddMessage(t('common.shared.oauth.success', 'Authorization successful'));
@@ -249,7 +302,11 @@ export function KiroAccountsPage() {
     let started = false;
 
     kiroService
-      .startKiroOAuthLogin()
+      .startKiroOAuthLogin({
+        provider: oauthProvider,
+        region: oauthRegion || 'us-east-1',
+        startUrl: oauthProvider === 'enterprise' ? oauthStartUrl : undefined,
+      })
       .then((resp) => {
         started = true;
         oauthLoginIdRef.current = resp.loginId ?? null;
@@ -287,12 +344,15 @@ export function KiroAccountsPage() {
       .finally(() => {
         oauthActiveRef.current = false;
       });
-  }, [completeOauthSuccess, handleOauthCompleteError, handleOauthPrepareError, oauthLog]);
-
-  useEffect(() => {
-    if (!showAddModal || addTab !== 'oauth' || oauthUrl) return;
-    prepareOauthUrl();
-  }, [showAddModal, addTab, oauthUrl, prepareOauthUrl]);
+  }, [
+    completeOauthSuccess,
+    handleOauthCompleteError,
+    handleOauthPrepareError,
+    oauthLog,
+    oauthProvider,
+    oauthRegion,
+    oauthStartUrl,
+  ]);
 
   useEffect(() => {
     if (showAddModal && addTab === 'oauth') return;
@@ -590,7 +650,10 @@ export function KiroAccountsPage() {
       authUrl: oauthUrl,
     });
     try {
-      await openUrl(oauthUrl);
+      await invoke('open_url_in_browser', {
+        url: oauthUrl,
+        incognito: oauthIncognito,
+      });
     } catch (e) {
       console.error('打开浏览器失败:', e);
       await navigator.clipboard.writeText(oauthUrl).catch(() => {});
@@ -1855,6 +1918,98 @@ export function KiroAccountsPage() {
                   <p className="section-desc">
                     {t('kiro.oauth.desc', 'Click the button below and complete Kiro authorization in your browser.')}
                   </p>
+                  <div className="oauth-config-grid">
+                    <div className="oauth-field">
+                      <span className="oauth-field-label">Provider</span>
+                      <div className="filter-select">
+                        <select
+                          value={oauthProvider}
+                          onChange={(e) => {
+                            setOauthProvider(e.target.value as 'google' | 'github' | 'builderid' | 'awsidc' | 'enterprise');
+                            setOauthPrepareError(null);
+                            setOauthCompleteError(null);
+                            setOauthTimedOut(false);
+                            setOauthPolling(false);
+                            setOauthMeta(null);
+                            setOauthUrl(null);
+                            setOauthUrlCopied(false);
+                            setOauthUserCode(null);
+                            setOauthUserCodeCopied(false);
+                          }}
+                        >
+                          <option value="google">Google</option>
+                          <option value="github">GitHub</option>
+                          <option value="awsidc">AWS (BuilderId)</option>
+                          <option value="builderid">BuilderId</option>
+                          <option value="enterprise">Enterprise (IAM SSO)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {(oauthProvider === 'awsidc' ||
+                      oauthProvider === 'builderid' ||
+                      oauthProvider === 'enterprise') && (
+                      <div className="oauth-field">
+                        <span className="oauth-field-label">AWS Region</span>
+                        <div className="oauth-region-row">
+                          <div className="filter-select">
+                            <select
+                              value={KIRO_OAUTH_KNOWN_REGIONS.includes(oauthRegion) ? oauthRegion : 'custom'}
+                              onChange={(e) => {
+                                if (e.target.value !== 'custom') {
+                                  setOauthRegion(e.target.value);
+                                }
+                              }}
+                            >
+                              {KIRO_OAUTH_REGION_GROUPS.map((group) => (
+                                <optgroup key={group.label} label={group.label}>
+                                  {group.options.map(([value, label]) => (
+                                    <option key={value} value={value}>
+                                      {label}
+                                    </option>
+                                  ))}
+                                </optgroup>
+                              ))}
+                              <optgroup label="Custom">
+                                <option value="custom">-- Custom --</option>
+                              </optgroup>
+                            </select>
+                          </div>
+                          <input
+                            className="token-input oauth-singleline-input oauth-region-custom-input"
+                            type="text"
+                            value={oauthRegion}
+                            onChange={(e) => setOauthRegion(e.target.value)}
+                            placeholder="e.g., cn-north-1"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {oauthProvider === 'enterprise' && (
+                      <div className="oauth-field">
+                        <span className="oauth-field-label">SSO Start URL</span>
+                        <input
+                          className="token-input oauth-singleline-input"
+                          type="text"
+                          value={oauthStartUrl}
+                          onChange={(e) => setOauthStartUrl(e.target.value)}
+                          placeholder="https://your-org.awsapps.com/start"
+                        />
+                      </div>
+                    )}
+
+                    <div className="oauth-incognito-toggle">
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={oauthIncognito}
+                          onChange={(e) => setOauthIncognito(e.target.checked)}
+                        />
+                        <span>Open browser in incognito</span>
+                      </label>
+                    </div>
+                  </div>
 
                   {oauthPrepareError ? (
                     <div className="add-status error">
@@ -1918,8 +2073,14 @@ export function KiroAccountsPage() {
                     </div>
                   ) : (
                     <div className="oauth-loading">
-                      <RefreshCw size={24} className="loading-spinner" />
-                      <span>{t('common.shared.oauth.preparing', 'Preparing authorization info...')}</span>
+                      <button
+                        className="btn btn-primary btn-full"
+                        onClick={prepareOauthUrl}
+                        disabled={oauthPolling}
+                      >
+                        <Globe size={16} />
+                        {t('common.shared.oauth.prepare', 'Prepare authorization link')}
+                      </button>
                     </div>
                   )}
                 </div>

@@ -1,4 +1,4 @@
-import { Settings, GaugeCircle, LayoutGrid, SlidersHorizontal } from 'lucide-react';
+import { Settings, GaugeCircle, LayoutGrid, SlidersHorizontal, Server } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { Page } from '../../types/navigation';
@@ -182,6 +182,14 @@ export function SideNav({
       </div>
 
       <div className="nav-footer">
+        <button
+          className={`nav-item ${page === 'kiro-proxy' ? 'active' : ''}`}
+          onClick={() => setPage('kiro-proxy')}
+          title={t('nav.kiroProxy', 'Kiro Proxy')}
+        >
+          <Server size={20} />
+          <span className="tooltip">{t('nav.kiroProxy', 'Kiro Proxy')}</span>
+        </button>
         <button
           className={`nav-item ${page === 'settings' ? 'active' : ''}`}
           onClick={() => setPage('settings')}
