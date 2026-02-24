@@ -1,6 +1,6 @@
 [package]
 name = "mira-tools"
-version = "0.8.18"
+version = "0.8.19"
 description = "Mira Tools"
 authors = ["ProTechPh"]
 license = "CC-BY-NC-SA-4.0"
@@ -11,10 +11,10 @@ name = "antigravity_mira_tools_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2", features = [] }
+tauri-build = { version = "2.5", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = ["macos-private-api", "tray-icon", "image-png"] }
+tauri = { version = "=2.9.5", features = ["macos-private-api", "tray-icon", "image-png"] }
 tauri-plugin-opener = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-fs = "2"
