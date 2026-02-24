@@ -56,11 +56,26 @@ jobs:
           node-version: 20
           cache: "npm"
 
+      - name: Set version from tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          export VERSION
+          node -e "const fs=require('fs');const p='package.json';const j=JSON.parse(fs.readFileSync(p,'utf8'));j.version=process.env.VERSION;fs.writeFileSync(p, JSON.stringify(j, null, 2)+'\n');"
+
       - name: Install frontend dependencies
         run: npm install
 
       - name: Sync versions
         run: npm run sync-version
+
+      - name: Regenerate Cargo.lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd src-tauri
+          cargo generate-lockfile
 
       - name: Read app version
         id: app_version
@@ -155,4 +170,107 @@ jobs:
         run: |
           set -euo pipefail
           gh release upload "v${VERSION}" SHA256SUMS.txt --clobber
+
+  update-homebrew-cask:
+    name: Update Homebrew Cask
+    needs:
+      - release
+      - upload-checksums
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Fast-forward local main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git pull --ff-only origin main
+
+      - name: Determine version
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Node.js setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Rust setup
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Sync app version files on main
+        shell: bash
+        run: |
+          set -euo pipefail
+          node -e "const fs=require('fs');const p='package.json';const j=JSON.parse(fs.readFileSync(p,'utf8'));j.version=process.env.VERSION;fs.writeFileSync(p, JSON.stringify(j, null, 2)+'\n');"
+          npm run sync-version
+          cd src-tauri
+          cargo generate-lockfile
+          cd ..
+          git diff -- package.json src-tauri/Cargo.toml src-tauri/Cargo.lock src-tauri/tauri.conf.json
+
+      - name: Download universal DMG from GitHub Releases (retry)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="v${VERSION}"
+          for i in $(seq 1 30); do
+            rm -f Mira.Tools_*_universal.dmg mira-tools.dmg
+            if gh release download "$TAG" --pattern "Mira.Tools_*_universal.dmg" --clobber; then
+              mv Mira.Tools_*_universal.dmg mira-tools.dmg
+              exit 0
+            fi
+            echo "Asset not ready yet (attempt $i/30). Sleeping 10s..."
+            sleep 10
+          done
+          echo "Failed to download release asset after retries."
+          exit 1
+
+      - name: Compute sha256
+        shell: bash
+        run: |
+          set -euo pipefail
+          SHA256="$(sha256sum mira-tools.dmg | awk '{print $1}')"
+          echo "SHA256=$SHA256" >> "$GITHUB_ENV"
+
+      - name: Update Cask file
+        shell: bash
+        run: |
+          set -euo pipefail
+          FILE="Casks/mira-tools.rb"
+          if [ ! -f "$FILE" ]; then
+            echo "Missing $FILE. Create it first."
+            exit 1
+          fi
+
+          perl -0777 -i -pe \
+            's/version \"[^\"]+\"/version \"'"$VERSION"'\"/; s/sha256 \"[0-9a-f]{64}\"/sha256 \"'"$SHA256"'\"/' \
+            "$FILE"
+
+          git diff -- "$FILE"
+
+      - name: Commit and push automated release metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json src-tauri/Cargo.toml src-tauri/Cargo.lock src-tauri/tauri.conf.json Casks/mira-tools.rb
+          if git diff --cached --quiet; then
+            echo "No release metadata changes to commit."
+            exit 0
+          fi
+          git commit -m "chore(release): sync version files and cask for v${VERSION}"
+          git push origin HEAD:main
 
