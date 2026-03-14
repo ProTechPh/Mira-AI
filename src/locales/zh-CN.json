@@ -157,7 +157,8 @@
     "antigravityProxy": "Antigravity 代理",
     "kirogateProxy": "KiroGate 代理",
     "morePlatforms": "更多平台",
-    "instances": "多开实例"
+    "instances": "多开实例",
+    "showcase": "展示"
   },
   "antigravityProxy": {
     "title": "Antigravity API 代理",
@@ -1569,5 +1570,16 @@
       "localClient": "从本机 Kiro 导入"
     },
     "injectToVSCode": "切换到 Kiro"
+  },
+  "showcase": {
+    "title": "第三方展示",
+    "subtitle": "探索与 Mira AI 配合使用的集成、工具和服务",
+    "featured": "精选",
+    "featuredBadge": "精选",
+    "all": "所有项目",
+    "website": "网站",
+    "github": "GitHub",
+    "visitWebsite": "访问网站",
+    "viewGithub": "在 GitHub 上查看"
   }
 }

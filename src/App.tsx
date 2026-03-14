@@ -53,6 +53,9 @@ const SettingsPage = lazy(() =>
 const InstancesPage = lazy(() =>
   import('./pages/InstancesPage').then((module) => ({ default: module.InstancesPage })),
 );
+const ShowcasePage = lazy(() =>
+  import('./pages/ShowcasePage').then((module) => ({ default: module.ShowcasePage })),
+);
 const PlatformLayoutModal = lazy(() =>
   import('./components/PlatformLayoutModal').then((module) => ({
     default: module.PlatformLayoutModal,
@@ -1043,6 +1046,7 @@ function App() {
           {page === 'fingerprints' && <FingerprintsPage onNavigate={setPage} />}
           {page === 'wakeup' && <WakeupTasksPage onNavigate={setPage} />}
           {page === 'settings' && <SettingsPage />}
+          {page === 'showcase' && <ShowcasePage />}
         </Suspense>
       </div>
     </div>

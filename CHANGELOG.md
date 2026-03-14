@@ -7,6 +7,17 @@ All notable changes to  will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
+## [0.8.23] - 2026-03-14
+
+### Added
+- **Showcase page for third-party integrations**: New dedicated page to display third-party software, tools, and integrations that work with Mira AI. Features card-based layout with support for featured items, tags, website and GitHub links.
+- **Kiro Account Manager showcase entry**: Added Kiro Account Manager as the first featured project in the showcase, highlighting its multi-account management, auto token refresh, and API proxy capabilities.
+
+### Changed
+- **Navigation enhancement**: Added Sparkles icon button in sidebar footer to access the new Showcase page.
+- **Design system consistency**: Showcase page fully integrated with existing design system variables for seamless light/dark mode support.
+
+---
 ## [0.8.22] - 2026-03-14
 
 ### Removed

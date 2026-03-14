@@ -157,7 +157,8 @@
     "kirogateProxy": "KiroGate Proxy",
     "dashboard": "Dashboard",
     "morePlatforms": "More Platforms",
-    "instances": "Multi-Instance"
+    "instances": "Multi-Instance",
+    "showcase": "Showcase"
   },
   "antigravityProxy": {
     "title": "Antigravity API Proxy",
@@ -1569,5 +1570,16 @@
       "localClient": "Import from local Kiro"
     },
     "injectToVSCode": "Switch to Kiro"
+  },
+  "showcase": {
+    "title": "Third-Party Showcase",
+    "subtitle": "Discover integrations, tools, and services that work with Mira AI",
+    "featured": "Featured",
+    "featuredBadge": "Featured",
+    "all": "All Projects",
+    "website": "Website",
+    "github": "GitHub",
+    "visitWebsite": "Visit Website",
+    "viewGithub": "View on GitHub"
   }
 }
