@@ -7,6 +7,22 @@
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)。
 
 ---
+## [0.8.22] - 2026-03-14
+
+### 移除
+- **完全移除 Proxy 功能**：移除所有 Antigravity Proxy 和 KiroGate Proxy 相关功能，包括页面、组件、服务、导航、Rust 后端模块和配置。应用现在专注于核心账号和实例管理功能。
+
+---
+## [0.8.21] - 2026-02-25
+
+### 变更
+- **KiroGate Proxy 切换至原生 `kiro_proxy` 内核**：重新接线 Tauri 命令、自动启动与初始化流程，现全部直接调用 Rust `kiro_proxy` 模块，恢复完整的 Kiro 调度、账号池与管理 API 能力，取代临时的 Antigravity 代理桥接方案。
+- **KiroGate 管理页接入原生事件流**：Proxy 页面改为订阅 `kiro-proxy:*` 事件，运行状态、统计与日志可实时同步原生服务的输出。
+
+### 修复
+- **模型列表改为固定白名单**：KiroGate 现在直接返回精选模型清单（Claude Sonnet 4.5 / Haiku 4.5 / Sonnet 4 / Claude 3.7 Sonnet / DeepSeek-V3.2 / MiniMax M2.1 / Qwen3-Coder-Next），不再触发上游 `ListAvailableModels` 请求，避免多余的模型接口调用并保证 UI 一致。
+
+---
 ## [0.8.20] - 2026-02-24
 
 ### 变更

@@ -753,7 +753,7 @@ fn pick_quota_alert_recommendation(accounts: &[Account], current_id: &str) -> Op
 
 fn build_quota_alert_notification_text(payload: &QuotaAlertPayload) -> (String, String) {
     let title = format!(
-        "{} 配额预警",
+        "{} Quota Alert",
         match payload.platform.as_str() {
             "codex" => "Codex",
             "github_copilot" => "GitHub Copilot",
@@ -762,16 +762,16 @@ fn build_quota_alert_notification_text(payload: &QuotaAlertPayload) -> (String, 
         }
     );
     let model_text = if payload.low_models.is_empty() {
-        "未知模型".to_string()
+        "unknown model".to_string()
     } else {
         payload.low_models.join(", ")
     };
     let mut body = format!(
-        "{} 低于 {}%（最低 {}%，模型：{}）",
+        "{} is below {}% (lowest {}%, model: {})",
         payload.current_email, payload.threshold, payload.lowest_percentage, model_text
     );
     if let Some(email) = payload.recommended_email.as_ref() {
-        body.push_str(&format!("，建议切换到 {}", email));
+        body.push_str(&format!(", consider switching to {}", email));
     }
     (title, body)
 }

@@ -41,15 +41,6 @@ const WindsurfAccountsPage = lazy(() =>
 const KiroAccountsPage = lazy(() =>
   import('./pages/KiroAccountsPage').then((module) => ({ default: module.KiroAccountsPage })),
 );
-const KiroProxyPage = lazy(() =>
-  import('./pages/KiroProxyPage').then((module) => ({ default: module.KiroProxyPage })),
-);
-const AntigravityProxyPage = lazy(() =>
-  import('./pages/AntigravityProxyPage').then((module) => ({ default: module.AntigravityProxyPage })),
-);
-const ProxyPage = lazy(() =>
-  import('./pages/ProxyPage').then((module) => ({ default: module.ProxyPage })),
-);
 const FingerprintsPage = lazy(() =>
   import('./pages/FingerprintsPage').then((module) => ({ default: module.FingerprintsPage })),
 );
@@ -1048,9 +1039,6 @@ function App() {
           {page === 'github-copilot' && <GitHubCopilotAccountsPage />}
           {page === 'windsurf' && <WindsurfAccountsPage />}
           {page === 'kiro' && <KiroAccountsPage />}
-          {page === 'proxy' && <ProxyPage />}
-          {page === 'kiro-proxy' && <KiroProxyPage />}
-          {page === 'antigravity-proxy' && <AntigravityProxyPage />}
           {page === 'instances' && <InstancesPage onNavigate={setPage} />}
           {page === 'fingerprints' && <FingerprintsPage onNavigate={setPage} />}
           {page === 'wakeup' && <WakeupTasksPage onNavigate={setPage} />}

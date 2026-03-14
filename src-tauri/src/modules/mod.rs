@@ -1,5 +1,4 @@
 pub mod account;
-pub mod antigravity_proxy;
 pub mod codex_account;
 pub mod codex_instance;
 pub mod codex_oauth;
@@ -18,7 +17,6 @@ pub mod instance_store;
 pub mod kiro_account;
 pub mod kiro_instance;
 pub mod kiro_oauth;
-pub mod kiro_proxy;
 pub mod logger;
 pub mod oauth;
 pub mod oauth_server;

@@ -7,6 +7,22 @@ All notable changes to  will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
+## [0.8.22] - 2026-03-14
+
+### Removed
+- **Proxy functionality completely removed**: Removed all Antigravity Proxy and KiroGate Proxy features including pages, components, services, navigation, Rust backend modules, and configuration. The application now focuses on core account and instance management functionality.
+
+---
+## [0.8.21] - 2026-02-25
+
+### Changed
+- **KiroGate proxy now runs on the native `kiro_proxy` core**: The Tauri command surface, auto-start hooks, and setup pipeline were rewired to the Rust `kiro_proxy` module so the in-app proxy uses the full Kiro scheduler, account pool, and admin APIs instead of the temporary Antigravity bridge.
+- **KiroGate admin UI listens to native proxy events**: The proxy page now subscribes to the `kiro-proxy:*` event stream, ensuring status cards, stats, and logs stay in sync with the Rust runtime.
+
+### Fixed
+- **Model list no longer hits upstream APIs**: KiroGate now serves a curated static model catalog (Claude Sonnet 4.5 / Haiku 4.5 / Sonnet 4 / Claude 3.7 Sonnet / DeepSeek-V3.2 / MiniMax M2.1 / Qwen3-Coder-Next), preventing repeated `ListAvailableModels` calls and keeping the UI consistent.
+
+---
 ## [0.8.20] - 2026-02-24
 
 ### Changed

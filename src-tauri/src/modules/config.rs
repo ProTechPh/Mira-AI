@@ -3,7 +3,6 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
 use std::sync::{OnceLock, RwLock};
@@ -130,288 +129,6 @@ pub struct UserConfig {
     /// Kiro 配额预警阈值（百分比）
     #[serde(default = "default_kiro_quota_alert_threshold")]
     pub kiro_quota_alert_threshold: i32,
-    /// Kiro API 代理配置
-    #[serde(default)]
-    pub kiro_proxy: KiroProxyConfig,
-    /// Antigravity API 代理配置
-    #[serde(default)]
-    pub antigravity_proxy: AntigravityProxyConfig,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-#[serde(rename_all = "camelCase")]
-pub struct KiroProxyApiKeyUsageDaily {
-    #[serde(default)]
-    pub requests: u64,
-    #[serde(default)]
-    pub input_tokens: u64,
-    #[serde(default)]
-    pub output_tokens: u64,
-    #[serde(default)]
-    pub credits: f64,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-#[serde(rename_all = "camelCase")]
-pub struct KiroProxyApiKeyUsageModel {
-    #[serde(default)]
-    pub requests: u64,
-    #[serde(default)]
-    pub input_tokens: u64,
-    #[serde(default)]
-    pub output_tokens: u64,
-    #[serde(default)]
-    pub credits: f64,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-#[serde(rename_all = "camelCase")]
-pub struct KiroProxyApiKeyUsage {
-    #[serde(default)]
-    pub total_requests: u64,
-    #[serde(default)]
-    pub total_input_tokens: u64,
-    #[serde(default)]
-    pub total_output_tokens: u64,
-    #[serde(default)]
-    pub total_credits: f64,
-    #[serde(default)]
-    pub daily: HashMap<String, KiroProxyApiKeyUsageDaily>,
-    #[serde(default)]
-    pub by_model: HashMap<String, KiroProxyApiKeyUsageModel>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct KiroProxyApiKey {
-    pub id: String,
-    pub name: String,
-    pub key: String,
-    #[serde(default = "default_true")]
-    pub enabled: bool,
-    #[serde(default = "default_timestamp_now")]
-    pub created_at: i64,
-    #[serde(default)]
-    pub last_used_at: Option<i64>,
-    #[serde(default)]
-    pub credits_limit: Option<f64>,
-    #[serde(default)]
-    pub usage: KiroProxyApiKeyUsage,
-    #[serde(default)]
-    pub usage_history: Vec<crate::modules::kiro_proxy::types::ProxyUsageRecord>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct KiroProxyModelMappingRule {
-    pub id: String,
-    pub name: String,
-    #[serde(default = "default_true")]
-    pub enabled: bool,
-    #[serde(
-        rename = "type",
-        alias = "mappingType",
-        default = "default_model_mapping_type"
-    )]
-    pub mapping_type: String,
-    pub source_model: String,
-    #[serde(default)]
-    pub target_models: Vec<String>,
-    #[serde(default)]
-    pub weights: Vec<f64>,
-    #[serde(default = "default_model_mapping_priority")]
-    pub priority: i32,
-    #[serde(default)]
-    pub api_key_ids: Vec<String>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct KiroProxyConfig {
-    #[serde(default)]
-    pub enabled: bool,
-    #[serde(default)]
-    pub auto_start: bool,
-    #[serde(default = "default_proxy_host")]
-    pub host: String,
-    #[serde(default = "default_proxy_port")]
-    pub port: u16,
-    #[serde(default)]
-    pub api_key: Option<String>,
-    #[serde(default)]
-    pub api_keys: Vec<KiroProxyApiKey>,
-    #[serde(default = "default_true")]
-    pub enable_multi_account: bool,
-    #[serde(default)]
-    pub selected_account_ids: Vec<String>,
-    #[serde(default = "default_true")]
-    pub log_requests: bool,
-    #[serde(default = "default_proxy_max_retries")]
-    pub max_retries: u32,
-    #[serde(default = "default_proxy_retry_delay_ms")]
-    pub retry_delay_ms: u64,
-    #[serde(default = "default_thinking_output_format")]
-    pub thinking_output_format: String,
-    #[serde(default)]
-    pub auto_continue_rounds: u32,
-    #[serde(default)]
-    pub disable_tools: bool,
-    #[serde(default)]
-    pub preferred_endpoint: Option<String>,
-    #[serde(default = "default_proxy_model_cache_ttl_sec")]
-    pub model_cache_ttl_sec: u64,
-    #[serde(default = "default_proxy_token_refresh_before_expiry_sec")]
-    pub token_refresh_before_expiry_sec: u64,
-    #[serde(default)]
-    pub auto_switch_on_quota_exhausted: bool,
-    #[serde(default)]
-    pub model_mappings: Vec<KiroProxyModelMappingRule>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-#[serde(rename_all = "camelCase")]
-pub struct AntigravityProxyConfig {
-    #[serde(default)]
-    pub enabled: bool,
-    #[serde(default)]
-    pub auto_start: bool,
-    #[serde(default = "default_antigravity_proxy_host")]
-    pub host: String,
-    #[serde(default = "default_antigravity_proxy_port")]
-    pub port: u16,
-    #[serde(default)]
-    pub auth_enabled: bool,
-    #[serde(default)]
-    pub api_key: Option<String>,
-    #[serde(default = "default_true")]
-    pub enable_multi_account: bool,
-    #[serde(default)]
-    pub selected_account_ids: Vec<String>,
-    #[serde(default = "default_true")]
-    pub log_requests: bool,
-    #[serde(default = "default_antigravity_proxy_max_retries")]
-    pub max_retries: u32,
-    #[serde(default = "default_antigravity_proxy_retry_delay_ms")]
-    pub retry_delay_ms: u64,
-    #[serde(default = "default_antigravity_proxy_model_cache_ttl_sec")]
-    pub model_cache_ttl_sec: u64,
-    #[serde(default = "default_antigravity_proxy_token_refresh_before_expiry_sec")]
-    pub token_refresh_before_expiry_sec: u64,
-}
-
-fn default_proxy_host() -> String {
-    "127.0.0.1".to_string()
-}
-
-fn default_antigravity_proxy_host() -> String {
-    "127.0.0.1".to_string()
-}
-
-fn default_proxy_port() -> u16 {
-    5580
-}
-
-fn default_antigravity_proxy_port() -> u16 {
-    5581
-}
-
-fn default_proxy_max_retries() -> u32 {
-    3
-}
-
-fn default_antigravity_proxy_max_retries() -> u32 {
-    2
-}
-
-fn default_proxy_retry_delay_ms() -> u64 {
-    1000
-}
-
-fn default_antigravity_proxy_retry_delay_ms() -> u64 {
-    800
-}
-
-fn default_thinking_output_format() -> String {
-    "reasoning_content".to_string()
-}
-
-fn default_proxy_model_cache_ttl_sec() -> u64 {
-    300
-}
-
-fn default_antigravity_proxy_model_cache_ttl_sec() -> u64 {
-    300
-}
-
-fn default_proxy_token_refresh_before_expiry_sec() -> u64 {
-    300
-}
-
-fn default_antigravity_proxy_token_refresh_before_expiry_sec() -> u64 {
-    300
-}
-
-fn default_true() -> bool {
-    true
-}
-
-fn default_timestamp_now() -> i64 {
-    chrono::Utc::now().timestamp()
-}
-
-fn default_model_mapping_type() -> String {
-    "replace".to_string()
-}
-
-fn default_model_mapping_priority() -> i32 {
-    100
-}
-
-impl Default for KiroProxyConfig {
-    fn default() -> Self {
-        Self {
-            enabled: false,
-            auto_start: false,
-            host: default_proxy_host(),
-            port: default_proxy_port(),
-            api_key: None,
-            api_keys: Vec::new(),
-            enable_multi_account: true,
-            selected_account_ids: Vec::new(),
-            log_requests: true,
-            max_retries: default_proxy_max_retries(),
-            retry_delay_ms: default_proxy_retry_delay_ms(),
-            thinking_output_format: default_thinking_output_format(),
-            auto_continue_rounds: 0,
-            disable_tools: false,
-            preferred_endpoint: None,
-            model_cache_ttl_sec: default_proxy_model_cache_ttl_sec(),
-            token_refresh_before_expiry_sec: default_proxy_token_refresh_before_expiry_sec(),
-            auto_switch_on_quota_exhausted: false,
-            model_mappings: Vec::new(),
-        }
-    }
-}
-
-impl Default for AntigravityProxyConfig {
-    fn default() -> Self {
-        Self {
-            enabled: false,
-            auto_start: false,
-            host: default_antigravity_proxy_host(),
-            port: default_antigravity_proxy_port(),
-            auth_enabled: false,
-            api_key: None,
-            enable_multi_account: true,
-            selected_account_ids: Vec::new(),
-            log_requests: true,
-            max_retries: default_antigravity_proxy_max_retries(),
-            retry_delay_ms: default_antigravity_proxy_retry_delay_ms(),
-            model_cache_ttl_sec: default_antigravity_proxy_model_cache_ttl_sec(),
-            token_refresh_before_expiry_sec:
-                default_antigravity_proxy_token_refresh_before_expiry_sec(),
-        }
-    }
 }
 
 /// 窗口关闭行为
@@ -621,8 +338,6 @@ impl Default for UserConfig {
             windsurf_quota_alert_threshold: default_windsurf_quota_alert_threshold(),
             kiro_quota_alert_enabled: default_kiro_quota_alert_enabled(),
             kiro_quota_alert_threshold: default_kiro_quota_alert_threshold(),
-            kiro_proxy: KiroProxyConfig::default(),
-            antigravity_proxy: AntigravityProxyConfig::default(),
         }
     }
 }
@@ -649,7 +364,7 @@ fn get_runtime_state() -> &'static RwLock<RuntimeState> {
 
 /// 获取数据目录路径
 pub fn get_data_dir() -> Result<PathBuf, String> {
-    let home = dirs::home_dir().ok_or("无法获取 Home 目录")?;
+    let home = dirs::home_dir().ok_or("Failed to get home directory")?;
     Ok(home.join(DATA_DIR))
 }
 
@@ -681,11 +396,11 @@ pub fn load_user_config() -> Result<UserConfig, String> {
         return Ok(UserConfig::default());
     }
 
-    let content =
-        fs::read_to_string(&config_path).map_err(|e| format!("读取配置文件失败: {}", e))?;
+    let content = fs::read_to_string(&config_path)
+        .map_err(|e| format!("Failed to read config file: {}", e))?;
 
-    let mut value: serde_json::Value =
-        serde_json::from_str(&content).map_err(|e| format!("解析配置文件失败: {}", e))?;
+    let mut value: serde_json::Value = serde_json::from_str(&content)
+        .map_err(|e| format!("Failed to parse config file: {}", e))?;
 
     // 兼容旧配置：平台独立预警字段不存在时，继承历史全局预警配置
     if let Some(obj) = value.as_object_mut() {
@@ -760,23 +475,9 @@ pub fn load_user_config() -> Result<UserConfig, String> {
             );
         }
 
-        if !obj.contains_key("kiro_proxy") {
-            obj.insert(
-                "kiro_proxy".to_string(),
-                serde_json::to_value(KiroProxyConfig::default())
-                    .unwrap_or_else(|_| json!({})),
-            );
-        }
-        if !obj.contains_key("antigravity_proxy") {
-            obj.insert(
-                "antigravity_proxy".to_string(),
-                serde_json::to_value(AntigravityProxyConfig::default())
-                    .unwrap_or_else(|_| json!({})),
-            );
-        }
     }
 
-    serde_json::from_value(value).map_err(|e| format!("解析配置文件失败: {}", e))
+    serde_json::from_value(value).map_err(|e| format!("Failed to parse config file: {}", e))
 }
 
 /// 保存用户配置
@@ -786,13 +487,14 @@ pub fn save_user_config(config: &UserConfig) -> Result<(), String> {
 
     // 确保目录存在
     if !data_dir.exists() {
-        fs::create_dir_all(&data_dir).map_err(|e| format!("创建配置目录失败: {}", e))?;
+        fs::create_dir_all(&data_dir)
+            .map_err(|e| format!("Failed to create config directory: {}", e))?;
     }
 
-    let json =
-        serde_json::to_string_pretty(config).map_err(|e| format!("序列化配置失败: {}", e))?;
+    let json = serde_json::to_string_pretty(config)
+        .map_err(|e| format!("Failed to serialize config: {}", e))?;
 
-    fs::write(&config_path, json).map_err(|e| format!("写入配置文件失败: {}", e))?;
+    fs::write(&config_path, json).map_err(|e| format!("Failed to write config file: {}", e))?;
 
     // 更新运行时状态
     if let Ok(mut state) = get_runtime_state().write() {
@@ -835,14 +537,15 @@ pub fn save_server_status(status: &ServerStatus) -> Result<(), String> {
 
     // 确保目录存在
     if !data_dir.exists() {
-        fs::create_dir_all(&data_dir).map_err(|e| format!("创建配置目录失败: {}", e))?;
+        fs::create_dir_all(&data_dir)
+            .map_err(|e| format!("Failed to create config directory: {}", e))?;
     }
 
     // 写入状态文件
-    let json =
-        serde_json::to_string_pretty(status).map_err(|e| format!("序列化状态失败: {}", e))?;
+    let json = serde_json::to_string_pretty(status)
+        .map_err(|e| format!("Failed to serialize status file: {}", e))?;
 
-    fs::write(&status_path, json).map_err(|e| format!("写入状态文件失败: {}", e))?;
+    fs::write(&status_path, json).map_err(|e| format!("Failed to write status file: {}", e))?;
 
     crate::modules::logger::log_info(&format!(
         "[Config] Server status saved: ws_port={}, pid={}",

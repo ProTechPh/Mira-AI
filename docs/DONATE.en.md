@@ -8,11 +8,11 @@ Your support is greatly appreciated! ❤️
 
 ## 💰 Crypto Donation
 
-- **ETH Address**: `0xc75d68fe59e4b44904b1CAa1Da4FDfEddD780aef`
+- **ETH Address**: `0x800E016f1794Fcf307Ef46d4f5daa03fa2283Dd1`
 
   <img src="images/donation_eth.png" width="200" />
 
-- **SOLANA Address**: `6yNHzh6e3LLbYrJZg7ayhNZyCKazQZTTYWnfz9i87Zeo`
+- **SOLANA Address**: `9GtWDMT8JL1fuK1TcFjT6KTy7hDFe8Hr5grxomPwebvG`
 
   <img src="images/donation_sol.png" width="200" />
 
