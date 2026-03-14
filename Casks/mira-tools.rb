@@ -1,6 +1,6 @@
 cask "Mira-tools" do
-  version "0.8.22"
-  sha256 "12d9d6e666274df2c97d418a9d19cc3605cb8fc8e878d82580b2d4aec299bbeb"
+  version "0.8.23"
+  sha256 "91201ab14eb5b3dfdb08aac77f743909f971d7f03aad00e8ca00c5989835508f"
 
   url "https://github.com/ProTechPh/Mira-AI/releases/download/v#{version}/Mira.Tools_#{version}_universal.dmg",
       verified: "github.com/ProTechPh/Mira-AI/"
